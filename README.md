@@ -1,4 +1,4 @@
 # CarData
 Data of Car Scraped from Mudah Website
 
-will be updated for an interval
+The master file will be updated for an interval
