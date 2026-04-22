@@ -2,5 +2,9 @@ requests>=2.31.0
 cloudscraper>=1.2.71
 beautifulsoup4>=4.12.2
 pandas>=2.1.0
+openpyxl>=3.1.0
 fake-useragent>=1.2.1
 tqdm>=4.66.1
+
+# dev
+pytest>=8.0.0
