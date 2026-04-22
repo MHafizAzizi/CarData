@@ -89,34 +89,45 @@ class TestAttrsToDict:
 # ---------------------------------------------------------------------------
 
 class TestGetPageUrls:
-    def test_single_page(self, scraper):
-        urls = scraper.get_page_urls("selangor", "toyota", 1, 1)
+    def test_single_page_cars(self, scraper):
+        urls = scraper.get_page_urls("selangor", "cars", "toyota", 1, 1)
         assert len(urls) == 1
         assert "selangor" in urls[0]
         assert "toyota" in urls[0]
+        assert "cars-for-sale" in urls[0]
         assert urls[0].endswith("1")
 
+    def test_single_page_motorcycles(self, scraper):
+        urls = scraper.get_page_urls("malaysia", "motorcycles", "royal-enfield", 1, 1)
+        assert len(urls) == 1
+        assert "motorcycles-for-sale" in urls[0]
+        assert "royal-enfield" in urls[0]
+
     def test_multiple_pages(self, scraper):
-        urls = scraper.get_page_urls("johor", "honda", 1, 5)
+        urls = scraper.get_page_urls("johor", "cars", "honda", 1, 5)
         assert len(urls) == 5
         assert urls[0].endswith("1")
         assert urls[-1].endswith("5")
 
     def test_no_brand_uses_all_cars_url(self, scraper):
-        urls = scraper.get_page_urls("malaysia", "", 1, 1)
+        urls = scraper.get_page_urls("malaysia", "cars", "", 1, 1)
         assert "cars-for-sale?" in urls[0]
         assert "/none" not in urls[0]
 
+    def test_no_brand_motorcycles_url(self, scraper):
+        urls = scraper.get_page_urls("malaysia", "motorcycles", "", 1, 1)
+        assert "motorcycles-for-sale?" in urls[0]
+
     def test_brand_none_string_uses_all_cars_url(self, scraper):
-        urls = scraper.get_page_urls("malaysia", "none", 1, 1)
+        urls = scraper.get_page_urls("malaysia", "cars", "none", 1, 1)
         assert "cars-for-sale?" in urls[0]
 
     def test_state_lowercased(self, scraper):
-        urls = scraper.get_page_urls("Selangor", "Toyota", 1, 1)
+        urls = scraper.get_page_urls("Selangor", "cars", "Toyota", 1, 1)
         assert "selangor" in urls[0]
 
     def test_empty_state_defaults_to_malaysia(self, scraper):
-        urls = scraper.get_page_urls("", "", 1, 1)
+        urls = scraper.get_page_urls("", "cars", "", 1, 1)
         assert "malaysia" in urls[0]
 
 

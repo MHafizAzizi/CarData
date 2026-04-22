@@ -24,8 +24,9 @@ python script.py [OPTIONS]
 
 | Flag | Default | Description |
 |---|---|---|
+| `--category` | `cars` | Category: `cars` or `motorcycles` |
 | `--state` | `malaysia` | State to scrape (e.g. `selangor`, `johor`) |
-| `--brand` | all brands | Car brand filter (e.g. `toyota`, `honda`) |
+| `--brand` | all brands | Brand filter (see `brands.md` for available brands) |
 | `--start` | `1` | Start page number |
 | `--end` | `1` | End page number (max ~250) |
 | `--workers` | `5` | Concurrent workers for fetching listing details |
@@ -35,20 +36,27 @@ python script.py [OPTIONS]
 
 ### Examples
 
-Scrape all Toyota listings in Selangor across pages 1–50:
+**Scrape cars — all Toyota listings in Selangor:**
 ```bash
-python script.py --state selangor --brand toyota --start 1 --end 50
+python script.py --category cars --state selangor --brand toyota --start 1 --end 50
 ```
 
-Scrape all brands nationwide and update the master file:
+**Scrape motorcycles — all Royal Enfield nationwide:**
 ```bash
-python script.py --state malaysia --start 1 --end 250 --workers 10 --update-master
+python script.py --category motorcycles --brand royal-enfield --start 1 --end 20
 ```
 
-Save output to a specific folder:
+**Scrape all car brands nationwide and update master:**
+```bash
+python script.py --category cars --start 1 --end 250 --workers 10 --update-master
+```
+
+**Save output to a specific folder:**
 ```bash
 python script.py --state kuala-lumpur --brand honda --start 1 --end 30 --output-dir ./data
 ```
+
+See [`brands.md`](brands.md) for a complete list of available brands.
 
 ---
 

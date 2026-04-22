@@ -175,15 +175,21 @@ class MudahScraper:
                 })
         return other_dets
 
-    def get_page_urls(self, state: str = "", brand: str = "", start: int = 1, end: int = 1) -> List[str]:
-        """Generate paginated Mudah.my search URLs for a given state and brand."""
+    def get_page_urls(self, state: str = "", category: str = "cars", brand: str = "", start: int = 1, end: int = 1) -> List[str]:
+        """Generate paginated Mudah.my search URLs for a given state, category, and brand."""
         base_url = "https://www.mudah.my"
         state = state.lower() if state else "malaysia"
 
+        category_map = {
+            "cars": "cars-for-sale",
+            "motorcycles": "motorcycles-for-sale",
+        }
+        category_path = category_map.get(category.lower(), "cars-for-sale")
+
         if not brand or brand.lower() == 'none':
-            url = f"{base_url}/{state}/cars-for-sale?o="
+            url = f"{base_url}/{state}/{category_path}?o="
         else:
-            url = f"{base_url}/{state}/cars-for-sale/{brand}?o="
+            url = f"{base_url}/{state}/{category_path}/{brand}?o="
 
         return [url + str(page) for page in range(start, end + 1)]
 
@@ -231,16 +237,17 @@ class MudahScraper:
     def scrape_cars(
         self,
         state: str,
+        category: str,
         brand: str,
         start: int,
         end: int,
         expected_urls_per_page: int = 40,
         checkpoint_every: int = 100,
     ) -> pd.DataFrame:
-        """Scrape car listings; fetches details concurrently and checkpoints progress to disk."""
-        logging.info(f"Starting scrape for '{brand or 'all'}' cars in '{state}', pages {start}–{end}")
+        """Scrape listings; fetches details concurrently and checkpoints progress to disk."""
+        logging.info(f"Starting scrape for '{brand or 'all'}' {category} in '{state}', pages {start}–{end}")
 
-        page_urls = self.get_page_urls(state, brand, start, end)
+        page_urls = self.get_page_urls(state, category, brand, start, end)
         car_urls: List[str] = []
 
         with tqdm(total=len(page_urls), desc="Collecting pages", unit="page") as pbar:
@@ -296,9 +303,10 @@ class MudahScraper:
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Mudah.my car listing scraper")
+    parser = argparse.ArgumentParser(description="Mudah.my listing scraper for cars and motorcycles")
+    parser.add_argument("--category", default="cars", choices=["cars", "motorcycles"], help="Category to scrape (default: cars)")
     parser.add_argument("--state", default="malaysia", help="State to scrape (default: malaysia)")
-    parser.add_argument("--brand", default="", help="Car brand filter (default: all brands)")
+    parser.add_argument("--brand", default="", help="Brand filter (default: all brands). See brands.md for available brands.")
     parser.add_argument("--start", type=int, default=1, help="Start page number (default: 1)")
     parser.add_argument("--end", type=int, default=1, help="End page number (default: 1)")
     parser.add_argument("--workers", type=int, default=5, help="Concurrent workers for detail fetching (default: 5)")
@@ -320,21 +328,21 @@ def main():
 
     scraper = MudahScraper(max_workers=args.workers)
 
-    print(f"\n=== Mudah.my Car Scraper ===")
-    print(f"State: {args.state} | Brand: {args.brand or 'all'} | Pages: {args.start}–{args.end} | Workers: {args.workers}\n")
+    print(f"\n=== Mudah.my Listing Scraper ===")
+    print(f"Category: {args.category} | State: {args.state} | Brand: {args.brand or 'all'} | Pages: {args.start}–{args.end} | Workers: {args.workers}\n")
 
     try:
-        df = scraper.scrape_cars(args.state, args.brand, args.start, args.end)
+        df = scraper.scrape_cars(args.state, args.category, args.brand, args.start, args.end)
 
         timestamp = pd.Timestamp.now().strftime("%Y%m%d%H%M%S")
         os.makedirs(args.output_dir, exist_ok=True)
         brand_label = args.brand or 'all'
         filename = os.path.join(
             args.output_dir,
-            f"mudah_cars_{brand_label}_{args.state}_{args.start}_to_{args.end}_{timestamp}.csv"
+            f"mudah_{args.category}_{brand_label}_{args.state}_{args.start}_to_{args.end}_{timestamp}.csv"
         )
         df.to_csv(filename, index=False)
-        print(f"\nScraped {len(df)} cars → {filename}")
+        print(f"\nScraped {len(df)} {args.category} → {filename}")
 
         if args.update_master:
             scraper.update_master(df, args.master)
