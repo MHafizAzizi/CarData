@@ -8,6 +8,7 @@ import time
 import random
 import argparse
 import os
+from datetime import datetime, timedelta
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from requests.exceptions import RequestException
 from typing import List, Dict, Any, Optional
@@ -15,18 +16,60 @@ import logging
 from fake_useragent import UserAgent
 from tqdm import tqdm
 
+
+def _parse_published(text: str) -> str:
+    """Convert Mudah's relative date strings ('Today 15:49', 'Yesterday 10:30',
+    '22 Apr 09:15') to absolute 'YYYY-MM-DD HH:MM'."""
+    if not text:
+        return ''
+    today = datetime.now()
+    text = text.strip()
+    low = text.lower()
+    try:
+        if low.startswith('today'):
+            time_part = text.split(' ', 1)[1] if ' ' in text else '00:00'
+            return f"{today.strftime('%Y-%m-%d')} {time_part}"
+        if low.startswith('yesterday'):
+            y = today - timedelta(days=1)
+            time_part = text.split(' ', 1)[1] if ' ' in text else '00:00'
+            return f"{y.strftime('%Y-%m-%d')} {time_part}"
+        try:
+            dt = datetime.strptime(f"{today.year} {text}", '%Y %d %b %H:%M')
+            if dt > today:
+                dt = dt.replace(year=today.year - 1)
+            return dt.strftime('%Y-%m-%d %H:%M')
+        except ValueError:
+            pass
+        try:
+            return datetime.strptime(text, '%d %b %Y').strftime('%Y-%m-%d')
+        except ValueError:
+            pass
+    except Exception:
+        pass
+    return text
+
+import sys
+
+try:
+    sys.stdout.reconfigure(encoding='utf-8')
+    sys.stderr.reconfigure(encoding='utf-8')
+except (AttributeError, OSError):
+    pass
+
+os.makedirs('logs', exist_ok=True)
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('scraper.log'),
+        logging.FileHandler('logs/scraper.log', encoding='utf-8'),
         logging.StreamHandler()
     ]
 )
 
 
 class MudahScraper:
-    def __init__(self, max_retries: int = 3, base_delay: int = 2, max_workers: int = 5):
+    def __init__(self, max_retries: int = 3, base_delay: int = 2, max_workers: int = 2):
         self.scraper = cloudscraper.create_scraper(
             browser={
                 'browser': 'chrome',
@@ -40,15 +83,19 @@ class MudahScraper:
         self.ua = UserAgent()
 
         self.keys = [
-            "price",
-            "location", "condition", "make", "model",
-            "car_type", "transmission", "engine_capacity", "mileage",
-            "manufactured_date", "ads_id", "family", "variant", "series",
+            "ads_id", "subject", "price",
+            "condition", "make", "model", "motorcycle_make", "motorcycle_model",
+            "manufactured_date", "mileage",
+            "location", "region", "subregion",
+            "seller_name", "company_ad",
+            "car_type", "transmission", "engine_capacity",
+            "family", "variant", "series",
             "style", "seat", "country_origin", "cc", "comp_ratio", "kw",
             "torque", "engine", "fuel_type", "length", "width", "height",
             "wheelbase", "kerbwt", "fueltk", "brake_front", "brake_rear",
             "suspension_front", "suspension_rear", "steering", "tyres_front",
-            "tyres_rear", "wheel_rim_front", "wheel_rim_rear"
+            "tyres_rear", "wheel_rim_front", "wheel_rim_rear",
+            "published", "Tarikh_Kemaskini",
         ]
 
     def _get_random_headers(self) -> Dict[str, str]:
@@ -56,7 +103,7 @@ class MudahScraper:
             'User-Agent': self.ua.random,
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
             'Accept-Language': 'en-US,en;q=0.5',
-            'Accept-Encoding': 'gzip, deflate, br',
+            'Accept-Encoding': 'gzip, deflate',
             'DNT': '1',
             'Connection': 'keep-alive',
             'Upgrade-Insecure-Requests': '1',
@@ -89,7 +136,7 @@ class MudahScraper:
 
         raise last_error
 
-    def get_car_urls(self, page_url: str, expected_urls: int = 40, max_retries: int = 3) -> List[str]:
+    def get_car_urls(self, page_url: str, expected_urls: int = 20, max_retries: int = 3) -> List[str]:
         """Extract car listing URLs from a page using three fallback parsing strategies."""
         best_result: List[str] = []
 
@@ -165,8 +212,10 @@ class MudahScraper:
     def parse_mcdparams(self, car_mcdparams: List[Dict]) -> List[Dict]:
         """Parse additional car parameters from mcdParams."""
         other_dets = []
-        for group in car_mcdparams:
-            for params in group.get('params', []):
+        for group in car_mcdparams or []:
+            if not isinstance(group, dict):
+                continue
+            for params in (group.get('params') or []):
                 other_dets.append({
                     'realValue': params.get('realValue', ''),
                     'id': params.get('id', ''),
@@ -210,21 +259,26 @@ class MudahScraper:
             data = json.loads(script_tag.string)
             car_ads_no = re.search(r'-(\d+)\.htm', url).group(1)
 
-            dict_id = [{
-                'realValue': '',
-                'id': 'ads_id',
-                'value': car_ads_no,
-                'label': 'id ads'
-            }]
-
             props = data.get('props', {})
             ads_id = props.get('initialState', {}).get('adDetails', {}).get('byID', {}).get(car_ads_no, {})
 
-            car_attrs = ads_id.get('attributes', {}).get('categoryParams', [])
-            car_mcdparams = ads_id.get('attributes', {}).get('mcdParams', [])
+            attributes = ads_id.get('attributes', {}) or {}
+            car_attrs = attributes.get('categoryParams') or []
+            car_mcdparams = attributes.get('mcdParams') or []
             mcd_params = self.parse_mcdparams(car_mcdparams)
 
-            return car_attrs + dict_id + mcd_params
+            top_level = [
+                {'id': 'ads_id', 'value': car_ads_no, 'realValue': '', 'label': 'Ad ID'},
+                {'id': 'subject', 'value': attributes.get('subject', ''), 'realValue': '', 'label': 'Subject'},
+                {'id': 'region', 'value': attributes.get('regionName', ''), 'realValue': '', 'label': 'Region'},
+                {'id': 'subregion', 'value': attributes.get('subregionName', ''), 'realValue': '', 'label': 'Subregion'},
+                {'id': 'seller_name', 'value': attributes.get('name', ''), 'realValue': '', 'label': 'Seller'},
+                {'id': 'company_ad', 'value': attributes.get('companyAd', ''), 'realValue': '', 'label': 'Company Ad'},
+                {'id': 'published', 'value': _parse_published(attributes.get('publishedDatetime', '')), 'realValue': '', 'label': 'Published'},
+                {'id': 'Tarikh_Kemaskini', 'value': datetime.now().strftime('%Y-%m-%d'), 'realValue': '', 'label': 'Scrape Date'},
+            ]
+
+            return car_attrs + top_level + mcd_params
 
         except Exception as e:
             logging.error(f"Error processing car info for {url}: {str(e)}")
@@ -241,7 +295,7 @@ class MudahScraper:
         brand: str,
         start: int,
         end: int,
-        expected_urls_per_page: int = 40,
+        expected_urls_per_page: int = 20,
         checkpoint_every: int = 100,
     ) -> pd.DataFrame:
         """Scrape listings; fetches details concurrently and checkpoints progress to disk."""
@@ -276,7 +330,7 @@ class MudahScraper:
 
                     if i % checkpoint_every == 0:
                         pd.DataFrame(processed_data).to_csv(checkpoint_path, index=False)
-                        logging.info(f"Checkpoint saved: {len(processed_data)} records → {checkpoint_path}")
+                        logging.info(f"Checkpoint saved: {len(processed_data)} records -> {checkpoint_path}")
 
         if os.path.exists(checkpoint_path):
             os.remove(checkpoint_path)
@@ -295,7 +349,7 @@ class MudahScraper:
             before = len(combined)
             combined = combined.drop_duplicates(subset='ads_id', keep='last')
             removed = before - len(combined)
-            logging.info(f"Deduplication: {before} → {len(combined)} records ({removed} duplicates removed)")
+            logging.info(f"Deduplication: {before} -> {len(combined)} records ({removed} duplicates removed)")
 
         combined.to_excel(master_path, index=False)
         logging.info(f"Master file updated: {master_path}")
@@ -304,15 +358,15 @@ class MudahScraper:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Mudah.my listing scraper for cars and motorcycles")
-    parser.add_argument("--category", default="cars", choices=["cars", "motorcycles"], help="Category to scrape (default: cars)")
-    parser.add_argument("--state", default="malaysia", help="State to scrape (default: malaysia)")
-    parser.add_argument("--brand", default="", help="Brand filter (default: all brands). See brands.md for available brands.")
-    parser.add_argument("--start", type=int, default=None, help="Start page number (default: prompted interactively)")
-    parser.add_argument("--end", type=int, default=None, help="End page number (default: prompted interactively)")
+    parser.add_argument("--category", default=None, choices=["cars", "motorcycles"], help="Category to scrape")
+    parser.add_argument("--state", default=None, help="State to scrape")
+    parser.add_argument("--brand", default=None, help="Brand filter. See brands.md for available brands.")
+    parser.add_argument("--start", type=int, default=None, help="Start page number")
+    parser.add_argument("--end", type=int, default=None, help="End page number")
     parser.add_argument("--pages", type=int, default=None, help="Number of pages to scrape from --start (alternative to --end)")
-    parser.add_argument("--workers", type=int, default=5, help="Concurrent workers for detail fetching (default: 5)")
-    parser.add_argument("--output-dir", default=".", help="Directory to save output CSV (default: current dir)")
-    parser.add_argument("--master", default="MasterMudahCarData.xlsx", help="Path to master Excel file")
+    parser.add_argument("--workers", type=int, default=2, help="Concurrent workers for detail fetching (default: 2)")
+    parser.add_argument("--output-dir", default="data/raw", help="Directory to save output CSV (default: data/raw)")
+    parser.add_argument("--master", default="data/master/MasterMudahCarData.xlsx", help="Path to master Excel file")
     parser.add_argument("--update-master", action="store_true", help="Merge results into master Excel file after scraping")
     return parser.parse_args()
 
@@ -332,17 +386,15 @@ def _prompt_int(prompt: str, min_val: int = 1) -> int:
 def _prompt_inputs(args: argparse.Namespace) -> argparse.Namespace:
     print("\n=== Mudah.my Listing Scraper ===\n")
 
-    if args.category == "cars":
+    if args.category is None:
         category_input = input("Category (cars/motorcycles) [default: cars]: ").strip().lower()
-        if category_input in ("cars", "motorcycles"):
-            args.category = category_input
+        args.category = category_input if category_input in ("cars", "motorcycles") else "cars"
 
-    if args.state == "malaysia":
+    if args.state is None:
         state_input = input("State [default: malaysia]: ").strip().lower()
-        if state_input:
-            args.state = state_input
+        args.state = state_input or "malaysia"
 
-    if not args.brand:
+    if args.brand is None:
         brand_input = input("Brand (leave blank for all): ").strip().lower()
         args.brand = brand_input
 
@@ -383,7 +435,7 @@ def main():
             f"mudah_{args.category}_{brand_label}_{args.state}_{args.start}_to_{args.end}_{timestamp}.csv"
         )
         df.to_csv(filename, index=False)
-        print(f"\nScraped {len(df)} {args.category} → {filename}")
+        print(f"\nScraped {len(df)} {args.category} -> {filename}")
 
         if args.update_master:
             scraper.update_master(df, args.master)
@@ -391,7 +443,7 @@ def main():
 
     except Exception as e:
         logging.error(f"Scraper failed: {str(e)}")
-        print("\nAn error occurred. Check scraper.log for details.")
+        print("\nAn error occurred. Check logs/scraper.log for details.")
 
 
 if __name__ == "__main__":

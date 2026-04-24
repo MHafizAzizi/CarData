@@ -125,7 +125,7 @@ def clean(df: pd.DataFrame) -> pd.DataFrame:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Clean MasterMudahCarData Excel file")
-    parser.add_argument("--input", default="MasterMudahCarData.xlsx", help="Input Excel file")
+    parser.add_argument("--input", default="data/master/MasterMudahCarData.xlsx", help="Input Excel file")
     parser.add_argument("--output", default=None, help="Output Excel file (default: overwrite input)")
     return parser.parse_args()
 

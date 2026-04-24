@@ -1,9 +1,11 @@
 # Scraper outputs
-scraper.log
+logs/
 checkpoint_*.csv
+data/raw/
 *.csv
 
 # Master data (large binary — store externally)
+data/master/
 *.xlsx
 
 # Python
