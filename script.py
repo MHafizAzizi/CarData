@@ -307,8 +307,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--category", default="cars", choices=["cars", "motorcycles"], help="Category to scrape (default: cars)")
     parser.add_argument("--state", default="malaysia", help="State to scrape (default: malaysia)")
     parser.add_argument("--brand", default="", help="Brand filter (default: all brands). See brands.md for available brands.")
-    parser.add_argument("--start", type=int, default=1, help="Start page number (default: 1)")
-    parser.add_argument("--end", type=int, default=1, help="End page number (default: 1)")
+    parser.add_argument("--start", type=int, default=None, help="Start page number (default: prompted interactively)")
+    parser.add_argument("--end", type=int, default=None, help="End page number (default: prompted interactively)")
+    parser.add_argument("--pages", type=int, default=None, help="Number of pages to scrape from --start (alternative to --end)")
     parser.add_argument("--workers", type=int, default=5, help="Concurrent workers for detail fetching (default: 5)")
     parser.add_argument("--output-dir", default=".", help="Directory to save output CSV (default: current dir)")
     parser.add_argument("--master", default="MasterMudahCarData.xlsx", help="Path to master Excel file")
@@ -316,8 +317,49 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+def _prompt_int(prompt: str, min_val: int = 1) -> int:
+    while True:
+        try:
+            value = int(input(prompt))
+            if value < min_val:
+                print(f"Please enter a number >= {min_val}.")
+            else:
+                return value
+        except ValueError:
+            print("Invalid input. Please enter a whole number.")
+
+
+def _prompt_inputs(args: argparse.Namespace) -> argparse.Namespace:
+    print("\n=== Mudah.my Listing Scraper ===\n")
+
+    if args.category == "cars":
+        category_input = input("Category (cars/motorcycles) [default: cars]: ").strip().lower()
+        if category_input in ("cars", "motorcycles"):
+            args.category = category_input
+
+    if args.state == "malaysia":
+        state_input = input("State [default: malaysia]: ").strip().lower()
+        if state_input:
+            args.state = state_input
+
+    if not args.brand:
+        brand_input = input("Brand (leave blank for all): ").strip().lower()
+        args.brand = brand_input
+
+    if args.start is None:
+        args.start = _prompt_int("Start page [default: 1]: ", min_val=1)
+
+    if args.pages is not None:
+        args.end = args.start + args.pages - 1
+    elif args.end is None:
+        args.end = args.start + _prompt_int("How many pages to scrape? ") - 1
+
+    return args
+
+
 def main():
     args = parse_args()
+    args = _prompt_inputs(args)
 
     if args.start > args.end:
         print(f"Error: --start ({args.start}) must be <= --end ({args.end})")
@@ -328,8 +370,7 @@ def main():
 
     scraper = MudahScraper(max_workers=args.workers)
 
-    print(f"\n=== Mudah.my Listing Scraper ===")
-    print(f"Category: {args.category} | State: {args.state} | Brand: {args.brand or 'all'} | Pages: {args.start}–{args.end} | Workers: {args.workers}\n")
+    print(f"\nCategory: {args.category} | State: {args.state} | Brand: {args.brand or 'all'} | Pages: {args.start}–{args.end} | Workers: {args.workers}\n")
 
     try:
         df = scraper.scrape_cars(args.state, args.category, args.brand, args.start, args.end)
