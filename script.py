@@ -8,6 +8,7 @@ import time
 import random
 import argparse
 import os
+import threading
 from datetime import datetime, timedelta
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from requests.exceptions import RequestException
@@ -15,6 +16,17 @@ from typing import List, Dict, Any, Optional
 import logging
 from fake_useragent import UserAgent
 from tqdm import tqdm
+
+
+def _clean_body(text: Optional[str]) -> str:
+    """Normalize Mudah's HTML-flavored ad body to plain text."""
+    if not text:
+        return ''
+    # Mudah uses <br>, <br/>, <br /> as line breaks; collapse all to \n
+    text = re.sub(r'<br\s*/?>', '\n', text, flags=re.IGNORECASE)
+    # Strip any other stray HTML tags (rare, but defensive)
+    text = re.sub(r'<[^>]+>', '', text)
+    return text.strip()
 
 
 def _parse_published(text: str) -> str:
@@ -82,8 +94,13 @@ class MudahScraper:
         self.max_workers = max_workers
         self.ua = UserAgent()
 
+        self._request_lock = threading.Lock()
+        self._last_request_time = 0.0
+        self._min_request_interval = (3.0, 4.0)
+
         self.keys = [
-            "ads_id", "subject", "price",
+            "url",
+            "ads_id", "subject", "body", "price",
             "condition", "make", "model", "motorcycle_make", "motorcycle_model",
             "manufactured_date", "mileage",
             "location", "region", "subregion",
@@ -114,14 +131,27 @@ class MudahScraper:
             'Cache-Control': 'max-age=0'
         }
 
+    def _throttle(self) -> None:
+        """Block until at least min_request_interval has passed since the last request.
+        Holding the lock during sleep serializes pacing across worker threads."""
+        with self._request_lock:
+            target_gap = random.uniform(*self._min_request_interval)
+            elapsed = time.monotonic() - self._last_request_time
+            if elapsed < target_gap:
+                time.sleep(target_gap - elapsed)
+            self._last_request_time = time.monotonic()
+
     def _make_request(self, url: str) -> requests.Response:
-        """Make a request with iterative exponential backoff retry."""
+        """Make a request with rate limiting and a fixed-schedule retry backoff."""
+        retry_waits = [2, 3, 5]
         last_error: Optional[Exception] = None
         for attempt in range(self.max_retries + 1):
             try:
-                jitter = random.uniform(0.5, 1.5)
-                delay = (self.base_delay * (2 ** attempt)) * jitter
-                time.sleep(delay)
+                if attempt == 0:
+                    self._throttle()
+                else:
+                    wait = retry_waits[min(attempt - 1, len(retry_waits) - 1)]
+                    time.sleep(wait)
 
                 response = self.scraper.get(url, headers=self._get_random_headers())
                 response.raise_for_status()
@@ -140,10 +170,11 @@ class MudahScraper:
         """Extract car listing URLs from a page using three fallback parsing strategies."""
         best_result: List[str] = []
 
+        retry_waits = [2, 3, 5]
         for attempt in range(max_retries):
             if attempt > 0:
-                delay = self.base_delay * (2 ** (attempt - 1)) + random.uniform(1, 3)
-                logging.info(f"Retry #{attempt} for {page_url}. Waiting {delay:.2f} seconds...")
+                delay = retry_waits[min(attempt - 1, len(retry_waits) - 1)]
+                logging.info(f"Retry #{attempt} for {page_url}. Waiting {delay} seconds...")
                 time.sleep(delay)
 
             try:
@@ -268,8 +299,10 @@ class MudahScraper:
             mcd_params = self.parse_mcdparams(car_mcdparams)
 
             top_level = [
+                {'id': 'url', 'value': url, 'realValue': '', 'label': 'Listing URL'},
                 {'id': 'ads_id', 'value': car_ads_no, 'realValue': '', 'label': 'Ad ID'},
                 {'id': 'subject', 'value': attributes.get('subject', ''), 'realValue': '', 'label': 'Subject'},
+                {'id': 'body', 'value': _clean_body(attributes.get('body')), 'realValue': '', 'label': 'Description'},
                 {'id': 'region', 'value': attributes.get('regionName', ''), 'realValue': '', 'label': 'Region'},
                 {'id': 'subregion', 'value': attributes.get('subregionName', ''), 'realValue': '', 'label': 'Subregion'},
                 {'id': 'seller_name', 'value': attributes.get('name', ''), 'realValue': '', 'label': 'Seller'},
@@ -371,6 +404,16 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+CATEGORY_CHOICES = ["cars", "motorcycles"]
+
+STATE_CHOICES = [
+    "malaysia",
+    "johor", "kedah", "kelantan", "kuala-lumpur", "labuan", "melaka",
+    "negeri-sembilan", "pahang", "penang", "perak", "perlis", "putrajaya",
+    "sabah", "sarawak", "selangor", "terengganu",
+]
+
+
 def _prompt_int(prompt: str, min_val: int = 1) -> int:
     while True:
         try:
@@ -383,16 +426,32 @@ def _prompt_int(prompt: str, min_val: int = 1) -> int:
             print("Invalid input. Please enter a whole number.")
 
 
+def _prompt_choice(label: str, choices: List[str], default_index: int = 0) -> str:
+    print(f"\n{label}:")
+    for i, choice in enumerate(choices, 1):
+        marker = " (default)" if i - 1 == default_index else ""
+        print(f"  {i}. {choice}{marker}")
+    while True:
+        raw = input(f"Select 1-{len(choices)} [default: {default_index + 1}]: ").strip()
+        if raw == "":
+            return choices[default_index]
+        try:
+            idx = int(raw)
+            if 1 <= idx <= len(choices):
+                return choices[idx - 1]
+        except ValueError:
+            pass
+        print(f"Please enter a number between 1 and {len(choices)}.")
+
+
 def _prompt_inputs(args: argparse.Namespace) -> argparse.Namespace:
-    print("\n=== Mudah.my Listing Scraper ===\n")
+    print("\n=== Mudah.my Listing Scraper ===")
 
     if args.category is None:
-        category_input = input("Category (cars/motorcycles) [default: cars]: ").strip().lower()
-        args.category = category_input if category_input in ("cars", "motorcycles") else "cars"
+        args.category = _prompt_choice("Category", CATEGORY_CHOICES, default_index=0)
 
     if args.state is None:
-        state_input = input("State [default: malaysia]: ").strip().lower()
-        args.state = state_input or "malaysia"
+        args.state = _prompt_choice("State", STATE_CHOICES, default_index=0)
 
     if args.brand is None:
         brand_input = input("Brand (leave blank for all): ").strip().lower()
