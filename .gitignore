@@ -8,6 +8,13 @@ data/raw/
 data/master/
 *.xlsx
 
+# SQLite databases (live data — never tracked)
+*.db
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+
 # Python
 __pycache__/
 *.pyc
