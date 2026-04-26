@@ -17,12 +17,16 @@ import logging
 import os
 import sys
 from datetime import datetime
+from pathlib import Path
 from typing import Dict, List, Set, Tuple
 
 import pandas as pd
 
 from db import connect, db_path_for, CATEGORIES
 
+# Anchor all paths to the project root regardless of cwd
+_ROOT = Path(__file__).resolve().parent.parent
+_LOGS_DIR = _ROOT / "logs"
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -30,12 +34,12 @@ try:
 except (AttributeError, OSError):
     pass
 
-os.makedirs("../logs", exist_ok=True)
+_LOGS_DIR.mkdir(parents=True, exist_ok=True)
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
     handlers=[
-        logging.FileHandler("../logs/migrate.log", encoding="utf-8"),
+        logging.FileHandler(_LOGS_DIR / "migrate.log", encoding="utf-8"),
         logging.StreamHandler(),
     ],
 )
@@ -153,7 +157,7 @@ def load_category(slice_df: pd.DataFrame, category: str, *, dry_run: bool) -> No
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Load master xlsx into the per-category SQLite databases")
-    p.add_argument("--xlsx", default="../data/master/MasterMudahCarData.xlsx", help="Source Excel file")
+    p.add_argument("--xlsx", default=str(_ROOT / "data" / "master" / "MasterMudahCarData.xlsx"), help="Source Excel file")
     p.add_argument(
         "--category",
         choices=[*CATEGORIES, "both"],

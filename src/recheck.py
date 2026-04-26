@@ -33,11 +33,15 @@ import re
 import sqlite3
 import sys
 from datetime import datetime, timedelta
+from pathlib import Path
 from typing import Iterable, List, Optional, Tuple
 
 from db import connect, db_path_for, CATEGORIES
 from mudah_client import MudahClient
 
+# Anchor all paths to the project root regardless of cwd
+_ROOT = Path(__file__).resolve().parent.parent
+_LOGS_DIR = _ROOT / "logs"
 
 # -----------------------------------------------------------------------------
 # Logging — same UTF-8 setup as script.py
@@ -49,12 +53,12 @@ try:
 except (AttributeError, OSError):
     pass
 
-os.makedirs('../logs', exist_ok=True)
+_LOGS_DIR.mkdir(parents=True, exist_ok=True)
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('../logs/recheck.log', encoding='utf-8'),
+        logging.FileHandler(_LOGS_DIR / 'recheck.log', encoding='utf-8'),
         logging.StreamHandler(),
     ],
 )

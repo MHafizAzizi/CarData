@@ -17,26 +17,30 @@ import sqlite3
 from pathlib import Path
 from typing import Dict, Optional, Union
 
+# Project root = one level above this file (src/ -> CarData/)
+_HERE = Path(__file__).resolve().parent
+_ROOT = _HERE.parent
+
 CATEGORIES = ("cars", "motorcycles")
 
-DB_PATHS: Dict[str, str] = {
-    "cars": "../data/master/cardata_cars.db",
-    "motorcycles": "../data/master/cardata_motorcycles.db",
+DB_PATHS: Dict[str, Path] = {
+    "cars": _ROOT / "data" / "master" / "cardata_cars.db",
+    "motorcycles": _ROOT / "data" / "master" / "cardata_motorcycles.db",
 }
 
-SCHEMA_PATHS: Dict[str, str] = {
-    "cars": "../schema_cars.sql",
-    "motorcycles": "../schema_motorcycles.sql",
+SCHEMA_PATHS: Dict[str, Path] = {
+    "cars": _ROOT / "schema_cars.sql",
+    "motorcycles": _ROOT / "schema_motorcycles.sql",
 }
 
 
-def db_path_for(category: str) -> str:
+def db_path_for(category: str) -> Path:
     if category not in DB_PATHS:
         raise ValueError(f"Unknown category: {category!r}. Expected one of {CATEGORIES}.")
     return DB_PATHS[category]
 
 
-def schema_path_for(category: str) -> str:
+def schema_path_for(category: str) -> Path:
     if category not in SCHEMA_PATHS:
         raise ValueError(f"Unknown category: {category!r}. Expected one of {CATEGORIES}.")
     return SCHEMA_PATHS[category]
