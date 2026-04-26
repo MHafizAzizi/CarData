@@ -143,11 +143,78 @@ The master file is **not tracked in git** due to its size. Store it locally or i
 
 ---
 
+## Availability Re-checking
+
+`recheck.py` revisits previously scraped listings to track whether each URL is still live. It does **not** claim listings are "sold" — only that the URL is currently `available` or `unavailable`.
+
+```bash
+# normal cadenced run (recommended)
+python recheck.py
+
+# re-check every row regardless of policy, capped to 50
+python recheck.py --all --limit 50
+
+# preview what would be checked, no HTTP requests
+python recheck.py --dry-run
+```
+
+### Flags
+
+| Flag | Default | Description |
+|---|---|---|
+| `--master` | `data/master/MasterMudahCarData.xlsx` | Master Excel file to update |
+| `--limit` | — | Max rows to probe this run |
+| `--all` | off | Skip cadence policy, probe every row that has a URL |
+| `--dry-run` | off | Compute the due set and log it; make no HTTP requests |
+
+### Cadence policy
+
+| Listing age (since `first_seen_at`) | Re-check interval |
+|---|---|
+| 0–7 days | ~daily (≥ 20 hours since last check) |
+| 7–30 days | every 3 days |
+| 30+ days | weekly |
+| `unavailable` for 14+ days | give up — stop re-checking |
+
+### Columns added to the master file
+
+| Column | Meaning |
+|---|---|
+| `first_seen_at` | First time the listing was probed (or scraped, if pre-populated) |
+| `last_seen_at` | Last time the listing was confirmed `available` |
+| `last_checked_at` | Last time we probed (regardless of outcome) |
+| `availability_status` | `available` \| `unavailable` \| `unknown` |
+
+### Audit log
+
+Every probe also appends one row to `data/master/availability_log.csv`:
+
+| Column | Description |
+|---|---|
+| `ads_id` | Listing ID |
+| `url` | Probed URL |
+| `checked_at` | Timestamp |
+| `http_status` | HTTP response code (blank on connection error/timeout) |
+| `detected_status` | `available` \| `soft_404` \| `removed` \| `blocked` \| `transient` |
+
+### Detection rules
+
+- **`available`** — HTTP 200 *and* the ad's `adDetails` block is present in `__NEXT_DATA__`
+- **`soft_404`** — HTTP 200 but Mudah serves a "listing not found" page (no ad block)
+- **`removed`** — HTTP 404 or 410
+- **`blocked`** — HTTP 403 (Cloudflare bot block) — treated as **transient**, the previous `availability_status` is preserved (we don't lie about ads being unavailable just because we got blocked)
+- **`transient`** — 5xx, timeout, connection error — also preserves previous status
+
+`recheck.py` shares the same global 3–4s throttle as the scraper through `mudah_client.py`, so running both concurrently won't blow the request budget. Logs go to `logs/recheck.log`.
+
+---
+
 ## Changelog
 
 This section tracks every revision of this README. Add a new entry at the top whenever the document is updated.
 
 ### 2026-04-26
+- Added the **Availability Re-checking** section documenting `recheck.py`, its CLI flags, cadence policy, new master columns (`first_seen_at`, `last_seen_at`, `last_checked_at`, `availability_status`), the `data/master/availability_log.csv` audit log, and the response-classification rules (incl. 403/timeouts treated as transient).
 - Documented the new `body` column (full seller description from `attributes.body`, with `<br>` collapsed to newlines).
 
 ### 2026-04-25
