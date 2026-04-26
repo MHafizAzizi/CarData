@@ -2,9 +2,9 @@
 
 Primary workflow — CSV (recommended):
     Run interactively and pick cars (1) or motorcycles (2).
-    The script scans data/raw/<category>/ for any CSV files created since the
-    last successful migration, loads them all, and updates last_migrated_at in
-    the database's meta table so the next run only picks up new files.
+    The script loads every CSV file currently in data/raw/<category>/ and,
+    after a successful migration, moves the processed files into
+    data/old/<category>/ so the next run only sees freshly scraped files.
 
 Legacy workflow — xlsx (cars only):
     Pass --xlsx <path> to load from a master Excel file instead of CSVs.
@@ -13,20 +13,21 @@ Legacy workflow — xlsx (cars only):
 Usage:
     python src/migrate_xlsx_to_db.py                  # interactive prompt
     python src/migrate_xlsx_to_db.py --category cars  # skip prompt
-    python src/migrate_xlsx_to_db.py --dry-run        # preview, write nothing
+    python src/migrate_xlsx_to_db.py --dry-run        # preview, write/move nothing
     python src/migrate_xlsx_to_db.py --xlsx data/master/MasterMudahCarData.xlsx
 """
 
 import argparse
 import logging
+import shutil
 import sys
-from datetime import datetime, timezone
+from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Dict, List, Set, Tuple
 
 import pandas as pd
 
-from db import connect, db_path_for, CATEGORIES, get_meta, set_meta
+from db import connect, db_path_for, CATEGORIES, set_meta
 
 # ---------------------------------------------------------------------------
 # Paths
@@ -35,6 +36,7 @@ from db import connect, db_path_for, CATEGORIES, get_meta, set_meta
 _ROOT = Path(__file__).resolve().parent.parent
 _LOGS_DIR = _ROOT / "logs"
 _RAW_DIR = _ROOT / "data" / "raw"
+_OLD_DIR = _ROOT / "data" / "old"
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -98,47 +100,30 @@ def _prompt_category() -> str:
         print("Please enter 1 or 2.")
 
 # ---------------------------------------------------------------------------
-# CSV discovery — only files newer than last_migrated_at
+# CSV discovery + archival
 # ---------------------------------------------------------------------------
 
-def _last_migrated_at(category: str) -> Optional[datetime]:
-    """Read last_migrated_at from the DB meta table. Returns None if never run."""
-    conn = connect(category)
-    raw = get_meta(conn, "last_migrated_at")
-    if not raw:
-        return None
-    try:
-        return datetime.fromisoformat(raw)
-    except ValueError:
-        logging.warning(f"[{category}] Unreadable last_migrated_at value '{raw}' — treating as never migrated")
-        return None
-
-
-def _find_new_csvs(category: str, since: Optional[datetime]) -> List[Path]:
-    """Return CSV files in data/raw/<category>/ that are newer than *since*.
-
-    If *since* is None, all CSVs in the folder are returned (first-ever run).
-    Files are sorted oldest-first so they are loaded in chronological order.
-    """
+def _find_csvs(category: str) -> List[Path]:
+    """Return every CSV in data/raw/<category>/, oldest-first."""
     folder = _RAW_DIR / category
     if not folder.exists():
         logging.warning(f"[{category}] Raw folder not found: {folder}")
         return []
-
     csvs = sorted(folder.glob("*.csv"), key=lambda p: p.stat().st_mtime)
+    logging.info(f"[{category}] Found {len(csvs)} CSV(s) in {folder}")
+    return csvs
 
-    if since is None:
-        logging.info(f"[{category}] First migration — loading all {len(csvs)} CSV(s) found")
-        return csvs
 
-    # st_mtime is a Unix timestamp (seconds); compare with since (local naive datetime)
-    since_ts = since.timestamp()
-    new = [p for p in csvs if p.stat().st_mtime > since_ts]
-    logging.info(
-        f"[{category}] {len(new)} new CSV(s) since last migration "
-        f"({since.strftime('%Y-%m-%d %H:%M:%S')}) out of {len(csvs)} total"
-    )
-    return new
+def _archive_csv(category: str, src: Path) -> None:
+    """Move a processed CSV into data/old/<category>/. Disambiguate name collisions."""
+    dest_dir = _OLD_DIR / category
+    dest_dir.mkdir(parents=True, exist_ok=True)
+    dest = dest_dir / src.name
+    if dest.exists():
+        ts = datetime.now().strftime("%Y%m%d%H%M%S")
+        dest = dest_dir / f"{src.stem}_{ts}{src.suffix}"
+    shutil.move(str(src), str(dest))
+    logging.info(f"[{category}] Archived {src.name} -> {dest.relative_to(_ROOT)}")
 
 # ---------------------------------------------------------------------------
 # DataFrame preparation
@@ -227,16 +212,15 @@ def _insert_rows(conn, df: pd.DataFrame, *, dry_run: bool) -> Tuple[int, int]:
 # ---------------------------------------------------------------------------
 
 def migrate_csv(category: str, *, dry_run: bool) -> None:
-    """Load all new CSV files from data/raw/<category>/ into the SQLite DB."""
-    since = _last_migrated_at(category)
-    csv_files = _find_new_csvs(category, since)
+    """Load every CSV from data/raw/<category>/ into the DB, then archive each one."""
+    csv_files = _find_csvs(category)
 
     if not csv_files:
-        print(f"[{category}] No new CSV files to migrate.")
+        print(f"[{category}] No CSV files to migrate.")
         return
 
     conn = connect(category)
-    total_attempted = total_inserted = 0
+    total_attempted = total_inserted = total_archived = 0
     run_start = datetime.now()
 
     for csv_path in csv_files:
@@ -262,15 +246,23 @@ def migrate_csv(category: str, *, dry_run: bool) -> None:
         total_attempted += attempted
         total_inserted += inserted
 
+        if dry_run:
+            logging.info(f"[{category}] DRY RUN: would archive {csv_path.name}")
+        else:
+            try:
+                _archive_csv(category, csv_path)
+                total_archived += 1
+            except OSError as exc:
+                logging.error(f"[{category}] Failed to archive {csv_path.name}: {exc}")
+
     logging.info(
         f"[{category}] Migration complete — "
         f"total attempted={total_attempted}, inserted={total_inserted}, "
-        f"skipped={total_attempted - total_inserted}"
+        f"skipped={total_attempted - total_inserted}, archived={total_archived}"
     )
 
     if not dry_run:
         set_meta(conn, "last_migrated_at", run_start.strftime("%Y-%m-%d %H:%M:%S"))
-        logging.info(f"[{category}] Updated last_migrated_at = {run_start.strftime('%Y-%m-%d %H:%M:%S')}")
 
 
 def migrate_xlsx(xlsx_path: Path, category: str, *, dry_run: bool) -> None:

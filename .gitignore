@@ -10,6 +10,13 @@ data/raw/*
 data/raw/cars/*
 data/raw/motorcycles/*
 
+# Archived CSVs (post-migration) — ignore contents but track folders
+data/old/*
+!data/old/cars/
+!data/old/motorcycles/
+data/old/cars/*
+data/old/motorcycles/*
+
 # Master data (large binary — store externally)
 data/master/
 *.xlsx
