@@ -1,28 +1,42 @@
-"""One-shot loader: import an existing master xlsx into the per-category SQLite DBs.
+"""Load raw CSV files (or legacy master xlsx) into the per-category SQLite DBs.
 
-Reads the master Excel file, classifies each row as cars or motorcycles by which
-make-style column is populated, drops columns the target schema doesn't know
-about, backfills `first_seen_at` from `Tarikh_Kemaskini` (or today if missing),
-and inserts using INSERT OR IGNORE so re-runs are safe.
+Primary workflow — CSV (recommended):
+    Run interactively and pick cars (1) or motorcycles (2).
+    The script loads every CSV file currently in data/raw/<category>/ and,
+    after a successful migration, moves the processed files into
+    data/old/<category>/ so the next run only sees freshly scraped files.
+
+Legacy workflow — xlsx (cars only):
+    Pass --xlsx <path> to load from a master Excel file instead of CSVs.
+    Useful for backfilling historical data that was never scraped as CSV.
 
 Usage:
-    python migrate_xlsx_to_db.py                         # both categories
-    python migrate_xlsx_to_db.py --category cars         # cars only
-    python migrate_xlsx_to_db.py --category motorcycles  # motorcycles only
-    python migrate_xlsx_to_db.py --dry-run               # report, write nothing
+    python src/migrate_xlsx_to_db.py                  # interactive prompt
+    python src/migrate_xlsx_to_db.py --category cars  # skip prompt
+    python src/migrate_xlsx_to_db.py --dry-run        # preview, write/move nothing
+    python src/migrate_xlsx_to_db.py --xlsx data/master/MasterMudahCarData.xlsx
 """
 
 import argparse
 import logging
-import os
+import shutil
 import sys
 from datetime import datetime
+from pathlib import Path
 from typing import Dict, List, Set, Tuple
 
 import pandas as pd
 
-from db import connect, db_path_for, CATEGORIES
+from db import connect, db_path_for, CATEGORIES, set_meta
 
+# ---------------------------------------------------------------------------
+# Paths
+# ---------------------------------------------------------------------------
+
+_ROOT = Path(__file__).resolve().parent.parent
+_LOGS_DIR = _ROOT / "logs"
+_RAW_DIR = _ROOT / "data" / "raw"
+_OLD_DIR = _ROOT / "data" / "old"
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -30,18 +44,20 @@ try:
 except (AttributeError, OSError):
     pass
 
-os.makedirs("../logs", exist_ok=True)
+_LOGS_DIR.mkdir(parents=True, exist_ok=True)
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
     handlers=[
-        logging.FileHandler("../logs/migrate.log", encoding="utf-8"),
+        logging.FileHandler(_LOGS_DIR / "migrate.log", encoding="utf-8"),
         logging.StreamHandler(),
     ],
 )
 
+# ---------------------------------------------------------------------------
+# Schema column sets (must match schema_*.sql)
+# ---------------------------------------------------------------------------
 
-# Columns each schema accepts (must match schema_*.sql)
 SHARED_COLUMNS: List[str] = [
     "ads_id", "url", "subject", "body", "price",
     "condition", "manufactured_date", "mileage",
@@ -67,28 +83,57 @@ CATEGORY_COLUMNS: Dict[str, Set[str]] = {
     "motorcycles": set(SHARED_COLUMNS) | set(MOTORCYCLE_ONLY_COLUMNS),
 }
 
+# ---------------------------------------------------------------------------
+# Interactive prompt
+# ---------------------------------------------------------------------------
 
-def classify_rows(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame, int]:
-    """Split rows into (cars_df, motorcycles_df, unknown_count) by which make field is populated."""
-    has_make = df["make"].notna() & (df["make"].astype(str).str.strip() != "") if "make" in df.columns else pd.Series(False, index=df.index)
-    has_moto = (
-        df["motorcycle_make"].notna() & (df["motorcycle_make"].astype(str).str.strip() != "")
-        if "motorcycle_make" in df.columns
-        else pd.Series(False, index=df.index)
-    )
+def _prompt_category() -> str:
+    print("\nSelect category:")
+    print("  1. cars")
+    print("  2. motorcycles")
+    while True:
+        raw = input("Enter 1 or 2: ").strip()
+        if raw == "1":
+            return "cars"
+        if raw == "2":
+            return "motorcycles"
+        print("Please enter 1 or 2.")
 
-    cars_mask = has_make & ~has_moto
-    moto_mask = has_moto & ~has_make
-    unknown_mask = ~(cars_mask | moto_mask)
+# ---------------------------------------------------------------------------
+# CSV discovery + archival
+# ---------------------------------------------------------------------------
 
-    return df[cars_mask].copy(), df[moto_mask].copy(), int(unknown_mask.sum())
+def _find_csvs(category: str) -> List[Path]:
+    """Return every CSV in data/raw/<category>/, oldest-first."""
+    folder = _RAW_DIR / category
+    if not folder.exists():
+        logging.warning(f"[{category}] Raw folder not found: {folder}")
+        return []
+    csvs = sorted(folder.glob("*.csv"), key=lambda p: p.stat().st_mtime)
+    logging.info(f"[{category}] Found {len(csvs)} CSV(s) in {folder}")
+    return csvs
 
 
-def prepare_dataframe(df: pd.DataFrame, category: str) -> pd.DataFrame:
-    """Coerce a category-specific slice of the xlsx into the shape `listings` expects."""
-    today = datetime.now().strftime("%Y-%m-%d")
+def _archive_csv(category: str, src: Path) -> None:
+    """Move a processed CSV into data/old/<category>/. Disambiguate name collisions."""
+    dest_dir = _OLD_DIR / category
+    dest_dir.mkdir(parents=True, exist_ok=True)
+    dest = dest_dir / src.name
+    if dest.exists():
+        ts = datetime.now().strftime("%Y%m%d%H%M%S")
+        dest = dest_dir / f"{src.stem}_{ts}{src.suffix}"
+    shutil.move(str(src), str(dest))
+    logging.info(f"[{category}] Archived {src.name} -> {dest.relative_to(_ROOT)}")
 
-    if "first_seen_at" not in df.columns:
+# ---------------------------------------------------------------------------
+# DataFrame preparation
+# ---------------------------------------------------------------------------
+
+def prepare_dataframe(df: pd.DataFrame, category: str, source_label: str = "") -> pd.DataFrame:
+    """Coerce a DataFrame into the shape the listings table expects."""
+    today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    if "first_seen_at" not in df.columns or df["first_seen_at"].isna().all():
         if "Tarikh_Kemaskini" in df.columns:
             df["first_seen_at"] = df["Tarikh_Kemaskini"].fillna(today).astype(str)
         else:
@@ -97,15 +142,16 @@ def prepare_dataframe(df: pd.DataFrame, category: str) -> pd.DataFrame:
     if "availability_status" not in df.columns:
         df["availability_status"] = "unknown"
 
+    # Keep only columns the schema knows
     valid = CATEGORY_COLUMNS[category]
     keep = [c for c in df.columns if c in valid]
     dropped = [c for c in df.columns if c not in valid]
     if dropped:
-        logging.info(f"[{category}] dropping {len(dropped)} unknown columns: {sorted(dropped)}")
+        logging.debug(f"[{category}]{' ' + source_label if source_label else ''} dropping {len(dropped)} unknown columns")
     df = df[keep].copy()
 
     if "ads_id" not in df.columns:
-        raise ValueError("Source rows missing required `ads_id` column.")
+        raise ValueError(f"Source missing required `ads_id` column ({source_label or 'unknown file'}).")
     df["ads_id"] = pd.to_numeric(df["ads_id"], errors="coerce")
     bad = df["ads_id"].isna().sum()
     if bad:
@@ -116,78 +162,174 @@ def prepare_dataframe(df: pd.DataFrame, category: str) -> pd.DataFrame:
     df = df.astype(object).where(df.notna(), None)
     return df
 
+# ---------------------------------------------------------------------------
+# xlsx classification (legacy path)
+# ---------------------------------------------------------------------------
 
-def insert_rows(conn, df: pd.DataFrame, *, dry_run: bool) -> int:
+def _classify_xlsx_rows(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame, int]:
+    """Split xlsx rows into (cars_df, motorcycles_df, unknown_count)."""
+    has_make = (
+        df["make"].notna() & (df["make"].astype(str).str.strip() != "")
+        if "make" in df.columns
+        else pd.Series(False, index=df.index)
+    )
+    has_moto = (
+        df["motorcycle_make"].notna() & (df["motorcycle_make"].astype(str).str.strip() != "")
+        if "motorcycle_make" in df.columns
+        else pd.Series(False, index=df.index)
+    )
+    cars_mask = has_make & ~has_moto
+    moto_mask = has_moto & ~has_make
+    unknown_mask = ~(cars_mask | moto_mask)
+    return df[cars_mask].copy(), df[moto_mask].copy(), int(unknown_mask.sum())
+
+# ---------------------------------------------------------------------------
+# Insert helper
+# ---------------------------------------------------------------------------
+
+def _insert_rows(conn, df: pd.DataFrame, *, dry_run: bool) -> Tuple[int, int]:
+    """Insert rows with INSERT OR IGNORE. Returns (attempted, inserted)."""
     if df.empty:
-        return 0
+        return 0, 0
     cols = list(df.columns)
     placeholders = ", ".join(["?"] * len(cols))
     quoted_cols = ", ".join(f'"{c}"' for c in cols)
     sql = f"INSERT OR IGNORE INTO listings ({quoted_cols}) VALUES ({placeholders})"
-
     rows = [tuple(r) for r in df.itertuples(index=False, name=None)]
+
     if dry_run:
         logging.info(f"DRY RUN: would attempt to insert {len(rows)} rows")
-        return 0
+        return len(rows), 0
 
+    before = conn.execute("SELECT COUNT(*) FROM listings").fetchone()[0]
     with conn:
-        cur = conn.executemany(sql, rows)
-        return cur.rowcount if cur.rowcount is not None else 0
+        conn.executemany(sql, rows)
+    after = conn.execute("SELECT COUNT(*) FROM listings").fetchone()[0]
+    return len(rows), after - before
 
+# ---------------------------------------------------------------------------
+# Migration modes
+# ---------------------------------------------------------------------------
 
-def load_category(slice_df: pd.DataFrame, category: str, *, dry_run: bool) -> None:
-    if slice_df.empty:
-        logging.info(f"[{category}] no rows to load")
+def migrate_csv(category: str, *, dry_run: bool) -> None:
+    """Load every CSV from data/raw/<category>/ into the DB, then archive each one."""
+    csv_files = _find_csvs(category)
+
+    if not csv_files:
+        print(f"[{category}] No CSV files to migrate.")
         return
 
-    prepared = prepare_dataframe(slice_df, category)
-    logging.info(f"[{category}] {len(prepared)} rows ready for insert into {db_path_for(category)}")
+    conn = connect(category)
+    total_attempted = total_inserted = total_archived = 0
+    run_start = datetime.now()
+
+    for csv_path in csv_files:
+        logging.info(f"[{category}] Loading {csv_path.name} …")
+        try:
+            df = pd.read_csv(csv_path, low_memory=False)
+        except Exception as exc:
+            logging.error(f"[{category}] Failed to read {csv_path.name}: {exc}")
+            continue
+
+        try:
+            prepared = prepare_dataframe(df, category, source_label=csv_path.name)
+        except ValueError as exc:
+            logging.error(f"[{category}] Skipping {csv_path.name}: {exc}")
+            continue
+
+        attempted, inserted = _insert_rows(conn, prepared, dry_run=dry_run)
+        skipped = attempted - inserted
+        logging.info(
+            f"[{category}] {csv_path.name}: attempted={attempted}, "
+            f"inserted={inserted}, skipped={skipped}"
+        )
+        total_attempted += attempted
+        total_inserted += inserted
+
+        if dry_run:
+            logging.info(f"[{category}] DRY RUN: would archive {csv_path.name}")
+        else:
+            try:
+                _archive_csv(category, csv_path)
+                total_archived += 1
+            except OSError as exc:
+                logging.error(f"[{category}] Failed to archive {csv_path.name}: {exc}")
+
+    logging.info(
+        f"[{category}] Migration complete — "
+        f"total attempted={total_attempted}, inserted={total_inserted}, "
+        f"skipped={total_attempted - total_inserted}, archived={total_archived}"
+    )
+
+    if not dry_run:
+        set_meta(conn, "last_migrated_at", run_start.strftime("%Y-%m-%d %H:%M:%S"))
+
+
+def migrate_xlsx(xlsx_path: Path, category: str, *, dry_run: bool) -> None:
+    """Load a master xlsx file into the DB (legacy path, primarily for cars)."""
+    if not xlsx_path.exists():
+        logging.error(f"Source xlsx not found: {xlsx_path}")
+        sys.exit(1)
+
+    logging.info(f"Reading {xlsx_path} …")
+    df = pd.read_excel(xlsx_path)
+    logging.info(f"Read {len(df)} rows, {len(df.columns)} columns")
+
+    cars_df, moto_df, unknown_n = _classify_xlsx_rows(df)
+    logging.info(f"Classified: cars={len(cars_df)}, motorcycles={len(moto_df)}, unknown={unknown_n}")
+    if unknown_n:
+        logging.warning(f"{unknown_n} rows had neither `make` nor `motorcycle_make` — skipped")
+
+    slice_df = cars_df if category == "cars" else moto_df
+    if slice_df.empty:
+        logging.info(f"[{category}] No rows to load from xlsx.")
+        return
+
+    prepared = prepare_dataframe(slice_df, category, source_label=xlsx_path.name)
+    logging.info(f"[{category}] {len(prepared)} rows ready → {db_path_for(category)}")
 
     conn = connect(category)
-    before = conn.execute("SELECT COUNT(*) FROM listings").fetchone()[0]
-    inserted = insert_rows(conn, prepared, dry_run=dry_run)
-    after = conn.execute("SELECT COUNT(*) FROM listings").fetchone()[0]
-    skipped = len(prepared) - (after - before)
-    logging.info(f"[{category}] listings: {before} -> {after} (inserted={inserted}, skipped duplicates={skipped})")
+    attempted, inserted = _insert_rows(conn, prepared, dry_run=dry_run)
+    skipped = attempted - inserted
+    logging.info(f"[{category}] attempted={attempted}, inserted={inserted}, skipped={skipped}")
 
+# ---------------------------------------------------------------------------
+# CLI
+# ---------------------------------------------------------------------------
 
 def parse_args() -> argparse.Namespace:
-    p = argparse.ArgumentParser(description="Load master xlsx into the per-category SQLite databases")
-    p.add_argument("--xlsx", default="../data/master/MasterMudahCarData.xlsx", help="Source Excel file")
+    p = argparse.ArgumentParser(
+        description="Migrate raw CSV files (or legacy xlsx) into the per-category SQLite databases"
+    )
     p.add_argument(
         "--category",
-        choices=[*CATEGORIES, "both"],
-        default="both",
-        help="Load only one category (default: both)",
+        choices=list(CATEGORIES),
+        default=None,
+        help="Category to migrate (cars or motorcycles). Prompted if omitted.",
     )
-    p.add_argument("--dry-run", action="store_true", help="Report what would happen, write nothing")
+    p.add_argument(
+        "--xlsx",
+        default=None,
+        metavar="PATH",
+        help="Load from a master Excel file instead of raw CSVs (legacy path).",
+    )
+    p.add_argument("--dry-run", action="store_true", help="Preview what would be loaded; write nothing.")
     return p.parse_args()
 
 
 def main() -> None:
     args = parse_args()
 
-    if not os.path.exists(args.xlsx):
-        logging.error(f"Source xlsx not found: {args.xlsx}")
-        sys.exit(1)
+    # Interactive category prompt when not supplied via flag
+    category = args.category or _prompt_category()
 
-    logging.info(f"Reading {args.xlsx}")
-    df = pd.read_excel(args.xlsx)
-    logging.info(f"Read {len(df)} rows, {len(df.columns)} columns")
+    if args.dry_run:
+        logging.info("--- DRY RUN mode — no data will be written ---")
 
-    cars_df, moto_df, unknown_n = classify_rows(df)
-    logging.info(
-        f"Classified rows: cars={len(cars_df)}, motorcycles={len(moto_df)}, unknown={unknown_n}"
-    )
-    if unknown_n:
-        logging.warning(
-            f"{unknown_n} rows had neither `make` nor `motorcycle_make` populated — skipping them"
-        )
-
-    targets = CATEGORIES if args.category == "both" else (args.category,)
-    for cat in targets:
-        slice_df = cars_df if cat == "cars" else moto_df
-        load_category(slice_df, cat, dry_run=args.dry_run)
+    if args.xlsx:
+        migrate_xlsx(Path(args.xlsx), category, dry_run=args.dry_run)
+    else:
+        migrate_csv(category, dry_run=args.dry_run)
 
 
 if __name__ == "__main__":

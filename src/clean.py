@@ -8,7 +8,12 @@ Usage:
 
 import argparse
 import re
+from pathlib import Path
+
 import pandas as pd
+
+# Anchor paths to project root regardless of cwd
+_ROOT = Path(__file__).resolve().parent.parent
 
 
 # ---------------------------------------------------------------------------
@@ -125,7 +130,7 @@ def clean(df: pd.DataFrame) -> pd.DataFrame:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Clean MasterMudahCarData Excel file")
-    parser.add_argument("--input", default="../data/master/MasterMudahCarData.xlsx", help="Input Excel file")
+    parser.add_argument("--input", default=str(_ROOT / "data" / "master" / "MasterMudahCarData.xlsx"), help="Input Excel file")
     parser.add_argument("--output", default=None, help="Output Excel file (default: overwrite input)")
     return parser.parse_args()
 
