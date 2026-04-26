@@ -25,10 +25,10 @@ python script.py
 ```
 
 You'll be asked for:
-1. **Category** — `cars` or `motorcycles` (default: cars)
-2. **State** — e.g. `selangor`, `johor` (default: malaysia)
-3. **Brand** — leave blank for all brands
-4. **Start page** — default 1
+1. **Category** — pick by number (`1. cars`, `2. motorcycles`); default `1`
+2. **State** — pick by number from a numbered list of `malaysia` plus the 13 states and 3 federal territories; default `1` (`malaysia` = nationwide)
+3. **Brand** — type the brand slug, or leave blank for all
+4. **Start page** — default `1`
 5. **How many pages to scrape**
 
 ### Non-interactive mode (for automation)
@@ -82,8 +82,10 @@ Each row in the output CSV/Excel represents one listing. Columns vary slightly b
 
 | Column | Description |
 |---|---|
+| `url` | Full Mudah.my listing URL |
 | `ads_id` | Unique Mudah listing ID |
 | `subject` | Full listing title |
+| `body` | Full seller-written description (HTML `<br>` collapsed to newlines) |
 | `price` | Listed price (MYR) |
 | `condition` | New / Used |
 | `manufactured_date` | Year of manufacture |
@@ -121,8 +123,37 @@ Each row in the output CSV/Excel represents one listing. Columns vary slightly b
 
 ---
 
+## Rate limiting & retries
+
+To stay friendly with mudah.my and avoid 403 blocks, the scraper paces itself:
+
+- **Per-request throttle:** all outgoing requests are spaced **3–4 seconds** apart globally (a shared lock across workers), so increasing `--workers` does not increase request rate.
+- **Listing-page retries:** if a search results page returns fewer URLs than expected, retries wait **2s → 3s → 5s**.
+- **Detail-page retries:** failed listing fetches retry on the same **2s → 3s → 5s** schedule before giving up.
+
+Logs are written to `logs/scraper.log` (UTF-8) so non-ASCII characters in titles are preserved.
+
+---
+
 ## Master Data
 
 The master file (`data/master/MasterMudahCarData.xlsx`) accumulates all scraped runs. Use `--update-master` to merge new results — duplicates are automatically removed based on `ads_id`.
 
 The master file is **not tracked in git** due to its size. Store it locally or in shared cloud storage (e.g. Google Drive, S3).
+
+---
+
+## Changelog
+
+This section tracks every revision of this README. Add a new entry at the top whenever the document is updated.
+
+### 2026-04-26
+- Documented the new `body` column (full seller description from `attributes.body`, with `<br>` collapsed to newlines).
+
+### 2026-04-25
+- Added the **Changelog** section.
+- Documented the new `url` column in the common-fields output table.
+- Added the **Rate limiting & retries** section (3–4s global throttle, 2s/3s/5s retry schedule, UTF-8 log location).
+- Updated the interactive-prompt description to reflect numbered category/state menus.
+- Updated default flag values: `--workers 2`, `--output-dir data/raw`, `--master data/master/MasterMudahCarData.xlsx`.
+- Updated master-file path reference to `data/master/MasterMudahCarData.xlsx` to match the new project layout.
