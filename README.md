@@ -143,15 +143,45 @@ The master file is **not tracked in git** due to its size. Store it locally or i
 
 ---
 
+## SQLite Storage
+
+The project uses per-category SQLite databases as the source of truth for tracking and re-checks:
+
+- `data/master/cardata_cars.db`
+- `data/master/cardata_motorcycles.db`
+
+Each DB has two tables:
+- **`listings`** — one row per listing (keyed on `ads_id`), including the availability tracking columns `first_seen_at`, `last_seen_at`, `last_checked_at`, `availability_status`.
+- **`availability_checks`** — append-only audit log of every probe.
+
+### Migrating an existing master xlsx into SQLite
+
+`migrate_xlsx_to_db.py` reads the master Excel file, classifies rows into cars vs. motorcycles (by which `make`/`motorcycle_make` column is populated), and inserts them into the appropriate DB. Duplicates (same `ads_id`) are skipped.
+
+```bash
+# migrate everything in the master xlsx into both DBs
+python migrate_xlsx_to_db.py --xlsx data/master/MasterMudahCarData.xlsx
+
+# only migrate the motorcycle rows
+python migrate_xlsx_to_db.py --xlsx data/master/MasterMudahCarData.xlsx --category motorcycles
+```
+
+> Rows from the legacy master xlsx have no `url` column — they can be inserted but cannot be re-checked until a URL is backfilled (e.g. by re-scraping). Rows from a fresh `script.py` run already include `url`.
+
+---
+
 ## Availability Re-checking
 
 `recheck.py` revisits previously scraped listings to track whether each URL is still live. It does **not** claim listings are "sold" — only that the URL is currently `available` or `unavailable`.
 
 ```bash
-# normal cadenced run (recommended)
+# normal cadenced run on both DBs (recommended)
 python recheck.py
 
-# re-check every row regardless of policy, capped to 50
+# only motorcycles
+python recheck.py --category motorcycles
+
+# re-check every row regardless of policy, capped to 50 per category
 python recheck.py --all --limit 50
 
 # preview what would be checked, no HTTP requests
@@ -162,8 +192,8 @@ python recheck.py --dry-run
 
 | Flag | Default | Description |
 |---|---|---|
-| `--master` | `data/master/MasterMudahCarData.xlsx` | Master Excel file to update |
-| `--limit` | — | Max rows to probe this run |
+| `--category` | `both` | Which DB to re-check: `cars`, `motorcycles`, or `both` (sequential through one shared client) |
+| `--limit` | — | Max rows to probe this run (per category) |
 | `--all` | off | Skip cadence policy, probe every row that has a URL |
 | `--dry-run` | off | Compute the due set and log it; make no HTTP requests |
 
@@ -176,7 +206,7 @@ python recheck.py --dry-run
 | 30+ days | weekly |
 | `unavailable` for 14+ days | give up — stop re-checking |
 
-### Columns added to the master file
+### `listings` availability columns
 
 | Column | Meaning |
 |---|---|
@@ -185,16 +215,16 @@ python recheck.py --dry-run
 | `last_checked_at` | Last time we probed (regardless of outcome) |
 | `availability_status` | `available` \| `unavailable` \| `unknown` |
 
-### Audit log
+### `availability_checks` audit log
 
-Every probe also appends one row to `data/master/availability_log.csv`:
+Every probe appends one row to the `availability_checks` table in the same DB:
 
 | Column | Description |
 |---|---|
-| `ads_id` | Listing ID |
-| `url` | Probed URL |
+| `id` | Auto-increment primary key |
+| `ads_id` | Listing ID (FK → `listings.ads_id`) |
 | `checked_at` | Timestamp |
-| `http_status` | HTTP response code (blank on connection error/timeout) |
+| `http_status` | HTTP response code (NULL on connection error/timeout) |
 | `detected_status` | `available` \| `soft_404` \| `removed` \| `blocked` \| `transient` |
 
 ### Detection rules
@@ -214,6 +244,7 @@ Every probe also appends one row to `data/master/availability_log.csv`:
 This section tracks every revision of this README. Add a new entry at the top whenever the document is updated.
 
 ### 2026-04-26
+- **Migrated to per-category SQLite storage** (`data/master/cardata_cars.db`, `data/master/cardata_motorcycles.db`). Added the **SQLite Storage** section and rewrote **Availability Re-checking** to match: `recheck.py` now reads/writes a `listings` table and appends to an `availability_checks` audit table; replaced `--master` with `--category {cars,motorcycles,both}`. Documented `migrate_xlsx_to_db.py` for one-time backfill from the legacy master xlsx.
 - Added the **Availability Re-checking** section documenting `recheck.py`, its CLI flags, cadence policy, new master columns (`first_seen_at`, `last_seen_at`, `last_checked_at`, `availability_status`), the `data/master/availability_log.csv` audit log, and the response-classification rules (incl. 403/timeouts treated as transient).
 - Documented the new `body` column (full seller description from `attributes.body`, with `<br>` collapsed to newlines).
 

@@ -1,25 +1,28 @@
-"""Re-check availability of previously scraped Mudah listings.
+"""Re-check availability of previously scraped Mudah listings (SQLite-backed).
 
-Reads the master Excel file, picks rows due for re-checking based on a cadence
-policy, probes each listing URL via MudahClient (shared throttle), classifies
-the response, and writes back four summary columns plus an append-only log.
+Reads candidate rows from the per-category SQLite database, probes each
+listing URL via MudahClient (shared throttle), classifies the response, and
+writes back four summary columns on `listings` plus an append row to
+`availability_checks`.
 
-Schema additions to the master file:
-    first_seen_at      : first time we saw this ads_id
-    last_seen_at       : last time the listing was confirmed AVAILABLE
-    last_checked_at    : last time we probed (regardless of outcome)
-    availability_status: 'available' | 'unavailable' | 'unknown'
+Categories:
+    cars        -> data/master/cardata_cars.db
+    motorcycles -> data/master/cardata_motorcycles.db
+    both        -> run cars then motorcycles through ONE MudahClient so the
+                   3-4s throttle spans both DBs in a single process.
 
-Append-only audit log:
-    data/master/availability_log.csv  with columns:
-        ads_id, url, checked_at, http_status, detected_status
+detected_status taxonomy (stored in availability_checks.detected_status):
+    available : HTTP 200 and __NEXT_DATA__ has the ad's adDetails block
+    soft_404  : HTTP 200 but the ad block is gone (Mudah's "ad not found" page)
+    removed   : HTTP 404 or 410
+    blocked   : HTTP 403 (Cloudflare bot block — TRANSIENT, not unavailable)
+    transient : HTTP 5xx, timeout, connection error
 
-detected_status taxonomy:
-    available     : HTTP 200 and __NEXT_DATA__ has the ad's adDetails block
-    soft_404      : HTTP 200 but the ad block is gone (Mudah's "ad not found" page)
-    removed       : HTTP 404 or 410
-    blocked       : HTTP 403 (Cloudflare bot block — TRANSIENT, not unavailable)
-    transient     : HTTP 5xx, timeout, connection error
+availability_status (the public summary):
+    available      <- detected_status='available'
+    unavailable    <- detected_status in ('removed','soft_404')
+    (unchanged)    <- detected_status in ('blocked','transient')  — preserve previous
+                      to avoid lying when we got rate-limited or hit a transient error
 """
 
 import argparse
@@ -27,12 +30,12 @@ import json
 import logging
 import os
 import re
+import sqlite3
 import sys
 from datetime import datetime, timedelta
-from typing import Optional, Tuple, List, Dict
+from typing import Iterable, List, Optional, Tuple
 
-import pandas as pd
-
+from db import connect, db_path_for, CATEGORIES
 from mudah_client import MudahClient
 
 
@@ -58,15 +61,6 @@ logging.basicConfig(
 
 
 # -----------------------------------------------------------------------------
-# Constants
-# -----------------------------------------------------------------------------
-
-NEW_COLUMNS = ['first_seen_at', 'last_seen_at', 'last_checked_at', 'availability_status']
-LOG_PATH = 'data/master/availability_log.csv'
-LOG_COLUMNS = ['ads_id', 'url', 'checked_at', 'http_status', 'detected_status']
-
-
-# -----------------------------------------------------------------------------
 # Classification
 # -----------------------------------------------------------------------------
 
@@ -83,7 +77,6 @@ def classify_response(status_code: Optional[int], body: Optional[str], ads_no: s
     if status_code != 200 or not body:
         return 'transient'
 
-    # 200 OK — verify the ad block actually exists in __NEXT_DATA__
     match = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', body, re.S)
     if not match:
         return 'soft_404'
@@ -104,16 +97,16 @@ def classify_response(status_code: Optional[int], body: Optional[str], ads_no: s
 
 
 def status_from_detected(detected: str, previous: Optional[str]) -> str:
-    """Collapse the detailed detected_status into the public availability_status.
+    """Collapse detected_status into the public availability_status.
 
-    Transient outcomes (blocked, transient) keep the previous status — we don't
-    know the truth, so don't lie. If there was no previous status, return 'unknown'.
+    Transient outcomes preserve the previous status so we never lie about
+    availability based on a 403/timeout. If there was no previous status,
+    return 'unknown'.
     """
     if detected == 'available':
         return 'available'
     if detected in ('removed', 'soft_404'):
         return 'unavailable'
-    # blocked or transient
     return previous if previous in ('available', 'unavailable') else 'unknown'
 
 
@@ -121,30 +114,30 @@ def status_from_detected(detected: str, previous: Optional[str]) -> str:
 # Cadence policy
 # -----------------------------------------------------------------------------
 
-def should_recheck(row: pd.Series, now: datetime) -> bool:
+def should_recheck(row: sqlite3.Row, now: datetime) -> bool:
     """Decide whether this row is due for re-checking.
 
     Policy:
       - never checked before -> always check
-      - currently 'unavailable' AND last_checked > 14 days ago -> stop checking
-      - first 7 days from first_seen -> daily
+      - currently 'unavailable' AND last_checked > 14 days ago -> stop checking (graveyard)
+      - first 7 days from first_seen -> daily-ish (>= 20h since last check)
       - 7-30 days -> every 3 days
       - 30+ days -> weekly
     """
-    last_checked = _parse_dt(row.get('last_checked_at'))
+    last_checked = _parse_dt(row['last_checked_at'])
     if last_checked is None:
         return True
 
-    if row.get('availability_status') == 'unavailable':
+    if row['availability_status'] == 'unavailable':
         if (now - last_checked) > timedelta(days=14):
-            return False  # graveyard — give up
+            return False
 
-    first_seen = _parse_dt(row.get('first_seen_at')) or last_checked
+    first_seen = _parse_dt(row['first_seen_at']) or last_checked
     age = now - first_seen
     elapsed = now - last_checked
 
     if age <= timedelta(days=7):
-        return elapsed >= timedelta(hours=20)   # ~daily
+        return elapsed >= timedelta(hours=20)
     if age <= timedelta(days=30):
         return elapsed >= timedelta(days=3)
     return elapsed >= timedelta(days=7)
@@ -153,11 +146,6 @@ def should_recheck(row: pd.Series, now: datetime) -> bool:
 def _parse_dt(value) -> Optional[datetime]:
     if value is None:
         return None
-    try:
-        if pd.isna(value):
-            return None
-    except (TypeError, ValueError):
-        pass
     if isinstance(value, datetime):
         return value
     s = str(value).strip()
@@ -173,96 +161,87 @@ def _parse_dt(value) -> Optional[datetime]:
 
 
 # -----------------------------------------------------------------------------
-# Master file I/O
-# -----------------------------------------------------------------------------
-
-def load_master(path: str) -> pd.DataFrame:
-    if not os.path.exists(path):
-        raise FileNotFoundError(f"Master file not found: {path}")
-    df = pd.read_excel(path)
-    for col in NEW_COLUMNS:
-        if col not in df.columns:
-            df[col] = pd.NA
-    return df
-
-
-def save_master(df: pd.DataFrame, path: str) -> None:
-    df.to_excel(path, index=False)
-
-
-def append_log(rows: List[Dict]) -> None:
-    if not rows:
-        return
-    os.makedirs(os.path.dirname(LOG_PATH), exist_ok=True)
-    df = pd.DataFrame(rows, columns=LOG_COLUMNS)
-    header = not os.path.exists(LOG_PATH)
-    df.to_csv(LOG_PATH, mode='a', header=header, index=False, encoding='utf-8')
-
-
-# -----------------------------------------------------------------------------
 # Core re-check loop
 # -----------------------------------------------------------------------------
 
-def recheck(master_path: str, limit: Optional[int] = None, force_all: bool = False, dry_run: bool = False) -> None:
-    df = load_master(master_path)
-    if 'url' not in df.columns or 'ads_id' not in df.columns:
-        raise ValueError("Master file must have 'url' and 'ads_id' columns. Run a scrape first.")
+def select_due_rows(
+    conn: sqlite3.Connection,
+    *,
+    force_all: bool,
+    limit: Optional[int],
+) -> List[sqlite3.Row]:
+    """Read all rows with a URL, then apply the cadence filter in Python.
 
+    Could be pushed into SQL, but the tiered policy is cleaner to read here
+    and the row count is small enough (tens of thousands max) that filtering
+    in Python is essentially free.
+    """
+    rows = conn.execute(
+        "SELECT ads_id, url, first_seen_at, last_seen_at, last_checked_at, availability_status "
+        "FROM listings WHERE url IS NOT NULL AND url != ''"
+    ).fetchall()
     now = datetime.now()
-    if force_all:
-        due_mask = df['url'].notna() & (df['url'] != '')
-    else:
-        due_mask = df.apply(lambda r: bool(r.get('url')) and should_recheck(r, now), axis=1)
-
-    due_idx = df.index[due_mask].tolist()
+    due = rows if force_all else [r for r in rows if should_recheck(r, now)]
     if limit is not None:
-        due_idx = due_idx[:limit]
+        due = due[:limit]
+    return due
 
-    logging.info(f"Master: {len(df)} rows. Due for re-check: {len(due_idx)}.")
-    if dry_run:
-        logging.info("Dry run — no requests will be made.")
+
+def recheck_category(
+    category: str,
+    *,
+    client: MudahClient,
+    limit: Optional[int],
+    force_all: bool,
+    dry_run: bool,
+) -> None:
+    db_file = db_path_for(category)
+    if not os.path.exists(db_file):
+        logging.warning(f"[{category}] DB not found at {db_file} — skipping. Run migrate_xlsx_to_db.py or scrape with --update-db first.")
         return
 
-    client = MudahClient()
-    log_rows: List[Dict] = []
+    conn = connect(category)
+    total = conn.execute("SELECT COUNT(*) FROM listings").fetchone()[0]
+    due = select_due_rows(conn, force_all=force_all, limit=limit)
+    logging.info(f"[{category}] DB rows: {total}. Due for re-check: {len(due)}.")
 
-    for n, idx in enumerate(due_idx, 1):
-        row = df.loc[idx]
-        url = str(row['url'])
-        ads_no = str(row['ads_id'])
-        previous_status = row.get('availability_status') if isinstance(row.get('availability_status'), str) else None
+    if dry_run:
+        logging.info(f"[{category}] dry run — no requests will be made.")
+        return
+
+    for n, row in enumerate(due, 1):
+        ads_id = row['ads_id']
+        url = row['url']
+        ads_no = str(ads_id)
+        previous_status = row['availability_status']
 
         status_code, body = client.get_status(url)
         detected = classify_response(status_code, body, ads_no)
         new_status = status_from_detected(detected, previous_status)
         ts = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
-        if _parse_dt(df.at[idx, 'first_seen_at']) is None:
-            df.at[idx, 'first_seen_at'] = ts
-        df.at[idx, 'last_checked_at'] = ts
-        if detected == 'available':
-            df.at[idx, 'last_seen_at'] = ts
-        df.at[idx, 'availability_status'] = new_status
+        with conn:
+            if detected == 'available':
+                conn.execute(
+                    "UPDATE listings SET last_seen_at=?, last_checked_at=?, availability_status=? WHERE ads_id=?",
+                    (ts, ts, new_status, ads_id),
+                )
+            else:
+                conn.execute(
+                    "UPDATE listings SET last_checked_at=?, availability_status=? WHERE ads_id=?",
+                    (ts, new_status, ads_id),
+                )
+            conn.execute(
+                "INSERT INTO availability_checks (ads_id, checked_at, http_status, detected_status) "
+                "VALUES (?, ?, ?, ?)",
+                (ads_id, ts, status_code, detected),
+            )
 
-        log_rows.append({
-            'ads_id': ads_no,
-            'url': url,
-            'checked_at': ts,
-            'http_status': status_code if status_code is not None else '',
-            'detected_status': detected,
-        })
+        logging.info(
+            f"[{category}] [{n}/{len(due)}] {ads_id} -> http={status_code} detected={detected} status={new_status}"
+        )
 
-        logging.info(f"[{n}/{len(due_idx)}] {ads_no} -> http={status_code} detected={detected} status={new_status}")
-
-        # Periodic flush so a crash mid-run doesn't lose progress
-        if n % 25 == 0:
-            save_master(df, master_path)
-            append_log(log_rows)
-            log_rows = []
-
-    save_master(df, master_path)
-    append_log(log_rows)
-    logging.info("Re-check complete.")
+    logging.info(f"[{category}] re-check complete.")
 
 
 # -----------------------------------------------------------------------------
@@ -270,17 +249,27 @@ def recheck(master_path: str, limit: Optional[int] = None, force_all: bool = Fal
 # -----------------------------------------------------------------------------
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Re-check availability of scraped Mudah listings")
-    parser.add_argument("--master", default="data/master/MasterMudahCarData.xlsx", help="Path to master Excel file")
-    parser.add_argument("--limit", type=int, default=None, help="Max number of rows to check this run")
-    parser.add_argument("--all", action="store_true", help="Ignore cadence policy and re-check every row that has a URL")
-    parser.add_argument("--dry-run", action="store_true", help="Compute the due set and log it, but make no HTTP requests")
+    parser = argparse.ArgumentParser(description="Re-check availability of scraped Mudah listings (SQLite)")
+    parser.add_argument(
+        "--category",
+        choices=[*CATEGORIES, "both"],
+        default="both",
+        help="Which database(s) to re-check (default: both, sequentially through one client)",
+    )
+    parser.add_argument("--limit", type=int, default=None, help="Max number of rows to check (per category)")
+    parser.add_argument("--all", action="store_true", help="Ignore cadence and re-check every row that has a URL")
+    parser.add_argument("--dry-run", action="store_true", help="Compute the due set and log it; make no HTTP requests")
     return parser.parse_args()
 
 
 def main() -> None:
     args = parse_args()
-    recheck(args.master, limit=args.limit, force_all=args.all, dry_run=args.dry_run)
+
+    targets: Iterable[str] = CATEGORIES if args.category == "both" else (args.category,)
+    client = MudahClient()  # ONE client across categories so the throttle is shared
+
+    for cat in targets:
+        recheck_category(cat, client=client, limit=args.limit, force_all=args.all, dry_run=args.dry_run)
 
 
 if __name__ == "__main__":
