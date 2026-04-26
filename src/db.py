@@ -100,3 +100,18 @@ def db_category(conn: sqlite3.Connection) -> Optional[str]:
     """Return the category recorded in the meta table, if any."""
     row = conn.execute("SELECT value FROM meta WHERE key='category'").fetchone()
     return row["value"] if row else None
+
+
+def get_meta(conn: sqlite3.Connection, key: str, default: Optional[str] = None) -> Optional[str]:
+    """Read a single value from the meta table. Returns *default* if the key is absent."""
+    row = conn.execute("SELECT value FROM meta WHERE key = ?", (key,)).fetchone()
+    return row["value"] if row else default
+
+
+def set_meta(conn: sqlite3.Connection, key: str, value: str) -> None:
+    """Upsert a key/value pair in the meta table."""
+    with conn:
+        conn.execute(
+            "INSERT INTO meta (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value",
+            (key, value),
+        )

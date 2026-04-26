@@ -1,8 +1,14 @@
 # Scraper outputs
 logs/
 checkpoint_*.csv
-data/raw/
 *.csv
+
+# Raw scrape output — ignore CSV files but track the category subfolders
+data/raw/*
+!data/raw/cars/
+!data/raw/motorcycles/
+data/raw/cars/*
+data/raw/motorcycles/*
 
 # Master data (large binary — store externally)
 data/master/
