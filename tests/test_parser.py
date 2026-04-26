@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 
 # Patch cloudscraper and fake_useragent before importing MudahScraper
 with patch("cloudscraper.create_scraper"), patch("fake_useragent.UserAgent"):
-    from script import MudahScraper
+    from src.script import MudahScraper
 
 
 @pytest.fixture

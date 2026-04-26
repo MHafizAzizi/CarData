@@ -20,13 +20,13 @@ from typing import Dict, Optional, Union
 CATEGORIES = ("cars", "motorcycles")
 
 DB_PATHS: Dict[str, str] = {
-    "cars": "data/master/cardata_cars.db",
-    "motorcycles": "data/master/cardata_motorcycles.db",
+    "cars": "../data/master/cardata_cars.db",
+    "motorcycles": "../data/master/cardata_motorcycles.db",
 }
 
 SCHEMA_PATHS: Dict[str, str] = {
-    "cars": "schema_cars.sql",
-    "motorcycles": "schema_motorcycles.sql",
+    "cars": "../schema_cars.sql",
+    "motorcycles": "../schema_motorcycles.sql",
 }
 
 

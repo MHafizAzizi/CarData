@@ -30,12 +30,12 @@ try:
 except (AttributeError, OSError):
     pass
 
-os.makedirs("logs", exist_ok=True)
+os.makedirs("../logs", exist_ok=True)
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
     handlers=[
-        logging.FileHandler("logs/migrate.log", encoding="utf-8"),
+        logging.FileHandler("../logs/migrate.log", encoding="utf-8"),
         logging.StreamHandler(),
     ],
 )
@@ -153,7 +153,7 @@ def load_category(slice_df: pd.DataFrame, category: str, *, dry_run: bool) -> No
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Load master xlsx into the per-category SQLite databases")
-    p.add_argument("--xlsx", default="data/master/MasterMudahCarData.xlsx", help="Source Excel file")
+    p.add_argument("--xlsx", default="../data/master/MasterMudahCarData.xlsx", help="Source Excel file")
     p.add_argument(
         "--category",
         choices=[*CATEGORIES, "both"],

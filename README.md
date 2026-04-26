@@ -14,6 +14,43 @@ pip install -r requirements.txt
 
 ---
 
+## Project Structure
+
+```
+CarData/
+├── src/                                   # All scripts
+│   ├── script.py                          # Main scraper
+│   ├── recheck.py                         # Availability re-checker
+│   ├── migrate_xlsx_to_db.py              # Excel → SQLite migration
+│   ├── db.py                              # Database connection helper
+│   ├── clean.py                           # Data cleanup utility
+│   └── mudah_client.py                    # Shared HTTP client
+│
+├── docs/                                  # Documentation
+│   └── brands.md                          # List of available car/motorcycle brands
+│
+├── data/
+│   ├── raw/                               # Raw CSV outputs from script.py
+│   └── master/                            # Production SQLite databases
+│       ├── cardata_cars.db
+│       ├── cardata_motorcycles.db
+│       └── MasterMudahCarData.xlsx        # Legacy Excel master (optional)
+│
+├── logs/                                  # Log files
+│   ├── scraper.log                        # script.py logs
+│   ├── recheck.log                        # recheck.py logs
+│   └── migrate.log                        # migrate_xlsx_to_db.py logs
+│
+├── tests/                                 # Unit tests
+├── schema_cars.sql                        # SQLite schema for cars
+├── schema_motorcycles.sql                 # SQLite schema for motorcycles
+├── requirements.txt
+├── README.md
+└── .gitignore
+```
+
+---
+
 ## Usage
 
 ### Interactive mode (recommended)
@@ -21,7 +58,7 @@ pip install -r requirements.txt
 Run the script with no arguments and it will prompt you for inputs:
 
 ```bash
-python script.py
+python src/script.py
 ```
 
 You'll be asked for:
@@ -39,38 +76,37 @@ Pass any of the flags below to skip the corresponding prompt:
 |---|---|---|
 | `--category` | *prompted* | Category: `cars` or `motorcycles` |
 | `--state` | *prompted* | State to scrape (e.g. `selangor`, `johor`) |
-| `--brand` | *prompted* | Brand filter (see `brands.md` for available brands) |
+| `--brand` | *prompted* | Brand filter (see `docs/brands.md` for available brands) |
 | `--start` | *prompted* | Start page number |
 | `--end` | *prompted* | End page number (max ~250) |
 | `--pages` | — | Number of pages to scrape from `--start` (alternative to `--end`) |
 | `--workers` | `2` | Concurrent workers for fetching listing details |
-| `--output-dir` | `data/raw` | Directory to save the output CSV |
-| `--master` | `data/master/MasterMudahCarData.xlsx` | Path to the master Excel file |
-| `--update-master` | off | Merge results into the master Excel file after scraping |
+| `--output-dir` | `../data/raw` | Directory to save the output CSV |
+| `--update-db` | off | Upsert results into the per-category SQLite database |
 
 ### Examples
 
 **Scrape cars — all Toyota listings in Selangor:**
 ```bash
-python script.py --category cars --state selangor --brand toyota --start 1 --end 50
+python src/script.py --category cars --state selangor --brand toyota --start 1 --end 50
 ```
 
 **Scrape motorcycles — all brands nationwide, first 5 pages:**
 ```bash
-python script.py --category motorcycles --brand "" --start 1 --pages 5
+python src/script.py --category motorcycles --brand "" --start 1 --pages 5
 ```
 
-**Scrape all car brands nationwide and update master:**
+**Scrape all car brands nationwide and update database:**
 ```bash
-python script.py --category cars --start 1 --end 250 --workers 4 --update-master
+python src/script.py --category cars --start 1 --end 250 --workers 4 --update-db
 ```
 
 **Save output to a specific folder:**
 ```bash
-python script.py --state kuala-lumpur --brand honda --start 1 --end 30 --output-dir ./data/raw
+python src/script.py --state kuala-lumpur --brand honda --start 1 --end 30 --output-dir ../data/raw
 ```
 
-See [`brands.md`](brands.md) for a complete list of available brands.
+See [`docs/brands.md`](docs/brands.md) for a complete list of available brands.
 
 ---
 
@@ -137,9 +173,11 @@ Logs are written to `logs/scraper.log` (UTF-8) so non-ASCII characters in titles
 
 ## Master Data
 
-The master file (`data/master/MasterMudahCarData.xlsx`) accumulates all scraped runs. Use `--update-master` to merge new results — duplicates are automatically removed based on `ads_id`.
+The SQLite databases (`data/master/cardata_cars.db` and `data/master/cardata_motorcycles.db`) are now the primary storage. Use `--update-db` flag in `script.py` to upsert new results — duplicates are automatically removed based on `ads_id`.
 
-The master file is **not tracked in git** due to its size. Store it locally or in shared cloud storage (e.g. Google Drive, S3).
+Legacy Excel file (`data/master/MasterMudahCarData.xlsx`) can still be migrated into SQLite using `migrate_xlsx_to_db.py` — see below.
+
+The databases are **not tracked in git** due to their size. Store them locally or in shared cloud storage (e.g. Google Drive, S3).
 
 ---
 
@@ -160,13 +198,13 @@ Each DB has two tables:
 
 ```bash
 # migrate everything in the master xlsx into both DBs
-python migrate_xlsx_to_db.py --xlsx data/master/MasterMudahCarData.xlsx
+python src/migrate_xlsx_to_db.py --xlsx ../data/master/MasterMudahCarData.xlsx
 
 # only migrate the motorcycle rows
-python migrate_xlsx_to_db.py --xlsx data/master/MasterMudahCarData.xlsx --category motorcycles
+python src/migrate_xlsx_to_db.py --xlsx ../data/master/MasterMudahCarData.xlsx --category motorcycles
 ```
 
-> Rows from the legacy master xlsx have no `url` column — they can be inserted but cannot be re-checked until a URL is backfilled (e.g. by re-scraping). Rows from a fresh `script.py` run already include `url`.
+> Rows from the legacy master xlsx have no `url` column — they can be inserted but cannot be re-checked until a URL is backfilled (e.g. by re-scraping). Rows from a fresh `src/script.py` run already include `url`.
 
 ---
 
@@ -176,16 +214,16 @@ python migrate_xlsx_to_db.py --xlsx data/master/MasterMudahCarData.xlsx --catego
 
 ```bash
 # normal cadenced run on both DBs (recommended)
-python recheck.py
+python src/recheck.py
 
 # only motorcycles
-python recheck.py --category motorcycles
+python src/recheck.py --category motorcycles
 
 # re-check every row regardless of policy, capped to 50 per category
-python recheck.py --all --limit 50
+python src/recheck.py --all --limit 50
 
 # preview what would be checked, no HTTP requests
-python recheck.py --dry-run
+python src/recheck.py --dry-run
 ```
 
 ### Flags

@@ -68,13 +68,13 @@ try:
 except (AttributeError, OSError):
     pass
 
-os.makedirs('logs', exist_ok=True)
+os.makedirs('../logs', exist_ok=True)
 
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('logs/scraper.log', encoding='utf-8'),
+        logging.FileHandler('../logs/scraper.log', encoding='utf-8'),
         logging.StreamHandler()
     ]
 )
@@ -449,7 +449,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--end", type=int, default=None, help="End page number")
     parser.add_argument("--pages", type=int, default=None, help="Number of pages to scrape from --start (alternative to --end)")
     parser.add_argument("--workers", type=int, default=2, help="Concurrent workers for detail fetching (default: 2)")
-    parser.add_argument("--output-dir", default="data/raw", help="Directory to save output CSV (default: data/raw)")
+    parser.add_argument("--output-dir", default="../data/raw", help="Directory to save output CSV (default: ../data/raw)")
     parser.add_argument("--update-db", action="store_true", help="Upsert results into the per-category SQLite database (data/master/cardata_<category>.db)")
     return parser.parse_args()
 
@@ -553,7 +553,7 @@ def main():
 
     except Exception as e:
         logging.error(f"Scraper failed: {str(e)}")
-        print("\nAn error occurred. Check logs/scraper.log for details.")
+        print("\nAn error occurred. Check ../logs/scraper.log for details.")
 
 
 if __name__ == "__main__":
