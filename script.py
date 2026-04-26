@@ -370,23 +370,74 @@ class MudahScraper:
 
         return pd.DataFrame(processed_data)
 
-    def update_master(self, new_df: pd.DataFrame, master_path: str) -> pd.DataFrame:
-        """Merge new data into the master Excel file, deduplicating on ads_id."""
-        if os.path.exists(master_path):
-            master_df = pd.read_excel(master_path)
-            combined = pd.concat([master_df, new_df], ignore_index=True)
-        else:
-            combined = new_df
+    def update_db(self, new_df: pd.DataFrame, category: str) -> int:
+        """Upsert scraped rows into the per-category SQLite database.
 
-        if 'ads_id' in combined.columns:
-            before = len(combined)
-            combined = combined.drop_duplicates(subset='ads_id', keep='last')
-            removed = before - len(combined)
-            logging.info(f"Deduplication: {before} -> {len(combined)} records ({removed} duplicates removed)")
+        Each successfully scraped row is also a confirmation that the listing
+        was live at this moment, so on insert OR update we set:
+          - last_seen_at, last_checked_at = now
+          - availability_status = 'available'
+          - first_seen_at = now (only on initial insert; preserved on update)
 
-        combined.to_excel(master_path, index=False)
-        logging.info(f"Master file updated: {master_path}")
-        return combined
+        Also appends one row to availability_checks per scraped listing so the
+        scraper's audit trail merges with recheck.py's.
+
+        Returns the number of rows attempted.
+        """
+        from db import connect  # local import: db.py needs schema files at import time
+        if new_df is None or new_df.empty:
+            logging.info("update_db: no rows to upsert")
+            return 0
+
+        now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        conn = connect(category)
+
+        # Restrict to columns the schema knows about (cars vs motorcycles diverge)
+        valid_cols = {r['name'] for r in conn.execute('PRAGMA table_info(listings)').fetchall()}
+        df = new_df[[c for c in new_df.columns if c in valid_cols]].copy()
+
+        if 'ads_id' not in df.columns:
+            raise ValueError("Scraped data is missing the required `ads_id` column.")
+        df['ads_id'] = pd.to_numeric(df['ads_id'], errors='coerce')
+        bad = df['ads_id'].isna().sum()
+        if bad:
+            logging.warning(f"update_db: dropping {bad} rows with non-numeric ads_id")
+            df = df[df['ads_id'].notna()].copy()
+        df['ads_id'] = df['ads_id'].astype('int64')
+
+        # Stamp tracking columns on every row
+        df['first_seen_at'] = now
+        df['last_seen_at'] = now
+        df['last_checked_at'] = now
+        df['availability_status'] = 'available'
+
+        # NaN -> None so sqlite stores NULL
+        df = df.astype(object).where(df.notna(), None)
+
+        cols = list(df.columns)
+        placeholders = ', '.join(['?'] * len(cols))
+        quoted = ', '.join(f'"{c}"' for c in cols)
+        # Preserve first_seen_at on conflict; everything else takes the new value
+        update_cols = [c for c in cols if c not in ('ads_id', 'first_seen_at')]
+        update_set = ', '.join(f'"{c}" = excluded."{c}"' for c in update_cols)
+        upsert_sql = (
+            f'INSERT INTO listings ({quoted}) VALUES ({placeholders}) '
+            f'ON CONFLICT(ads_id) DO UPDATE SET {update_set}'
+        )
+
+        rows = [tuple(r) for r in df.itertuples(index=False, name=None)]
+        check_rows = [(int(r['ads_id']), now, 200, 'available') for _, r in df.iterrows()]
+
+        with conn:  # one transaction for the whole batch
+            conn.executemany(upsert_sql, rows)
+            conn.executemany(
+                'INSERT INTO availability_checks (ads_id, checked_at, http_status, detected_status) '
+                'VALUES (?, ?, ?, ?)',
+                check_rows,
+            )
+
+        logging.info(f"update_db: upserted {len(rows)} rows into {category} DB and logged {len(check_rows)} checks")
+        return len(rows)
 
 
 def parse_args() -> argparse.Namespace:
@@ -399,8 +450,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--pages", type=int, default=None, help="Number of pages to scrape from --start (alternative to --end)")
     parser.add_argument("--workers", type=int, default=2, help="Concurrent workers for detail fetching (default: 2)")
     parser.add_argument("--output-dir", default="data/raw", help="Directory to save output CSV (default: data/raw)")
-    parser.add_argument("--master", default="data/master/MasterMudahCarData.xlsx", help="Path to master Excel file")
-    parser.add_argument("--update-master", action="store_true", help="Merge results into master Excel file after scraping")
+    parser.add_argument("--update-db", action="store_true", help="Upsert results into the per-category SQLite database (data/master/cardata_<category>.db)")
     return parser.parse_args()
 
 
@@ -496,9 +546,10 @@ def main():
         df.to_csv(filename, index=False)
         print(f"\nScraped {len(df)} {args.category} -> {filename}")
 
-        if args.update_master:
-            scraper.update_master(df, args.master)
-            print(f"Master file updated: {args.master}")
+        if args.update_db:
+            from db import db_path_for
+            n = scraper.update_db(df, args.category)
+            print(f"Upserted {n} rows into {db_path_for(args.category)}")
 
     except Exception as e:
         logging.error(f"Scraper failed: {str(e)}")
