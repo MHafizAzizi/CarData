@@ -351,7 +351,7 @@ class MudahScraper:
         logging.info(f"Found {len(car_urls)} listings — fetching details with {self.max_workers} workers")
 
         processed_data: List[Dict] = []
-        checkpoint_path = f"checkpoint_{brand or 'all'}_{state}.csv"
+        checkpoint_path = str(_ROOT / f"checkpoint_{brand or 'all'}_{state}.csv")
 
         with tqdm(total=len(car_urls), desc="Processing cars", unit="car") as pbar:
             with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
