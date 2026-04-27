@@ -81,8 +81,7 @@ Pass any of the flags below to skip the corresponding prompt:
 | `--end` | *prompted* | End page number (max ~250) |
 | `--pages` | — | Number of pages to scrape from `--start` (alternative to `--end`) |
 | `--workers` | `2` | Concurrent workers for fetching listing details |
-| `--output-dir` | `../data/raw` | Directory to save the output CSV |
-| `--update-db` | off | Upsert results into the per-category SQLite database |
+| `--output-dir` | `data/raw/<category>/` | Directory to save the output CSV |
 
 ### Examples
 
@@ -96,14 +95,15 @@ python src/script.py --category cars --state selangor --brand toyota --start 1 -
 python src/script.py --category motorcycles --brand "" --start 1 --pages 5
 ```
 
-**Scrape all car brands nationwide and update database:**
+**Scrape all car brands nationwide, then load into database:**
 ```bash
-python src/script.py --category cars --start 1 --end 250 --workers 4 --update-db
+python src/script.py --category cars --start 1 --end 250 --workers 4
+python src/migrate_xlsx_to_db.py --category cars
 ```
 
 **Save output to a specific folder:**
 ```bash
-python src/script.py --state kuala-lumpur --brand honda --start 1 --end 30 --output-dir ../data/raw
+python src/script.py --state kuala-lumpur --brand honda --start 1 --end 30 --output-dir data/raw/cars
 ```
 
 See [`docs/brands.md`](docs/brands.md) for a complete list of available brands.
@@ -280,6 +280,10 @@ Every probe appends one row to the `availability_checks` table in the same DB:
 ## Changelog
 
 This section tracks every revision of this README. Add a new entry at the top whenever the document is updated.
+
+### 2026-04-27
+- Removed `--update-db` flag from Usage docs — flag was dropped in the CSV-first workflow switch (`5ed2b29`); correct workflow is scrape → `migrate_xlsx_to_db.py`.
+- Fixed `--output-dir` default value (`../data/raw` → `data/raw/<category>/`) and example path.
 
 ### 2026-04-26
 - **Migrated to per-category SQLite storage** (`data/master/cardata_cars.db`, `data/master/cardata_motorcycles.db`). Added the **SQLite Storage** section and rewrote **Availability Re-checking** to match: `recheck.py` now reads/writes a `listings` table and appends to an `availability_checks` audit table; replaced `--master` with `--category {cars,motorcycles,both}`. Documented `migrate_xlsx_to_db.py` for one-time backfill from the legacy master xlsx.
