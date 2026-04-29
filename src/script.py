@@ -96,7 +96,8 @@ class MudahScraper:
         self.max_retries = max_retries
         self.base_delay = base_delay
         self.max_workers = max_workers
-        self.ua = UserAgent()
+        # Constrain to desktop UAs — Mudah serves a 12-listing mobile variant otherwise.
+        self.ua = UserAgent(platforms=['pc'])
 
         self._request_lock = threading.Lock()
         self._last_request_time = 0.0
@@ -332,7 +333,7 @@ class MudahScraper:
         brand: str,
         start: int,
         end: int,
-        expected_urls_per_page: int = 20,
+        expected_urls_per_page: int = 40,
         checkpoint_every: int = 100,
     ) -> pd.DataFrame:
         """Scrape listings; fetches details concurrently and checkpoints progress to disk."""

@@ -208,6 +208,71 @@ python src/migrate_xlsx_to_db.py --xlsx ../data/master/MasterMudahCarData.xlsx -
 
 ---
 
+## Data Cleaning
+
+`clean.py` normalizes raw scraped fields, strips noise, redacts PII, and removes duplicate listings. Cleans a category SQLite DB in place.
+
+```bash
+# clean motorcycles DB
+python src/clean.py --category motorcycles
+
+# preview without writing
+python src/clean.py --category motorcycles --dry-run
+
+# clean cars DB
+python src/clean.py --category cars
+```
+
+### What it cleans
+
+**Numeric normalization**
+| Field | Transform |
+|---|---|
+| `price` | `"RM 3,500"` → `"3500"` |
+| `mileage` | `"50,000 km"` → `"50000"` |
+| `engine_capacity` / `cc` | `"1500cc"` → `"1500"` |
+| `manufactured_date` | Extract 4-digit year. `"1995 or older"` → `"1995"` |
+| `company_ad` | `'0'`/`'1'` strings normalized to integer |
+| `kw`, `torque`, `length`, `width`, `height`, `wheelbase`, `kerbwt`, `fueltk` | Strip non-numeric chars → float |
+
+**Text normalization**
+| Field | Transform |
+|---|---|
+| `make`, `model`, `variant`, `family`, `series`, `motorcycle_make`, `motorcycle_model`, `location`, `condition`, `car_type`, `transmission`, `fuel_type`, `country_origin` | Strip whitespace + title-case |
+
+**Subject cleaning**
+- Strip leading/trailing whitespace
+- Strip emoji (🌕 ✅ 😊 …)
+- Strip trailing dealer sales noise after `-`/`~`/`|` separator: `Full Loan`, `Ready Stock`, `Low Deposit`, `90% Credit`, `Free Delivery`, `Ready`, `KHM <location>`
+
+**Body cleaning**
+- Redact Malaysian phone numbers (`01x-xxxxxxx`, `+601x…`) → `[PHONE]`
+- Strip emoji
+- Strip decorative separator lines (`====`, `****`, `----`, `~~~~` of length 5+)
+- Collapse 3+ blank lines → 1
+- Null-out effectively-empty body (< 20 chars after cleanup, e.g. `"Pm"`, `"Nego"`)
+
+**Row-level**
+- Drop rows missing all of `ads_id`/`make`/`model` (or `motorcycle_make`/`motorcycle_model`)
+- Dedup exact `ads_id` collisions, keep last
+- Dedup true reposts: same `(subject + price + make)` with different `ads_id`, keep highest `ads_id`
+- Flag (warn) any row with `price < 1000` MYR — likely spam/test listings, not auto-deleted
+
+**DB side effects**
+- Updates listing rows in place (preserves `first_seen_at`, `last_seen_at`, `last_checked_at`, `availability_status`, `url`)
+- Deletes rows removed by dedup/drop logic (cascades to `availability_checks`)
+- Stamps `meta.last_cleaned_at` with the run timestamp
+
+### Legacy xlsx mode
+
+Still supported for the old `MasterMudahCarData.xlsx` workflow:
+
+```bash
+python src/clean.py --input data/master/MasterMudahCarData.xlsx --output cleaned.xlsx
+```
+
+---
+
 ## Availability Re-checking
 
 `recheck.py` revisits previously scraped listings to track whether each URL is still live. It does **not** claim listings are "sold" — only that the URL is currently `available` or `unavailable`.
@@ -280,6 +345,10 @@ Every probe appends one row to the `availability_checks` table in the same DB:
 ## Changelog
 
 This section tracks every revision of this README. Add a new entry at the top whenever the document is updated.
+
+### 2026-04-29
+- Added the **Data Cleaning** section. `clean.py` rewritten to clean SQLite DBs in place via `--category {cars,motorcycles}`. Adds: `manufactured_date` `"1995 or older"` mapping, `company_ad` int normalization, `subject` emoji + trailing sales-noise stripping, `body` phone-number redaction + emoji + separator-line + blank-line collapse + short-body NULLing, true-repost deduplication on `(subject + price + make)`, price-outlier flagging at < 1000 MYR. Stamps `meta.last_cleaned_at`. Legacy xlsx mode preserved.
+- Fixed scraper returning only ~12 listings per page instead of the real 40. `fake_useragent.UserAgent.random` was returning mobile UAs (e.g. iPhone) which made Mudah serve the mobile listing variant. Constrained to desktop UAs via `UserAgent(platforms=['pc'])` and bumped `expected_urls_per_page` default from 20 → 40 in `scrape_cars`.
 
 ### 2026-04-27
 - Removed `--update-db` flag from Usage docs — flag was dropped in the CSV-first workflow switch (`5ed2b29`); correct workflow is scrape → `migrate_xlsx_to_db.py`.
