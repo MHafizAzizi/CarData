@@ -1,0 +1,467 @@
+[
+  {
+    "id": "48",
+    "name": "Adiva",
+    "slug": "adiva"
+  },
+  {
+    "id": "91",
+    "name": "Afaz",
+    "slug": "afaz"
+  },
+  {
+    "id": "46",
+    "name": "AJS",
+    "slug": "ajs"
+  },
+  {
+    "id": "1",
+    "name": "Aprilia",
+    "slug": "aprilia"
+  },
+  {
+    "id": "86",
+    "name": "Ariic",
+    "slug": "ariic"
+  },
+  {
+    "id": "63",
+    "name": "Aveta",
+    "slug": "aveta"
+  },
+  {
+    "slug": "benda",
+    "id": "79",
+    "name": "Benda"
+  },
+  {
+    "id": "2",
+    "name": "Benelli",
+    "slug": "benelli"
+  },
+  {
+    "id": "41",
+    "name": "Bimota",
+    "slug": "bimota"
+  },
+  {
+    "id": "40",
+    "name": "BKZ",
+    "slug": "bkz"
+  },
+  {
+    "name": "Blueshark",
+    "slug": "blueshark",
+    "id": "74"
+  },
+  {
+    "id": "3",
+    "name": "BMW",
+    "slug": "bmw"
+  },
+  {
+    "slug": "brixton",
+    "id": "44",
+    "name": "Brixton"
+  },
+  {
+    "id": "42",
+    "name": "Buell",
+    "slug": "buell"
+  },
+  {
+    "id": "26",
+    "name": "Can-Am",
+    "slug": "can-am"
+  },
+  {
+    "id": "47",
+    "name": "CFMOTO",
+    "slug": "cfmoto"
+  },
+  {
+    "id": "51",
+    "name": "Comel",
+    "slug": "comel"
+  },
+  {
+    "id": "28",
+    "name": "CMC",
+    "slug": "cmc"
+  },
+  {
+    "id": "4",
+    "name": "Daelim",
+    "slug": "daelim"
+  },
+  {
+    "name": "Daiichi",
+    "slug": "daiichi",
+    "id": "5"
+  },
+  {
+    "id": "6",
+    "name": "Demak",
+    "slug": "demak"
+  },
+  {
+    "id": "7",
+    "name": "Ducati",
+    "slug": "ducati"
+  },
+  {
+    "slug": "ebixon",
+    "id": "76",
+    "name": "Ebixon"
+  },
+  {
+    "id": "90",
+    "name": "EZI",
+    "slug": "ezi"
+  },
+  {
+    "id": "73",
+    "name": "Fantic",
+    "slug": "fantic"
+  },
+  {
+    "id": "33",
+    "name": "Gilera",
+    "slug": "gilera"
+  },
+  {
+    "id": "45",
+    "name": "GPX",
+    "slug": "gpx"
+  },
+  {
+    "id": "88",
+    "name": "Hanway",
+    "slug": "hanway"
+  },
+  {
+    "id": "8",
+    "name": "Harley-Davidson",
+    "slug": "harley-davidson"
+  },
+  {
+    "slug": "honda",
+    "id": "9",
+    "name": "Honda"
+  },
+  {
+    "id": "66",
+    "name": "Husaberg",
+    "slug": "husaberg"
+  },
+  {
+    "id": "23",
+    "name": "Husqvarna",
+    "slug": "husqvarna"
+  },
+  {
+    "id": "50",
+    "name": "Hyosung",
+    "slug": "hyosung"
+  },
+  {
+    "id": "52",
+    "name": "Indian",
+    "slug": "indian"
+  },
+  {
+    "id": "65",
+    "name": "Italjet",
+    "slug": "italjet"
+  },
+  {
+    "id": "43",
+    "name": "Jawa",
+    "slug": "jawa"
+  },
+  {
+    "name": "Kamax",
+    "slug": "kamax",
+    "id": "81"
+  },
+  {
+    "id": "10",
+    "name": "Kawasaki",
+    "slug": "kawasaki"
+  },
+  {
+    "id": "69",
+    "name": "Kayo",
+    "slug": "kayo"
+  },
+  {
+    "id": "11",
+    "name": "Keeway",
+    "slug": "keeway"
+  },
+  {
+    "id": "89",
+    "name": "Kove",
+    "slug": "kove"
+  },
+  {
+    "id": "12",
+    "name": "KTM",
+    "slug": "ktm"
+  },
+  {
+    "id": "24",
+    "name": "KTNS",
+    "slug": "ktns"
+  },
+  {
+    "id": "13",
+    "name": "Kymco",
+    "slug": "kymco"
+  },
+  {
+    "slug": "lambretta",
+    "id": "60",
+    "name": "Lambretta"
+  },
+  {
+    "id": "54",
+    "name": "Laverda",
+    "slug": "laverda"
+  },
+  {
+    "id": "53",
+    "name": "LIMA",
+    "slug": "lima"
+  },
+  {
+    "slug": "lytron",
+    "id": "92",
+    "name": "Lytron"
+  },
+  {
+    "name": "MBP",
+    "slug": "mbp",
+    "id": "77"
+  },
+  {
+    "id": "84",
+    "name": "MBP Morbidelli",
+    "slug": "mbp-morbidelli"
+  },
+  {
+    "id": "57",
+    "name": "MLE",
+    "slug": "mle"
+  },
+  {
+    "id": "85",
+    "name": "Moda",
+    "slug": "moda"
+  },
+  {
+    "id": "14",
+    "name": "Modenas",
+    "slug": "modenas"
+  },
+  {
+    "name": "Momos",
+    "slug": "momos",
+    "id": "29"
+  },
+  {
+    "id": "27",
+    "name": "Moto Guzzi",
+    "slug": "moto-guzzi"
+  },
+  {
+    "id": "70",
+    "name": "Moto Morini",
+    "slug": "moto-morini"
+  },
+  {
+    "id": "22",
+    "name": "MV Agusta",
+    "slug": "mv-agusta"
+  },
+  {
+    "id": "35",
+    "name": "Mz",
+    "slug": "mz"
+  },
+  {
+    "slug": "naza",
+    "id": "21",
+    "name": "Naza"
+  },
+  {
+    "name": "Nimota",
+    "slug": "nimota",
+    "id": "30"
+  },
+  {
+    "id": "59",
+    "name": "Nitro",
+    "slug": "nitro"
+  },
+  {
+    "name": "Norton",
+    "slug": "norton",
+    "id": "32"
+  },
+  {
+    "slug": "ottimo",
+    "id": "61",
+    "name": "Ottimo"
+  },
+  {
+    "id": "58",
+    "name": "Petronas",
+    "slug": "petronas"
+  },
+  {
+    "id": "15",
+    "name": "Piaggio",
+    "slug": "piaggio"
+  },
+  {
+    "id": "64",
+    "name": "Royal Alloy",
+    "slug": "royal-alloy"
+  },
+  {
+    "id": "31",
+    "name": "Royal Enfield",
+    "slug": "royal-enfield"
+  },
+  {
+    "id": "71",
+    "name": "QJ Motor",
+    "slug": "qj-motor"
+  },
+  {
+    "id": "25",
+    "name": "Scomadi",
+    "slug": "scomadi"
+  },
+  {
+    "slug": "sherco",
+    "id": "36",
+    "name": "Sherco"
+  },
+  {
+    "id": "34",
+    "name": "Skyteam",
+    "slug": "skyteam"
+  },
+  {
+    "id": "49",
+    "name": "SM Sport",
+    "slug": "sm-sport"
+  },
+  {
+    "name": "Steyr Daimler",
+    "slug": "steyr-daimler",
+    "id": "67"
+  },
+  {
+    "slug": "superlux",
+    "id": "82",
+    "name": "Superlux"
+  },
+  {
+    "id": "16",
+    "name": "Suzuki",
+    "slug": "suzuki"
+  },
+  {
+    "id": "17",
+    "name": "Sym",
+    "slug": "sym"
+  },
+  {
+    "id": "93",
+    "name": "Thunder",
+    "slug": "thunder"
+  },
+  {
+    "slug": "tm-moto",
+    "id": "83",
+    "name": "TM MOTO"
+  },
+  {
+    "id": "38",
+    "name": "Treeletrik",
+    "slug": "treeletrik"
+  },
+  {
+    "id": "18",
+    "name": "Triumph",
+    "slug": "triumph"
+  },
+  {
+    "id": "37",
+    "name": "TVS",
+    "slug": "tvs"
+  },
+  {
+    "name": "Vespa",
+    "slug": "vespa",
+    "id": "19"
+  },
+  {
+    "id": "39",
+    "name": "Victory",
+    "slug": "victory"
+  },
+  {
+    "name": "Voge",
+    "slug": "voge",
+    "id": "78"
+  },
+  {
+    "id": "56",
+    "name": "WMOTO",
+    "slug": "wmoto"
+  },
+  {
+    "id": "72",
+    "name": "X-MOTO",
+    "slug": "x-moto"
+  },
+  {
+    "id": "87",
+    "name": "X-WEDGE",
+    "slug": "x-wedge"
+  },
+  {
+    "id": "20",
+    "name": "Yamaha",
+    "slug": "yamaha"
+  },
+  {
+    "id": "75",
+    "name": "Yadea",
+    "slug": "yadea"
+  },
+  {
+    "id": "80",
+    "name": "Zeeho",
+    "slug": "zeeho"
+  },
+  {
+    "name": "Zero Engineering",
+    "slug": "zero-engineering",
+    "id": "68"
+  },
+  {
+    "id": "62",
+    "name": "Zesparii",
+    "slug": "zesparii"
+  },
+  {
+    "id": "55",
+    "name": "Zontes",
+    "slug": "zontes"
+  }
+]

@@ -1,0 +1,6998 @@
+{
+  "adiva": [
+    {
+      "id": "757",
+      "name": "AD1 200",
+      "slug": "ad1-200"
+    },
+    {
+      "id": "758",
+      "name": "AD2 400",
+      "slug": "ad2-400"
+    },
+    {
+      "id": "759",
+      "name": "AD3 300",
+      "slug": "ad3-300"
+    },
+    {
+      "name": "AD3 400",
+      "slug": "ad3-400",
+      "id": "760"
+    },
+    {
+      "id": "761",
+      "name": "AR3 200",
+      "slug": "ar3-200"
+    }
+  ],
+  "afaz": [
+    {
+      "id": "1331",
+      "name": "Kencana Sport 115",
+      "slug": "kencana-sport-115"
+    }
+  ],
+  "ajs": [
+    {
+      "id": "727",
+      "name": "Model 16",
+      "slug": "model-16"
+    }
+  ],
+  "aprilia": [
+    {
+      "id": "1",
+      "name": "Caponord 1200",
+      "slug": "caponord-1200"
+    },
+    {
+      "id": "2",
+      "name": "Dorsoduro 1200",
+      "slug": "dorsoduro-1200"
+    },
+    {
+      "id": "3",
+      "name": "Dorsoduro 750",
+      "slug": "dorsoduro-750"
+    },
+    {
+      "id": "4",
+      "name": "Mana 850",
+      "slug": "mana-850"
+    },
+    {
+      "name": "RS125",
+      "slug": "rs125",
+      "id": "5"
+    },
+    {
+      "id": "6",
+      "name": "RS4 125",
+      "slug": "rs4-125"
+    },
+    {
+      "slug": "rs-457",
+      "id": "1309",
+      "name": "RS 457"
+    },
+    {
+      "id": "7",
+      "name": "RSV4",
+      "slug": "rsv4"
+    },
+    {
+      "id": "8",
+      "name": "RX 125",
+      "slug": "rx-125"
+    },
+    {
+      "name": "Shiver 750",
+      "slug": "shiver-750",
+      "id": "20"
+    },
+    {
+      "id": "22",
+      "name": "SL1000 Falco",
+      "slug": "sl1000-falco"
+    },
+    {
+      "id": "10",
+      "name": "SportCity 125",
+      "slug": "sportcity-125"
+    },
+    {
+      "slug": "sportcity-200",
+      "id": "11",
+      "name": "SportCity 200"
+    },
+    {
+      "id": "12",
+      "name": "SportCity 250",
+      "slug": "sportcity-250"
+    },
+    {
+      "id": "9",
+      "name": "SportCity 50",
+      "slug": "sportcity-50"
+    },
+    {
+      "id": "13",
+      "name": "SportCity Cube 250",
+      "slug": "sportcity-cube-250"
+    },
+    {
+      "id": "14",
+      "name": "SportCity Cube 300",
+      "slug": "sportcity-cube-300"
+    },
+    {
+      "name": "SportCity One 125",
+      "slug": "sportcity-one-125",
+      "id": "17"
+    },
+    {
+      "id": "15",
+      "name": "SportCity One 50",
+      "slug": "sportcity-one-50"
+    },
+    {
+      "id": "16",
+      "name": "SportCity One 50 Street",
+      "slug": "sportcity-one-50-street"
+    },
+    {
+      "id": "1124",
+      "name": "SR GT 200 Std",
+      "slug": "sr-gt-200-std"
+    },
+    {
+      "id": "1125",
+      "name": "SR GT 200 Sport",
+      "slug": "sr-gt-200-sport"
+    },
+    {
+      "id": "18",
+      "name": "SR Max",
+      "slug": "sr-max"
+    },
+    {
+      "id": "19",
+      "name": "SRV 850",
+      "slug": "srv-850"
+    },
+    {
+      "id": "21",
+      "name": "Tuono V4",
+      "slug": "tuono-v4"
+    }
+  ],
+  "ariic": [
+    {
+      "id": "1274",
+      "name": "318GT",
+      "slug": "318gt"
+    }
+  ],
+  "aveta": [
+    {
+      "id": "1339",
+      "name": "Bellagio 125",
+      "slug": "bellagio-125"
+    },
+    {
+      "slug": "dy90",
+      "id": "925",
+      "name": "DY90"
+    },
+    {
+      "id": "1308",
+      "name": "DY 115",
+      "slug": "dy-115"
+    },
+    {
+      "id": "1305",
+      "name": "Marvel 150",
+      "slug": "marvel-150"
+    },
+    {
+      "id": "1328",
+      "name": "Nova 125",
+      "slug": "nova-125"
+    },
+    {
+      "id": "1273",
+      "name": "Nova 160",
+      "slug": "nova-160"
+    },
+    {
+      "id": "1354",
+      "name": "Nova 200",
+      "slug": "nova-200"
+    },
+    {
+      "id": "1280",
+      "name": "Nova 250",
+      "slug": "nova-250"
+    },
+    {
+      "slug": "ranger-110",
+      "id": "1032",
+      "name": "Ranger 110"
+    },
+    {
+      "slug": "rx110",
+      "id": "926",
+      "name": "RX110"
+    },
+    {
+      "id": "1356",
+      "name": "SERRA 125",
+      "slug": "serra-125"
+    },
+    {
+      "id": "1074",
+      "name": "V13R",
+      "slug": "v13r"
+    },
+    {
+      "id": "1126",
+      "name": "VADV150",
+      "slug": "vadv150"
+    },
+    {
+      "id": "1254",
+      "name": "Vanguard 250",
+      "slug": "vanguard-250"
+    },
+    {
+      "name": "Vanguard 250 V2",
+      "slug": "vanguard-250-v2",
+      "id": "1338"
+    },
+    {
+      "slug": "viper-180",
+      "id": "1337",
+      "name": "Viper 180"
+    },
+    {
+      "id": "1355",
+      "name": "VS 115",
+      "slug": "vs-115"
+    },
+    {
+      "name": "VS110",
+      "slug": "vs110",
+      "id": "1025"
+    },
+    {
+      "id": "1225",
+      "name": "VTM 250 LX",
+      "slug": "vtm-250-lx"
+    },
+    {
+      "slug": "vtm-250-m",
+      "id": "1358",
+      "name": "VTM 250 M"
+    },
+    {
+      "slug": "vzr250",
+      "id": "1121",
+      "name": "VZR250"
+    }
+  ],
+  "benda": [
+    {
+      "id": "1301",
+      "name": "Chinchilla 500",
+      "slug": "chinchilla-500"
+    },
+    {
+      "id": "1195",
+      "name": "DARK FLAG 500",
+      "slug": "dark-flag-500"
+    },
+    {
+      "name": "LFC 700 PRO",
+      "slug": "lfc-700-pro",
+      "id": "1272"
+    },
+    {
+      "slug": "napoleon-bob-250",
+      "id": "1226",
+      "name": "NAPOLEON BOB 250"
+    },
+    {
+      "id": "1196",
+      "name": "NAPOLEON BOB 500",
+      "slug": "napoleon-bob-500"
+    }
+  ],
+  "benelli": [
+    {
+      "id": "979",
+      "name": "150S",
+      "slug": "150s"
+    },
+    {
+      "id": "1021",
+      "name": "752S",
+      "slug": "752s"
+    },
+    {
+      "id": "581",
+      "name": "302R",
+      "slug": "302r"
+    },
+    {
+      "id": "948",
+      "name": "502C",
+      "slug": "502c"
+    },
+    {
+      "id": "23",
+      "name": "Century Racer",
+      "slug": "century-racer"
+    },
+    {
+      "slug": "imperiale-400-se",
+      "id": "991",
+      "name": "Imperiale 400 SE"
+    },
+    {
+      "id": "820",
+      "name": "Keeway TX200",
+      "slug": "keeway-tx200"
+    },
+    {
+      "id": "872",
+      "name": "Leoncino 250",
+      "slug": "leoncino-250"
+    },
+    {
+      "id": "654",
+      "name": "Leoncino 500",
+      "slug": "leoncino-500"
+    },
+    {
+      "slug": "panarea-125",
+      "id": "1119",
+      "name": "Panarea 125"
+    },
+    {
+      "name": "R18i",
+      "slug": "r18i",
+      "id": "1030"
+    },
+    {
+      "id": "1031",
+      "name": "R18i SE",
+      "slug": "r18i-se"
+    },
+    {
+      "id": "579",
+      "name": "RFS150i",
+      "slug": "rfs150i"
+    },
+    {
+      "id": "774",
+      "name": "RFS150i LE",
+      "slug": "rfs150i-le"
+    },
+    {
+      "id": "775",
+      "name": "RFS150i SE",
+      "slug": "rfs150i-se"
+    },
+    {
+      "id": "961",
+      "name": "RKV 200",
+      "slug": "rkv-200"
+    },
+    {
+      "name": "TNT 25",
+      "slug": "tnt-25",
+      "id": "777"
+    },
+    {
+      "id": "1135",
+      "name": "TNT 25N",
+      "slug": "tnt-25n"
+    },
+    {
+      "name": "TNT 135i",
+      "slug": "tnt-135i",
+      "id": "528"
+    },
+    {
+      "slug": "tnt-135i-le",
+      "id": "776",
+      "name": "TNT 135i LE"
+    },
+    {
+      "id": "984",
+      "name": "TNT 249S",
+      "slug": "tnt-249s"
+    },
+    {
+      "id": "985",
+      "name": "TNT 249S SE",
+      "slug": "tnt-249s-se"
+    },
+    {
+      "name": "TNT 250",
+      "slug": "tnt-250",
+      "id": "456"
+    },
+    {
+      "id": "24",
+      "name": "TNT 300",
+      "slug": "tnt-300"
+    },
+    {
+      "id": "25",
+      "name": "TNT 600S",
+      "slug": "tnt-600s"
+    },
+    {
+      "name": "TNT 899",
+      "slug": "tnt-899",
+      "id": "26"
+    },
+    {
+      "id": "27",
+      "name": "TRE 1130K",
+      "slug": "tre-1130k"
+    },
+    {
+      "id": "873",
+      "name": "TRK 251 SE",
+      "slug": "trk-251-se"
+    },
+    {
+      "id": "580",
+      "name": "TRK 502 LE",
+      "slug": "trk-502-le"
+    },
+    {
+      "slug": "trk-502-x",
+      "id": "1012",
+      "name": "TRK 502 X"
+    },
+    {
+      "name": "VZ 125i",
+      "slug": "vz-125i",
+      "id": "819"
+    },
+    {
+      "id": "839",
+      "name": "VZ 125i SE",
+      "slug": "vz-125i-se"
+    }
+  ],
+  "bimota": [
+    {
+      "id": "645",
+      "name": "BB1 Supermono",
+      "slug": "bb1-supermono"
+    },
+    {
+      "id": "877",
+      "name": "Mantra",
+      "slug": "mantra"
+    }
+  ],
+  "bkz": [
+    {
+      "id": "639",
+      "name": "RR",
+      "slug": "rr"
+    },
+    {
+      "slug": "tt160",
+      "id": "965",
+      "name": "TT160"
+    }
+  ],
+  "blueshark": [
+    {
+      "slug": "r1",
+      "id": "1150",
+      "name": "R1"
+    },
+    {
+      "id": "1152",
+      "name": "R1 Lite",
+      "slug": "r1-lite"
+    }
+  ],
+  "bmw": [
+    {
+      "slug": "310-gs",
+      "id": "681",
+      "name": "310 GS"
+    },
+    {
+      "id": "1046",
+      "name": "C 400 GT",
+      "slug": "c-400-gt"
+    },
+    {
+      "id": "980",
+      "name": "C 400 X",
+      "slug": "c-400-x"
+    },
+    {
+      "id": "28",
+      "name": "C 600",
+      "slug": "c-600"
+    },
+    {
+      "id": "29",
+      "name": "C 650",
+      "slug": "c-650"
+    },
+    {
+      "id": "1201",
+      "name": "CE 02",
+      "slug": "ce-02"
+    },
+    {
+      "id": "1202",
+      "name": "CE 04",
+      "slug": "ce-04"
+    },
+    {
+      "id": "552",
+      "name": "F 650",
+      "slug": "f-650"
+    },
+    {
+      "id": "30",
+      "name": "F 700",
+      "slug": "f-700"
+    },
+    {
+      "id": "31",
+      "name": "F 800",
+      "slug": "f-800"
+    },
+    {
+      "id": "32",
+      "name": "F 800 R",
+      "slug": "f-800-r"
+    },
+    {
+      "slug": "f-900-r",
+      "id": "917",
+      "name": "F 900 R"
+    },
+    {
+      "id": "923",
+      "name": "F 800 GS",
+      "slug": "f-800-gs"
+    },
+    {
+      "id": "924",
+      "name": "F 800 GS Adventure",
+      "slug": "f-800-gs-adventure"
+    },
+    {
+      "id": "846",
+      "name": "F 850 GS",
+      "slug": "f-850-gs"
+    },
+    {
+      "id": "861",
+      "name": "F 850 GS Adventure",
+      "slug": "f-850-gs-adventure"
+    },
+    {
+      "id": "1200",
+      "name": "F 900 GS",
+      "slug": "f-900-gs"
+    },
+    {
+      "slug": "f-900-xr",
+      "id": "1080",
+      "name": "F 900 XR"
+    },
+    {
+      "id": "889",
+      "name": "G 310 GS",
+      "slug": "g-310-gs"
+    },
+    {
+      "id": "967",
+      "name": "G 650 GS",
+      "slug": "g-650-gs"
+    },
+    {
+      "id": "698",
+      "name": "G 310 R",
+      "slug": "g-310-r"
+    },
+    {
+      "name": "HP 2",
+      "slug": "hp-2",
+      "id": "640"
+    },
+    {
+      "id": "33",
+      "name": "HP 4",
+      "slug": "hp-4"
+    },
+    {
+      "id": "34",
+      "name": "K 1300 R",
+      "slug": "k-1300-r"
+    },
+    {
+      "id": "35",
+      "name": "K 1300 S",
+      "slug": "k-1300-s"
+    },
+    {
+      "id": "36",
+      "name": "K 1600",
+      "slug": "k-1600"
+    },
+    {
+      "id": "920",
+      "name": "R 1100 RS",
+      "slug": "r-1100-rs"
+    },
+    {
+      "id": "972",
+      "name": "R 18",
+      "slug": "r-18"
+    },
+    {
+      "slug": "r-1200",
+      "id": "37",
+      "name": "R 1200"
+    },
+    {
+      "name": "R 1200 GS",
+      "slug": "r-1200-gs",
+      "id": "390"
+    },
+    {
+      "id": "816",
+      "name": "R 1200 GS Adventure LC",
+      "slug": "r-1200-gs-adventure-lc"
+    },
+    {
+      "slug": "r-1200-gs-lc",
+      "id": "815",
+      "name": "R 1200 GS LC"
+    },
+    {
+      "id": "901",
+      "name": "R 1200 R",
+      "slug": "r-1200-r"
+    },
+    {
+      "name": "R 1200 RS",
+      "slug": "r-1200-rs",
+      "id": "38"
+    },
+    {
+      "name": "R 1200 RT LC",
+      "slug": "r-1200-rt-lc",
+      "id": "553"
+    },
+    {
+      "id": "859",
+      "name": "R 1250 GS",
+      "slug": "r-1250-gs"
+    },
+    {
+      "id": "860",
+      "name": "R 1250 GS Adventure",
+      "slug": "r-1250-gs-adventure"
+    },
+    {
+      "slug": "r-1250-rs",
+      "id": "932",
+      "name": "R 1250 RS"
+    },
+    {
+      "slug": "r-1250-rt",
+      "id": "973",
+      "name": "R 1250 RT"
+    },
+    {
+      "id": "1199",
+      "name": "R 1300 GS",
+      "slug": "r-1300-gs"
+    },
+    {
+      "id": "891",
+      "name": "R 80 GS",
+      "slug": "r-80-gs"
+    },
+    {
+      "id": "39",
+      "name": "R NINE T",
+      "slug": "r-nine-t"
+    },
+    {
+      "slug": "s-1000-r",
+      "id": "40",
+      "name": "S 1000 R"
+    },
+    {
+      "id": "41",
+      "name": "S 1000 RR",
+      "slug": "s-1000-rr"
+    },
+    {
+      "id": "42",
+      "name": "S 1000 XR",
+      "slug": "s-1000-xr"
+    }
+  ],
+  "brixton": [
+    {
+      "id": "710",
+      "name": "Cafe Racer 150i",
+      "slug": "cafe-racer-150i"
+    },
+    {
+      "id": "711",
+      "name": "Classic 150i",
+      "slug": "classic-150i"
+    },
+    {
+      "id": "1142",
+      "name": "Cromwell 1200",
+      "slug": "cromwell-1200"
+    },
+    {
+      "id": "1178",
+      "name": "Crossfire 150 XS",
+      "slug": "crossfire-150-xs"
+    },
+    {
+      "id": "1156",
+      "name": "Felsberg 150 XC",
+      "slug": "felsberg-150-xc"
+    },
+    {
+      "name": "Rayburn 150",
+      "slug": "rayburn-150",
+      "id": "1157"
+    },
+    {
+      "slug": "scramble-150i",
+      "id": "712",
+      "name": "Scramble 150i"
+    },
+    {
+      "id": "1268",
+      "name": "Storr 500",
+      "slug": "storr-500"
+    }
+  ],
+  "buell": [
+    {
+      "id": "665",
+      "name": "Ulysee",
+      "slug": "ulysee"
+    },
+    {
+      "slug": "xb12ss",
+      "id": "850",
+      "name": "XB12SS"
+    }
+  ],
+  "can-am": [
+    {
+      "id": "464",
+      "name": "Spyder",
+      "slug": "spyder"
+    }
+  ],
+  "cfmoto": [
+    {
+      "name": "250 CL-X",
+      "slug": "250-cl-x",
+      "id": "1136"
+    },
+    {
+      "id": "1335",
+      "name": "250 Dual",
+      "slug": "250-dual"
+    },
+    {
+      "id": "1083",
+      "name": "700 CL-X",
+      "slug": "700-cl-x"
+    },
+    {
+      "id": "1084",
+      "name": "700 CL-X Heritage",
+      "slug": "700-cl-x-heritage"
+    },
+    {
+      "slug": "700-cl-x-sport",
+      "id": "1085",
+      "name": "700 CL-X Sport"
+    },
+    {
+      "id": "1143",
+      "name": "650GT",
+      "slug": "650gt"
+    },
+    {
+      "name": "450CL-C",
+      "slug": "450cl-c",
+      "id": "1183"
+    },
+    {
+      "id": "1173",
+      "name": "450MT",
+      "slug": "450mt"
+    },
+    {
+      "id": "1184",
+      "name": "450MTX",
+      "slug": "450mtx"
+    },
+    {
+      "id": "1185",
+      "name": "450NK",
+      "slug": "450nk"
+    },
+    {
+      "id": "1271",
+      "name": "675NK",
+      "slug": "675nk"
+    },
+    {
+      "id": "754",
+      "name": "650MT",
+      "slug": "650mt"
+    },
+    {
+      "id": "1263",
+      "name": "700MT",
+      "slug": "700mt"
+    },
+    {
+      "id": "1105",
+      "name": "800MT",
+      "slug": "800mt"
+    },
+    {
+      "slug": "800mtx",
+      "id": "1264",
+      "name": "800MTX"
+    },
+    {
+      "id": "1208",
+      "name": "800MT Explorer",
+      "slug": "800mt-explorer"
+    },
+    {
+      "name": "250NK",
+      "slug": "250nk",
+      "id": "982"
+    },
+    {
+      "id": "1260",
+      "name": "250NK LITE",
+      "slug": "250nk-lite"
+    },
+    {
+      "slug": "400nk",
+      "id": "983",
+      "name": "400NK"
+    },
+    {
+      "id": "1145",
+      "name": "800NK",
+      "slug": "800nk"
+    },
+    {
+      "id": "1107",
+      "name": "250SR",
+      "slug": "250sr"
+    },
+    {
+      "id": "1294",
+      "name": "250SR LITE",
+      "slug": "250sr-lite"
+    },
+    {
+      "id": "1137",
+      "name": "450SR",
+      "slug": "450sr"
+    },
+    {
+      "name": "500SR",
+      "slug": "500sr",
+      "id": "1209"
+    },
+    {
+      "id": "1210",
+      "name": "675SR-R",
+      "slug": "675sr-r"
+    },
+    {
+      "id": "1158",
+      "name": "1250 TR-G",
+      "slug": "1250-tr-g"
+    },
+    {
+      "slug": "xo-papio",
+      "id": "1138",
+      "name": "XO Papio"
+    }
+  ],
+  "comel": [
+    {
+      "id": "798",
+      "name": "JM50",
+      "slug": "jm50"
+    }
+  ],
+  "cmc": [
+    {
+      "id": "511",
+      "name": "400",
+      "slug": "400"
+    },
+    {
+      "id": "630",
+      "name": "Ario 110",
+      "slug": "ario-110"
+    },
+    {
+      "id": "516",
+      "name": "Bobber",
+      "slug": "bobber"
+    },
+    {
+      "id": "940",
+      "name": "Bobber 250",
+      "slug": "bobber-250"
+    },
+    {
+      "id": "935",
+      "name": "Buccaneer 250",
+      "slug": "buccaneer-250"
+    },
+    {
+      "id": "509",
+      "name": "Daytona",
+      "slug": "daytona"
+    },
+    {
+      "name": "Daytona 250",
+      "slug": "daytona-250",
+      "id": "937"
+    },
+    {
+      "name": "Daytona 250 Cafe Racer",
+      "slug": "daytona-250-cafe-racer",
+      "id": "938"
+    },
+    {
+      "id": "939",
+      "name": "Daytona 350",
+      "slug": "daytona-350"
+    },
+    {
+      "id": "474",
+      "name": "Italjet 125",
+      "slug": "italjet-125"
+    },
+    {
+      "slug": "sk200",
+      "id": "564",
+      "name": "SK200"
+    },
+    {
+      "id": "941",
+      "name": "Spyder 250",
+      "slug": "spyder-250"
+    },
+    {
+      "id": "649",
+      "name": "Tekken 250",
+      "slug": "tekken-250"
+    },
+    {
+      "slug": "valentine-125",
+      "id": "934",
+      "name": "Valentine 125"
+    },
+    {
+      "id": "510",
+      "name": "XY",
+      "slug": "xy"
+    },
+    {
+      "name": "XY400",
+      "slug": "xy400",
+      "id": "936"
+    }
+  ],
+  "daelim": [
+    {
+      "id": "43",
+      "name": "Daystar",
+      "slug": "daystar"
+    },
+    {
+      "id": "44",
+      "name": "GTR 180",
+      "slug": "gtr-180"
+    },
+    {
+      "id": "45",
+      "name": "S3 Advanced",
+      "slug": "s3-advanced"
+    },
+    {
+      "id": "46",
+      "name": "TL125",
+      "slug": "tl125"
+    },
+    {
+      "id": "50",
+      "name": "Xray 200",
+      "slug": "xray-200"
+    },
+    {
+      "id": "47",
+      "name": "XTM 200",
+      "slug": "xtm-200"
+    },
+    {
+      "id": "48",
+      "name": "XTM-R 200",
+      "slug": "xtm-r-200"
+    },
+    {
+      "id": "49",
+      "name": "XTR 200",
+      "slug": "xtr-200"
+    }
+  ],
+  "daiichi": [
+    {
+      "id": "51",
+      "name": "Caro 70 AX",
+      "slug": "caro-70-ax"
+    },
+    {
+      "id": "52",
+      "name": "Caro Pro 110",
+      "slug": "caro-pro-110"
+    },
+    {
+      "slug": "cfmoto-650",
+      "id": "53",
+      "name": "Cfmoto 650"
+    },
+    {
+      "id": "992",
+      "name": "D70U",
+      "slug": "d70u"
+    },
+    {
+      "id": "54",
+      "name": "Megelli 250",
+      "slug": "megelli-250"
+    },
+    {
+      "id": "55",
+      "name": "Sirius 110 Z",
+      "slug": "sirius-110-z"
+    }
+  ],
+  "demak": [
+    {
+      "id": "691",
+      "name": "Cougar 250",
+      "slug": "cougar-250"
+    },
+    {
+      "id": "56",
+      "name": "D7",
+      "slug": "d7"
+    },
+    {
+      "id": "946",
+      "name": "DJ 50",
+      "slug": "dj-50"
+    },
+    {
+      "id": "722",
+      "name": "DJ 90",
+      "slug": "dj-90"
+    },
+    {
+      "id": "804",
+      "name": "DMX 150",
+      "slug": "dmx-150"
+    },
+    {
+      "slug": "dtm-150",
+      "id": "57",
+      "name": "DTM 150"
+    },
+    {
+      "id": "58",
+      "name": "DTM 200",
+      "slug": "dtm-200"
+    },
+    {
+      "id": "59",
+      "name": "DV 110",
+      "slug": "dv-110"
+    },
+    {
+      "name": "DXT250",
+      "slug": "dxt250",
+      "id": "392"
+    },
+    {
+      "name": "DZM200",
+      "slug": "dzm200",
+      "id": "60"
+    },
+    {
+      "slug": "dzr-120",
+      "id": "488",
+      "name": "DZR 120"
+    },
+    {
+      "id": "587",
+      "name": "Eco 110",
+      "slug": "eco-110"
+    },
+    {
+      "id": "391",
+      "name": "Evo Z",
+      "slug": "evo-z"
+    },
+    {
+      "id": "393",
+      "name": "Evo ZR",
+      "slug": "evo-zr"
+    },
+    {
+      "id": "61",
+      "name": "EX-90",
+      "slug": "ex-90"
+    },
+    {
+      "slug": "ezio-50",
+      "id": "1087",
+      "name": "Ezio 50"
+    },
+    {
+      "slug": "ezio-100",
+      "id": "1088",
+      "name": "Ezio 100"
+    },
+    {
+      "id": "523",
+      "name": "MV110",
+      "slug": "mv110"
+    },
+    {
+      "id": "62",
+      "name": "Rinos",
+      "slug": "rinos"
+    },
+    {
+      "id": "63",
+      "name": "Skyline",
+      "slug": "skyline"
+    },
+    {
+      "id": "947",
+      "name": "Smart MTX",
+      "slug": "smart-mtx"
+    },
+    {
+      "id": "791",
+      "name": "Spark 110",
+      "slug": "spark-110"
+    },
+    {
+      "slug": "spark-ruv",
+      "id": "792",
+      "name": "Spark RUV"
+    },
+    {
+      "id": "641",
+      "name": "Sprinter 125",
+      "slug": "sprinter-125"
+    },
+    {
+      "id": "721",
+      "name": "Transtar 150",
+      "slug": "transtar-150"
+    },
+    {
+      "id": "631",
+      "name": "Vyking",
+      "slug": "vyking"
+    }
+  ],
+  "ducati": [
+    {
+      "id": "573",
+      "name": "1098",
+      "slug": "1098"
+    },
+    {
+      "slug": "1098s",
+      "id": "574",
+      "name": "1098S"
+    },
+    {
+      "slug": "1198",
+      "id": "530",
+      "name": "1198"
+    },
+    {
+      "name": "1198 S",
+      "slug": "1198-s",
+      "id": "531"
+    },
+    {
+      "id": "532",
+      "name": "1198 SP",
+      "slug": "1198-sp"
+    },
+    {
+      "slug": "1199-panigale",
+      "id": "64",
+      "name": "1199 Panigale"
+    },
+    {
+      "id": "65",
+      "name": "1299 Panigale",
+      "slug": "1299-panigale"
+    },
+    {
+      "id": "740",
+      "name": "848 Evo",
+      "slug": "848-evo"
+    },
+    {
+      "id": "741",
+      "name": "848 Evo Corse",
+      "slug": "848-evo-corse"
+    },
+    {
+      "id": "66",
+      "name": "899 Panigale",
+      "slug": "899-panigale"
+    },
+    {
+      "id": "533",
+      "name": "900 Sport",
+      "slug": "900-sport"
+    },
+    {
+      "slug": "900-supersport",
+      "id": "534",
+      "name": "900 SuperSport"
+    },
+    {
+      "id": "626",
+      "name": "999",
+      "slug": "999"
+    },
+    {
+      "name": "DesertX",
+      "slug": "desertx",
+      "id": "1257"
+    },
+    {
+      "id": "67",
+      "name": "Diavel",
+      "slug": "diavel"
+    },
+    {
+      "id": "68",
+      "name": "Hypermotard",
+      "slug": "hypermotard"
+    },
+    {
+      "id": "686",
+      "name": "Hypermotard 821",
+      "slug": "hypermotard-821"
+    },
+    {
+      "id": "632",
+      "name": "Hypermotard 939",
+      "slug": "hypermotard-939"
+    },
+    {
+      "id": "687",
+      "name": "Hyperstrada 821",
+      "slug": "hyperstrada-821"
+    },
+    {
+      "id": "633",
+      "name": "Hyperstrada 939",
+      "slug": "hyperstrada-939"
+    },
+    {
+      "id": "70",
+      "name": "Monster 795",
+      "slug": "monster-795"
+    },
+    {
+      "id": "71",
+      "name": "Monster 796",
+      "slug": "monster-796"
+    },
+    {
+      "id": "588",
+      "name": "Monster 797",
+      "slug": "monster-797"
+    },
+    {
+      "id": "72",
+      "name": "Monster 821",
+      "slug": "monster-821"
+    },
+    {
+      "id": "684",
+      "name": "Monster 1100",
+      "slug": "monster-1100"
+    },
+    {
+      "name": "Monster 1200",
+      "slug": "monster-1200",
+      "id": "69"
+    },
+    {
+      "name": "Monster M900",
+      "slug": "monster-m900",
+      "id": "1023"
+    },
+    {
+      "id": "73",
+      "name": "Monster S2R",
+      "slug": "monster-s2r"
+    },
+    {
+      "name": "Monster S4R",
+      "slug": "monster-s4r",
+      "id": "501"
+    },
+    {
+      "id": "74",
+      "name": "Multistrada",
+      "slug": "multistrada"
+    },
+    {
+      "name": "Multistrada 1200",
+      "slug": "multistrada-1200",
+      "id": "75"
+    },
+    {
+      "name": "Multistrada 1200 S Pikes Peak",
+      "slug": "multistrada-1200-s-pikes-peak",
+      "id": "729"
+    },
+    {
+      "id": "76",
+      "name": "Panigale",
+      "slug": "panigale"
+    },
+    {
+      "id": "518",
+      "name": "Scrambler",
+      "slug": "scrambler"
+    },
+    {
+      "id": "77",
+      "name": "Streetfighter 848",
+      "slug": "streetfighter-848"
+    },
+    {
+      "name": "Streetfighter V2",
+      "slug": "streetfighter-v2",
+      "id": "1255"
+    },
+    {
+      "id": "78",
+      "name": "Superleggera",
+      "slug": "superleggera"
+    }
+  ],
+  "ebixon": [
+    {
+      "id": "1159",
+      "name": "Bold",
+      "slug": "bold"
+    },
+    {
+      "slug": "cpx-pro",
+      "id": "1160",
+      "name": "CPX Pro"
+    },
+    {
+      "id": "1161",
+      "name": "Kruz",
+      "slug": "kruz"
+    },
+    {
+      "id": "1162",
+      "name": "TC-Max",
+      "slug": "tc-max"
+    },
+    {
+      "id": "1163",
+      "name": "Trigon",
+      "slug": "trigon"
+    },
+    {
+      "id": "1164",
+      "name": "Torq",
+      "slug": "torq"
+    }
+  ],
+  "ezi": [
+    {
+      "id": "1357",
+      "name": "RAY-01",
+      "slug": "ray-01"
+    },
+    {
+      "slug": "ts1",
+      "id": "1330",
+      "name": "TS1"
+    }
+  ],
+  "fantic": [
+    {
+      "slug": "xef250",
+      "id": "1151",
+      "name": "XEF250"
+    }
+  ],
+  "gilera": [
+    {
+      "slug": "fuoco-500ie",
+      "id": "838",
+      "name": "Fuoco 500ie"
+    },
+    {
+      "id": "555",
+      "name": "GP800",
+      "slug": "gp800"
+    },
+    {
+      "id": "642",
+      "name": "Runner",
+      "slug": "runner"
+    }
+  ],
+  "gpx": [
+    {
+      "id": "723",
+      "name": "Gentleman",
+      "slug": "gentleman"
+    },
+    {
+      "name": "Gentleman 200",
+      "slug": "gentleman-200",
+      "id": "751"
+    },
+    {
+      "slug": "gn150",
+      "id": "724",
+      "name": "GN150"
+    },
+    {
+      "id": "725",
+      "name": "GR150",
+      "slug": "gr150"
+    },
+    {
+      "id": "1120",
+      "name": "GR200-RR",
+      "slug": "gr200-rr"
+    },
+    {
+      "id": "969",
+      "name": "Legend 150",
+      "slug": "legend-150"
+    },
+    {
+      "slug": "legend-250",
+      "id": "1147",
+      "name": "Legend 250"
+    },
+    {
+      "id": "970",
+      "name": "Popz 110",
+      "slug": "popz-110"
+    }
+  ],
+  "hanway": [
+    {
+      "id": "1299",
+      "name": "Bob 125S",
+      "slug": "bob-125s"
+    },
+    {
+      "id": "1342",
+      "name": "BOB 250 Classic",
+      "slug": "bob-250-classic"
+    },
+    {
+      "id": "1343",
+      "name": "BOB 250 Heritage",
+      "slug": "bob-250-heritage"
+    }
+  ],
+  "harley-davidson": [
+    {
+      "slug": "1200-custom",
+      "id": "79",
+      "name": "1200 Custom"
+    },
+    {
+      "id": "80",
+      "name": "883 Roadster",
+      "slug": "883-roadster"
+    },
+    {
+      "name": "Blackline",
+      "slug": "blackline",
+      "id": "688"
+    },
+    {
+      "id": "81",
+      "name": "Breakout",
+      "slug": "breakout"
+    },
+    {
+      "id": "892",
+      "name": "Crossbone",
+      "slug": "crossbone"
+    },
+    {
+      "id": "728",
+      "name": "CVO Road Glide",
+      "slug": "cvo-road-glide"
+    },
+    {
+      "id": "82",
+      "name": "CVO Road Glide Ultra",
+      "slug": "cvo-road-glide-ultra"
+    },
+    {
+      "id": "83",
+      "name": "CVO Softail Deluxe",
+      "slug": "cvo-softail-deluxe"
+    },
+    {
+      "slug": "cvo-street-glide",
+      "id": "84",
+      "name": "CVO Street Glide"
+    },
+    {
+      "id": "85",
+      "name": "CVO Ultra Limited",
+      "slug": "cvo-ultra-limited"
+    },
+    {
+      "id": "739",
+      "name": "Duo Glide",
+      "slug": "duo-glide"
+    },
+    {
+      "id": "662",
+      "name": "Dyna Street Bob",
+      "slug": "dyna-street-bob"
+    },
+    {
+      "id": "549",
+      "name": "Dyna Wide Glide",
+      "slug": "dyna-wide-glide"
+    },
+    {
+      "name": "Electra Glide",
+      "slug": "electra-glide",
+      "id": "353"
+    },
+    {
+      "id": "86",
+      "name": "Fat Bob",
+      "slug": "fat-bob"
+    },
+    {
+      "id": "87",
+      "name": "Fat Boy",
+      "slug": "fat-boy"
+    },
+    {
+      "id": "88",
+      "name": "Fat Boy Special",
+      "slug": "fat-boy-special"
+    },
+    {
+      "name": "Forty-Eight",
+      "slug": "forty-eight",
+      "id": "89"
+    },
+    {
+      "id": "1013",
+      "name": "FXDR 114",
+      "slug": "fxdr-114"
+    },
+    {
+      "id": "90",
+      "name": "Heritage Softail Classic",
+      "slug": "heritage-softail-classic"
+    },
+    {
+      "id": "91",
+      "name": "Iron 883",
+      "slug": "iron-883"
+    },
+    {
+      "name": "Iron 1200",
+      "slug": "iron-1200",
+      "id": "999"
+    },
+    {
+      "id": "92",
+      "name": "Low Rider",
+      "slug": "low-rider"
+    },
+    {
+      "id": "93",
+      "name": "Night Rod Special",
+      "slug": "night-rod-special"
+    },
+    {
+      "id": "1221",
+      "name": "Nightster",
+      "slug": "nightster"
+    },
+    {
+      "id": "1078",
+      "name": "Pan America",
+      "slug": "pan-america"
+    },
+    {
+      "id": "94",
+      "name": "Road Glide Special",
+      "slug": "road-glide-special"
+    },
+    {
+      "name": "Road King",
+      "slug": "road-king",
+      "id": "1001"
+    },
+    {
+      "slug": "road-king-classic",
+      "id": "95",
+      "name": "Road King Classic"
+    },
+    {
+      "id": "998",
+      "name": "Road King Special",
+      "slug": "road-king-special"
+    },
+    {
+      "slug": "roadster",
+      "id": "1000",
+      "name": "Roadster"
+    },
+    {
+      "name": "Seventy-Two",
+      "slug": "seventy-two",
+      "id": "96"
+    },
+    {
+      "id": "672",
+      "name": "Single Racer",
+      "slug": "single-racer"
+    },
+    {
+      "name": "Softail Bad Boy Springer",
+      "slug": "softail-bad-boy-springer",
+      "id": "858"
+    },
+    {
+      "slug": "softail-deluxe",
+      "id": "97",
+      "name": "Softail Deluxe"
+    },
+    {
+      "id": "98",
+      "name": "Softail Slim",
+      "slug": "softail-slim"
+    },
+    {
+      "id": "663",
+      "name": "Sportster 48",
+      "slug": "sportster-48"
+    },
+    {
+      "name": "Sportster 72",
+      "slug": "sportster-72",
+      "id": "748"
+    },
+    {
+      "id": "1079",
+      "name": "Sportster S",
+      "slug": "sportster-s"
+    },
+    {
+      "slug": "sport-glide",
+      "id": "1006",
+      "name": "Sport Glide"
+    },
+    {
+      "id": "99",
+      "name": "Street",
+      "slug": "street"
+    },
+    {
+      "id": "100",
+      "name": "Street Bob",
+      "slug": "street-bob"
+    },
+    {
+      "slug": "street-glide-special",
+      "id": "101",
+      "name": "Street Glide Special"
+    },
+    {
+      "id": "550",
+      "name": "Super Glide",
+      "slug": "super-glide"
+    },
+    {
+      "id": "102",
+      "name": "SuperLow",
+      "slug": "superlow"
+    },
+    {
+      "id": "103",
+      "name": "SuperLow 1200 T",
+      "slug": "superlow-1200-t"
+    },
+    {
+      "id": "104",
+      "name": "Switchback",
+      "slug": "switchback"
+    },
+    {
+      "slug": "tri-glide-electra",
+      "id": "755",
+      "name": "Tri Glide Electra"
+    },
+    {
+      "id": "105",
+      "name": "Tri Glide Ultra",
+      "slug": "tri-glide-ultra"
+    },
+    {
+      "id": "106",
+      "name": "Trike",
+      "slug": "trike"
+    },
+    {
+      "id": "823",
+      "name": "Ultra Classic",
+      "slug": "ultra-classic"
+    },
+    {
+      "id": "107",
+      "name": "Ultra Limited",
+      "slug": "ultra-limited"
+    },
+    {
+      "id": "108",
+      "name": "Ultra Limited Low",
+      "slug": "ultra-limited-low"
+    },
+    {
+      "name": "V-Rod Muscle",
+      "slug": "v-rod-muscle",
+      "id": "109"
+    },
+    {
+      "id": "664",
+      "name": "XLH Sportster 883",
+      "slug": "xlh-sportster-883"
+    },
+    {
+      "name": "XR1200X",
+      "slug": "xr1200x",
+      "id": "756"
+    }
+  ],
+  "honda": [
+    {
+      "id": "1018",
+      "name": "ADV 150",
+      "slug": "adv-150"
+    },
+    {
+      "id": "1122",
+      "name": "ADV 160",
+      "slug": "adv-160"
+    },
+    {
+      "id": "1302",
+      "name": "ADV 350",
+      "slug": "adv-350"
+    },
+    {
+      "name": "AFS110KD",
+      "slug": "afs110kd",
+      "id": "943"
+    },
+    {
+      "id": "110",
+      "name": "Airblade",
+      "slug": "airblade"
+    },
+    {
+      "id": "637",
+      "name": "BeAT",
+      "slug": "beat"
+    },
+    {
+      "id": "636",
+      "name": "C100",
+      "slug": "c100"
+    },
+    {
+      "id": "565",
+      "name": "C102",
+      "slug": "c102"
+    },
+    {
+      "id": "836",
+      "name": "C125K",
+      "slug": "c125k"
+    },
+    {
+      "id": "316",
+      "name": "C200",
+      "slug": "c200"
+    },
+    {
+      "slug": "c50",
+      "id": "806",
+      "name": "C50"
+    },
+    {
+      "id": "709",
+      "name": "C65",
+      "slug": "c65"
+    },
+    {
+      "id": "311",
+      "name": "C70",
+      "slug": "c70"
+    },
+    {
+      "id": "699",
+      "name": "CB100",
+      "slug": "cb100"
+    },
+    {
+      "name": "CB175",
+      "slug": "cb175",
+      "id": "966"
+    },
+    {
+      "id": "1005",
+      "name": "CB200",
+      "slug": "cb200"
+    },
+    {
+      "slug": "cb1000r",
+      "id": "441",
+      "name": "CB1000R"
+    },
+    {
+      "id": "646",
+      "name": "CB1100",
+      "slug": "cb1100"
+    },
+    {
+      "id": "613",
+      "name": "CB1300",
+      "slug": "cb1300"
+    },
+    {
+      "id": "614",
+      "name": "CB1300BOLDOR",
+      "slug": "cb1300boldor"
+    },
+    {
+      "id": "615",
+      "name": "CB1300ST",
+      "slug": "cb1300st"
+    },
+    {
+      "id": "719",
+      "name": "CB250R",
+      "slug": "cb250r"
+    },
+    {
+      "id": "1303",
+      "name": "CB350RS",
+      "slug": "cb350rs"
+    },
+    {
+      "id": "307",
+      "name": "CB400",
+      "slug": "cb400"
+    },
+    {
+      "name": "CB500",
+      "slug": "cb500",
+      "id": "111"
+    },
+    {
+      "id": "660",
+      "name": "CB500F",
+      "slug": "cb500f"
+    },
+    {
+      "slug": "cb500x",
+      "id": "661",
+      "name": "CB500X"
+    },
+    {
+      "id": "838",
+      "name": "CB500XE",
+      "slug": "cb500xe"
+    },
+    {
+      "slug": "cb650",
+      "id": "853",
+      "name": "CB650"
+    },
+    {
+      "id": "112",
+      "name": "CB650F",
+      "slug": "cb650f"
+    },
+    {
+      "id": "852",
+      "name": "CB650R",
+      "slug": "cb650r"
+    },
+    {
+      "id": "1216",
+      "name": "CB750",
+      "slug": "cb750"
+    },
+    {
+      "id": "113",
+      "name": "CBR1000RR",
+      "slug": "cbr1000rr"
+    },
+    {
+      "id": "911",
+      "name": "CBR1000RR-R Fire Blade SP",
+      "slug": "cbr1000rr-r-fire-blade-sp"
+    },
+    {
+      "id": "706",
+      "name": "CBR1000XX Super Blackbird",
+      "slug": "cbr1000xx-super-blackbird"
+    },
+    {
+      "id": "484",
+      "name": "CBR150R",
+      "slug": "cbr150r"
+    },
+    {
+      "id": "114",
+      "name": "CBR250",
+      "slug": "cbr250"
+    },
+    {
+      "id": "1004",
+      "name": "CBR250RR",
+      "slug": "cbr250rr"
+    },
+    {
+      "id": "329",
+      "name": "CBR500R",
+      "slug": "cbr500r"
+    },
+    {
+      "slug": "cbr650r",
+      "id": "904",
+      "name": "CBR650R"
+    },
+    {
+      "name": "CBR600 F4i",
+      "slug": "cbr600-f4i",
+      "id": "874"
+    },
+    {
+      "id": "115",
+      "name": "CBR600RR",
+      "slug": "cbr600rr"
+    },
+    {
+      "id": "917",
+      "name": "CBR600F",
+      "slug": "cbr600f"
+    },
+    {
+      "id": "116",
+      "name": "CBR650F",
+      "slug": "cbr650f"
+    },
+    {
+      "id": "444",
+      "name": "CBX",
+      "slug": "cbx"
+    },
+    {
+      "id": "621",
+      "name": "CG125",
+      "slug": "cg125"
+    },
+    {
+      "id": "744",
+      "name": "CR250R",
+      "slug": "cr250r"
+    },
+    {
+      "slug": "crf1000l-africa-twin",
+      "id": "690",
+      "name": "CRF1000L Africa Twin"
+    },
+    {
+      "id": "915",
+      "name": "CRF1100L Africa Twin",
+      "slug": "crf1100l-africa-twin"
+    },
+    {
+      "id": "912",
+      "name": "CRF1100L Africa Twin Adventure Sport",
+      "slug": "crf1100l-africa-twin-adventure-sport"
+    },
+    {
+      "name": "CRF250 Rally",
+      "slug": "crf250-rally",
+      "id": "677"
+    },
+    {
+      "id": "117",
+      "name": "CRF250L",
+      "slug": "crf250l"
+    },
+    {
+      "name": "CRF250M",
+      "slug": "crf250m",
+      "id": "118"
+    },
+    {
+      "id": "1223",
+      "name": "CT125 Hunter Cub",
+      "slug": "ct125-hunter-cub"
+    },
+    {
+      "id": "1019",
+      "name": "DX 110",
+      "slug": "dx-110"
+    },
+    {
+      "id": "863",
+      "name": "Dash 110",
+      "slug": "dash-110"
+    },
+    {
+      "id": "822",
+      "name": "Dash 125",
+      "slug": "dash-125"
+    },
+    {
+      "name": "Dax 125",
+      "slug": "dax-125",
+      "id": "1224"
+    },
+    {
+      "slug": "dn-01",
+      "id": "659",
+      "name": "DN-01"
+    },
+    {
+      "id": "527",
+      "name": "EX5",
+      "slug": "ex5"
+    },
+    {
+      "name": "EX5 Dream",
+      "slug": "ex5-dream",
+      "id": "308"
+    },
+    {
+      "id": "119",
+      "name": "Ex5 Fi",
+      "slug": "ex5-fi"
+    },
+    {
+      "id": "383",
+      "name": "Fame",
+      "slug": "fame"
+    },
+    {
+      "id": "1003",
+      "name": "FJS 6002-ED",
+      "slug": "fjs-6002-ed"
+    },
+    {
+      "id": "1028",
+      "name": "Forza 250",
+      "slug": "forza-250"
+    },
+    {
+      "id": "1064",
+      "name": "FS150FJ 2",
+      "slug": "fs150fj-2"
+    },
+    {
+      "slug": "ftr223",
+      "id": "848",
+      "name": "FTR223"
+    },
+    {
+      "id": "1327",
+      "name": "Fury 1300",
+      "slug": "fury-1300"
+    },
+    {
+      "slug": "future-125",
+      "id": "1073",
+      "name": "Future 125"
+    },
+    {
+      "id": "120",
+      "name": "Future Mmc",
+      "slug": "future-mmc"
+    },
+    {
+      "id": "913",
+      "name": "GL1800 Gold Wing",
+      "slug": "gl1800-gold-wing"
+    },
+    {
+      "id": "121",
+      "name": "Goldwing",
+      "slug": "goldwing"
+    },
+    {
+      "id": "607",
+      "name": "Icon",
+      "slug": "icon"
+    },
+    {
+      "id": "122",
+      "name": "Integra",
+      "slug": "integra"
+    },
+    {
+      "id": "351",
+      "name": "MAGNA",
+      "slug": "magna"
+    },
+    {
+      "id": "736",
+      "name": "MBX125",
+      "slug": "mbx125"
+    },
+    {
+      "slug": "monkey-125",
+      "id": "837",
+      "name": "Monkey 125"
+    },
+    {
+      "id": "1063",
+      "name": "Montesa Cota 4rt 260",
+      "slug": "montesa-cota-4rt-260"
+    },
+    {
+      "id": "1118",
+      "name": "Motocompo",
+      "slug": "motocompo"
+    },
+    {
+      "id": "608",
+      "name": "MSX125",
+      "slug": "msx125"
+    },
+    {
+      "id": "675",
+      "name": "NBC110KD",
+      "slug": "nbc110kd"
+    },
+    {
+      "id": "123",
+      "name": "NC700",
+      "slug": "nc700"
+    },
+    {
+      "id": "124",
+      "name": "NC750",
+      "slug": "nc750"
+    },
+    {
+      "id": "442",
+      "name": "NF",
+      "slug": "nf"
+    },
+    {
+      "slug": "nm4",
+      "id": "658",
+      "name": "NM4"
+    },
+    {
+      "id": "524",
+      "name": "NSR",
+      "slug": "nsr"
+    },
+    {
+      "id": "125",
+      "name": "NSS300",
+      "slug": "nss300"
+    },
+    {
+      "id": "1261",
+      "name": "NT1100 DCT",
+      "slug": "nt1100-dct"
+    },
+    {
+      "id": "747",
+      "name": "NX 105",
+      "slug": "nx-105"
+    },
+    {
+      "name": "PCX",
+      "slug": "pcx",
+      "id": "126"
+    },
+    {
+      "id": "927",
+      "name": "PCX 50",
+      "slug": "pcx-50"
+    },
+    {
+      "id": "309",
+      "name": "PCX 100",
+      "slug": "pcx-100"
+    },
+    {
+      "slug": "pcx-150",
+      "id": "1086",
+      "name": "PCX 150"
+    },
+    {
+      "name": "PCX 400",
+      "slug": "pcx-400",
+      "id": "310"
+    },
+    {
+      "id": "835",
+      "name": "PCX Hybrid",
+      "slug": "pcx-hybrid"
+    },
+    {
+      "id": "668",
+      "name": "Raider HX135RS",
+      "slug": "raider-hx135rs"
+    },
+    {
+      "id": "667",
+      "name": "Raider HX135SS",
+      "slug": "raider-hx135ss"
+    },
+    {
+      "id": "349",
+      "name": "RC30",
+      "slug": "rc30"
+    },
+    {
+      "id": "350",
+      "name": "RC45",
+      "slug": "rc45"
+    },
+    {
+      "slug": "rsx",
+      "id": "1068",
+      "name": "RSX"
+    },
+    {
+      "name": "RS-X Winner",
+      "slug": "rs-x-winner",
+      "id": "1258"
+    },
+    {
+      "id": "610",
+      "name": "Rebel 300",
+      "slug": "rebel-300"
+    },
+    {
+      "slug": "rebel-500",
+      "id": "611",
+      "name": "Rebel 500"
+    },
+    {
+      "id": "1170",
+      "name": "Rebel 1100",
+      "slug": "rebel-1100"
+    },
+    {
+      "id": "486",
+      "name": "RS150",
+      "slug": "rs150"
+    },
+    {
+      "id": "485",
+      "name": "RS150R",
+      "slug": "rs150r"
+    },
+    {
+      "id": "344",
+      "name": "SABRE V4",
+      "slug": "sabre-v4"
+    },
+    {
+      "id": "443",
+      "name": "Shadow",
+      "slug": "shadow"
+    },
+    {
+      "id": "127",
+      "name": "Spacy",
+      "slug": "spacy"
+    },
+    {
+      "id": "341",
+      "name": "ST1100",
+      "slug": "st1100"
+    },
+    {
+      "id": "327",
+      "name": "ST1300",
+      "slug": "st1300"
+    },
+    {
+      "id": "799",
+      "name": "Steed 400",
+      "slug": "steed-400"
+    },
+    {
+      "id": "385",
+      "name": "TH110M",
+      "slug": "th110m"
+    },
+    {
+      "id": "535",
+      "name": "Transalp",
+      "slug": "transalp"
+    },
+    {
+      "name": "Varadero",
+      "slug": "varadero",
+      "id": "849"
+    },
+    {
+      "id": "1141",
+      "name": "Vario 125",
+      "slug": "vario-125"
+    },
+    {
+      "slug": "vario-150",
+      "id": "734",
+      "name": "Vario 150"
+    },
+    {
+      "id": "1123",
+      "name": "Vario 160",
+      "slug": "vario-160"
+    },
+    {
+      "slug": "vf1000",
+      "id": "345",
+      "name": "VF1000"
+    },
+    {
+      "id": "342",
+      "name": "VF400F",
+      "slug": "vf400f"
+    },
+    {
+      "id": "343",
+      "name": "VF500F",
+      "slug": "vf500f"
+    },
+    {
+      "id": "352",
+      "name": "VF700F",
+      "slug": "vf700f"
+    },
+    {
+      "id": "348",
+      "name": "VFR1200F",
+      "slug": "vfr1200f"
+    },
+    {
+      "id": "346",
+      "name": "VFR750F",
+      "slug": "vfr750f"
+    },
+    {
+      "id": "347",
+      "name": "VFR800",
+      "slug": "vfr800"
+    },
+    {
+      "id": "1036",
+      "name": "VT600",
+      "slug": "vt600"
+    },
+    {
+      "id": "910",
+      "name": "VTX1300T",
+      "slug": "vtx1300t"
+    },
+    {
+      "id": "525",
+      "name": "Wave 100",
+      "slug": "wave-100"
+    },
+    {
+      "name": "Wave 110",
+      "slug": "wave-110",
+      "id": "128"
+    },
+    {
+      "id": "446",
+      "name": "Wave 125",
+      "slug": "wave-125"
+    },
+    {
+      "id": "909",
+      "name": "Wave 125i",
+      "slug": "wave-125i"
+    },
+    {
+      "id": "447",
+      "name": "Wave 125s",
+      "slug": "wave-125s"
+    },
+    {
+      "id": "445",
+      "name": "Wave 125X Ultimo",
+      "slug": "wave-125x-ultimo"
+    },
+    {
+      "slug": "wave-alpha",
+      "id": "497",
+      "name": "Wave Alpha"
+    },
+    {
+      "name": "Wave Dash",
+      "slug": "wave-dash",
+      "id": "129"
+    },
+    {
+      "id": "328",
+      "name": "Wave S",
+      "slug": "wave-s"
+    },
+    {
+      "id": "666",
+      "name": "XADV",
+      "slug": "xadv"
+    },
+    {
+      "id": "855",
+      "name": "XL100 Scrambler",
+      "slug": "xl100-scrambler"
+    },
+    {
+      "id": "622",
+      "name": "XR400",
+      "slug": "xr400"
+    },
+    {
+      "id": "612",
+      "name": "XR650L",
+      "slug": "xr650l"
+    }
+  ],
+  "husaberg": [
+    {
+      "id": "1040",
+      "name": "FE350",
+      "slug": "fe350"
+    },
+    {
+      "slug": "fe450",
+      "id": "1041",
+      "name": "FE450"
+    },
+    {
+      "id": "1042",
+      "name": "FE570",
+      "slug": "fe570"
+    }
+  ],
+  "husqvarna": [
+    {
+      "id": "374",
+      "name": "701 Enduro",
+      "slug": "701-enduro"
+    },
+    {
+      "id": "499",
+      "name": "701 Supermoto",
+      "slug": "701-supermoto"
+    },
+    {
+      "id": "371",
+      "name": "FC 250",
+      "slug": "fc-250"
+    },
+    {
+      "slug": "fc-350",
+      "id": "372",
+      "name": "FC 350"
+    },
+    {
+      "name": "FC 450",
+      "slug": "fc-450",
+      "id": "373"
+    },
+    {
+      "id": "363",
+      "name": "FE 250",
+      "slug": "fe-250"
+    },
+    {
+      "id": "364",
+      "name": "FE 300",
+      "slug": "fe-300"
+    },
+    {
+      "slug": "fe-350",
+      "id": "365",
+      "name": "FE 350"
+    },
+    {
+      "id": "366",
+      "name": "FE 450",
+      "slug": "fe-450"
+    },
+    {
+      "id": "367",
+      "name": "FE 501",
+      "slug": "fe-501"
+    },
+    {
+      "id": "498",
+      "name": "FS 450",
+      "slug": "fs-450"
+    },
+    {
+      "id": "921",
+      "name": "FX 450",
+      "slug": "fx-450"
+    },
+    {
+      "id": "1117",
+      "name": "Norden 901",
+      "slug": "norden-901"
+    },
+    {
+      "id": "831",
+      "name": "Svartpilen 401",
+      "slug": "svartpilen-401"
+    },
+    {
+      "id": "369",
+      "name": "TC 125",
+      "slug": "tc-125"
+    },
+    {
+      "id": "370",
+      "name": "TC 250",
+      "slug": "tc-250"
+    },
+    {
+      "id": "623",
+      "name": "TC 50",
+      "slug": "tc-50"
+    },
+    {
+      "id": "624",
+      "name": "TC 65",
+      "slug": "tc-65"
+    },
+    {
+      "id": "368",
+      "name": "TC 85",
+      "slug": "tc-85"
+    },
+    {
+      "slug": "te-125",
+      "id": "360",
+      "name": "TE 125"
+    },
+    {
+      "slug": "te-250",
+      "id": "361",
+      "name": "TE 250"
+    },
+    {
+      "id": "362",
+      "name": "TE 300",
+      "slug": "te-300"
+    },
+    {
+      "id": "586",
+      "name": "TE 450",
+      "slug": "te-450"
+    },
+    {
+      "name": "TE150 I",
+      "slug": "te150-i",
+      "id": "1215"
+    },
+    {
+      "id": "500",
+      "name": "TX 300",
+      "slug": "tx-300"
+    },
+    {
+      "name": "V401",
+      "slug": "v401",
+      "id": "986"
+    },
+    {
+      "id": "832",
+      "name": "Vitpilen 701",
+      "slug": "vitpilen-701"
+    }
+  ],
+  "hyosung": [
+    {
+      "slug": "cruisse-ii",
+      "id": "797",
+      "name": "Cruisse II"
+    }
+  ],
+  "indian": [
+    {
+      "name": "Chieftain",
+      "slug": "chieftain",
+      "id": "942"
+    },
+    {
+      "id": "828",
+      "name": "Chief Dark Horse",
+      "slug": "chief-dark-horse"
+    },
+    {
+      "id": "834",
+      "name": "Chieftain Dark Horse",
+      "slug": "chieftain-dark-horse"
+    },
+    {
+      "id": "851",
+      "name": "Roadmaster",
+      "slug": "roadmaster"
+    },
+    {
+      "id": "802",
+      "name": "Scout",
+      "slug": "scout"
+    },
+    {
+      "slug": "scout-bobber",
+      "id": "803",
+      "name": "Scout Bobber"
+    },
+    {
+      "id": "829",
+      "name": "Springfield Dark Horse",
+      "slug": "springfield-dark-horse"
+    }
+  ],
+  "italjet": [
+    {
+      "id": "1108",
+      "name": "Dragster 125",
+      "slug": "dragster-125"
+    },
+    {
+      "id": "1109",
+      "name": "Dragster 200",
+      "slug": "dragster-200"
+    },
+    {
+      "id": "1298",
+      "name": "Dragster 300",
+      "slug": "dragster-300"
+    },
+    {
+      "id": "1022",
+      "name": "Formula 125",
+      "slug": "formula-125"
+    }
+  ],
+  "jawa": [
+    {
+      "id": "685",
+      "name": "CZ125",
+      "slug": "cz125"
+    }
+  ],
+  "kamax": [
+    {
+      "id": "5714",
+      "name": "Super Pro 125",
+      "slug": "super-pro-125"
+    }
+  ],
+  "kawasaki": [
+    {
+      "id": "1044",
+      "name": "Ar80",
+      "slug": "ar80"
+    },
+    {
+      "id": "130",
+      "name": "1400 GTR",
+      "slug": "1400-gtr"
+    },
+    {
+      "id": "131",
+      "name": "D-Tracker 150",
+      "slug": "d-tracker-150"
+    },
+    {
+      "name": "D-Tracker 250",
+      "slug": "d-tracker-250",
+      "id": "333"
+    },
+    {
+      "slug": "d-tracker-x",
+      "id": "132",
+      "name": "D-Tracker X"
+    },
+    {
+      "id": "1002",
+      "name": "EL250C",
+      "slug": "el250c"
+    },
+    {
+      "id": "1222",
+      "name": "Eliminator 500",
+      "slug": "eliminator-500"
+    },
+    {
+      "name": "EN",
+      "slug": "en",
+      "id": "404"
+    },
+    {
+      "slug": "en-650-a",
+      "id": "944",
+      "name": "EN 650-A"
+    },
+    {
+      "name": "ER 5",
+      "slug": "er-5",
+      "id": "405"
+    },
+    {
+      "slug": "er-6f",
+      "id": "133",
+      "name": "ER-6f"
+    },
+    {
+      "id": "134",
+      "name": "ER-6n",
+      "slug": "er-6n"
+    },
+    {
+      "name": "EX 400R",
+      "slug": "ex-400r",
+      "id": "406"
+    },
+    {
+      "name": "EX250-K",
+      "slug": "ex250-k",
+      "id": "807"
+    },
+    {
+      "id": "1060",
+      "name": "EX250H",
+      "slug": "ex250h"
+    },
+    {
+      "id": "844",
+      "name": "EX650-C",
+      "slug": "ex650-c"
+    },
+    {
+      "id": "682",
+      "name": "EX650-E",
+      "slug": "ex650-e"
+    },
+    {
+      "slug": "honey-an95",
+      "id": "732",
+      "name": "Honey AN95"
+    },
+    {
+      "id": "332",
+      "name": "J300",
+      "slug": "j300"
+    },
+    {
+      "id": "745",
+      "name": "K1",
+      "slug": "k1"
+    },
+    {
+      "id": "407",
+      "name": "KE 125",
+      "slug": "ke-125"
+    },
+    {
+      "name": "KG150A",
+      "slug": "kg150a",
+      "id": "717"
+    },
+    {
+      "id": "408",
+      "name": "KLE 250",
+      "slug": "kle-250"
+    },
+    {
+      "id": "409",
+      "name": "KLE 500",
+      "slug": "kle-500"
+    },
+    {
+      "id": "410",
+      "name": "KLE 650",
+      "slug": "kle-650"
+    },
+    {
+      "id": "700",
+      "name": "KLR 650",
+      "slug": "klr-650"
+    },
+    {
+      "id": "1129",
+      "name": "KLX 110",
+      "slug": "klx-110"
+    },
+    {
+      "id": "460",
+      "name": "KLX 150",
+      "slug": "klx-150"
+    },
+    {
+      "id": "135",
+      "name": "KLX 150L",
+      "slug": "klx-150l"
+    },
+    {
+      "id": "461",
+      "name": "KLX 150S",
+      "slug": "klx-150s"
+    },
+    {
+      "id": "136",
+      "name": "KLX 250",
+      "slug": "klx-250"
+    },
+    {
+      "id": "137",
+      "name": "KLX 450R",
+      "slug": "klx-450r"
+    },
+    {
+      "name": "KLX150BF",
+      "slug": "klx150bf",
+      "id": "790"
+    },
+    {
+      "id": "496",
+      "name": "KRR 150",
+      "slug": "krr-150"
+    },
+    {
+      "id": "767",
+      "name": "KRZ 150",
+      "slug": "krz-150"
+    },
+    {
+      "slug": "ksr-110",
+      "id": "638",
+      "name": "KSR 110"
+    },
+    {
+      "id": "138",
+      "name": "KSR PRO",
+      "slug": "ksr-pro"
+    },
+    {
+      "id": "139",
+      "name": "KX 250F",
+      "slug": "kx-250f"
+    },
+    {
+      "id": "140",
+      "name": "KX 450F",
+      "slug": "kx-450f"
+    },
+    {
+      "id": "141",
+      "name": "KX 65",
+      "slug": "kx-65"
+    },
+    {
+      "id": "411",
+      "name": "KX 85",
+      "slug": "kx-85"
+    },
+    {
+      "id": "142",
+      "name": "KX 85-D",
+      "slug": "kx-85-d"
+    },
+    {
+      "id": "143",
+      "name": "Ninja 1000",
+      "slug": "ninja-1000"
+    },
+    {
+      "id": "1281",
+      "name": "Ninja 1100 SX SE",
+      "slug": "ninja-1100-sx-se"
+    },
+    {
+      "name": "Ninja 250",
+      "slug": "ninja-250",
+      "id": "144"
+    },
+    {
+      "name": "Ninja 250SL",
+      "slug": "ninja-250sl",
+      "id": "494"
+    },
+    {
+      "id": "493",
+      "name": "Ninja 300",
+      "slug": "ninja-300"
+    },
+    {
+      "id": "764",
+      "name": "Ninja 400 ABS",
+      "slug": "ninja-400-abs"
+    },
+    {
+      "id": "763",
+      "name": "Ninja 400 SE ABS",
+      "slug": "ninja-400-se-abs"
+    },
+    {
+      "id": "1266",
+      "name": "Ninja 500",
+      "slug": "ninja-500"
+    },
+    {
+      "slug": "ninja-500-se",
+      "id": "1267",
+      "name": "Ninja 500 SE"
+    },
+    {
+      "id": "570",
+      "name": "Ninja 650",
+      "slug": "ninja-650"
+    },
+    {
+      "slug": "ninja-650-se",
+      "id": "571",
+      "name": "Ninja 650 SE"
+    },
+    {
+      "id": "145",
+      "name": "Ninja H2",
+      "slug": "ninja-h2"
+    },
+    {
+      "id": "808",
+      "name": "Ninja H2SX SE",
+      "slug": "ninja-h2sx-se"
+    },
+    {
+      "id": "340",
+      "name": "Ninja ZR-RR",
+      "slug": "ninja-zr-rr"
+    },
+    {
+      "slug": "ninja-zx-6r",
+      "id": "147",
+      "name": "Ninja ZX-6R"
+    },
+    {
+      "name": "Ninja ZX-7R",
+      "slug": "ninja-zx-7r",
+      "id": "334"
+    },
+    {
+      "id": "335",
+      "name": "Ninja ZX-9R",
+      "slug": "ninja-zx-9r"
+    },
+    {
+      "id": "146",
+      "name": "Ninja ZX-10R",
+      "slug": "ninja-zx-10r"
+    },
+    {
+      "id": "336",
+      "name": "Ninja ZX-11",
+      "slug": "ninja-zx-11"
+    },
+    {
+      "id": "337",
+      "name": "Ninja ZX-12R",
+      "slug": "ninja-zx-12r"
+    },
+    {
+      "id": "338",
+      "name": "Ninja ZX-14",
+      "slug": "ninja-zx-14"
+    },
+    {
+      "id": "1198",
+      "name": "Ninja ZX-25R",
+      "slug": "ninja-zx-25r"
+    },
+    {
+      "id": "339",
+      "name": "Ninja ZX-150RR",
+      "slug": "ninja-zx-150rr"
+    },
+    {
+      "id": "148",
+      "name": "Ninja ZZR1400",
+      "slug": "ninja-zzr1400"
+    },
+    {
+      "id": "151",
+      "name": "Versys",
+      "slug": "versys"
+    },
+    {
+      "id": "1282",
+      "name": "Versys 1100 S",
+      "slug": "versys-1100-s"
+    },
+    {
+      "id": "1283",
+      "name": "Versys 1100 SE",
+      "slug": "versys-1100-se"
+    },
+    {
+      "id": "1284",
+      "name": "Versys 1100 Std",
+      "slug": "versys-1100-std"
+    },
+    {
+      "name": "Versys 650",
+      "slug": "versys-650",
+      "id": "770"
+    },
+    {
+      "slug": "versys-x-250",
+      "id": "771",
+      "name": "Versys-X 250"
+    },
+    {
+      "id": "149",
+      "name": "VN1700 Voyager Custom",
+      "slug": "vn1700-voyager-custom"
+    },
+    {
+      "name": "VN250",
+      "slug": "vn250",
+      "id": "515"
+    },
+    {
+      "slug": "vn900",
+      "id": "150",
+      "name": "VN900"
+    },
+    {
+      "id": "415",
+      "name": "Vulcan 1500",
+      "slug": "vulcan-1500"
+    },
+    {
+      "id": "414",
+      "name": "Vulcan 1600",
+      "slug": "vulcan-1600"
+    },
+    {
+      "id": "413",
+      "name": "Vulcan 1700",
+      "slug": "vulcan-1700"
+    },
+    {
+      "id": "412",
+      "name": "Vulcan 2000",
+      "slug": "vulcan-2000"
+    },
+    {
+      "id": "514",
+      "name": "Vulcan 250",
+      "slug": "vulcan-250"
+    },
+    {
+      "id": "420",
+      "name": "Vulcan 400",
+      "slug": "vulcan-400"
+    },
+    {
+      "name": "Vulcan 500",
+      "slug": "vulcan-500",
+      "id": "419"
+    },
+    {
+      "id": "418",
+      "name": "Vulcan 750",
+      "slug": "vulcan-750"
+    },
+    {
+      "slug": "vulcan-800",
+      "id": "417",
+      "name": "Vulcan 800"
+    },
+    {
+      "name": "Vulcan 900",
+      "slug": "vulcan-900",
+      "id": "416"
+    },
+    {
+      "id": "152",
+      "name": "Vulcan S",
+      "slug": "vulcan-s"
+    },
+    {
+      "id": "489",
+      "name": "W 800",
+      "slug": "w-800"
+    },
+    {
+      "id": "153",
+      "name": "Z 1000",
+      "slug": "z-1000"
+    },
+    {
+      "id": "422",
+      "name": "Z 1100",
+      "slug": "z-1100"
+    },
+    {
+      "id": "421",
+      "name": "Z 1300",
+      "slug": "z-1300"
+    },
+    {
+      "id": "426",
+      "name": "Z 200",
+      "slug": "z-200"
+    },
+    {
+      "id": "154",
+      "name": "Z 250",
+      "slug": "z-250"
+    },
+    {
+      "id": "1071",
+      "name": "Z 300",
+      "slug": "z-300"
+    },
+    {
+      "id": "425",
+      "name": "Z 400",
+      "slug": "z-400"
+    },
+    {
+      "name": "Z 650",
+      "slug": "z-650",
+      "id": "424"
+    },
+    {
+      "id": "155",
+      "name": "Z 800",
+      "slug": "z-800"
+    },
+    {
+      "id": "423",
+      "name": "Z 900",
+      "slug": "z-900"
+    },
+    {
+      "slug": "z1",
+      "id": "427",
+      "name": "Z1"
+    },
+    {
+      "id": "707",
+      "name": "Z1000SX",
+      "slug": "z1000sx"
+    },
+    {
+      "id": "428",
+      "name": "Z125 Pro",
+      "slug": "z125-pro"
+    },
+    {
+      "id": "772",
+      "name": "Z125 PRO SE",
+      "slug": "z125-pro-se"
+    },
+    {
+      "id": "429",
+      "name": "Z1R",
+      "slug": "z1r"
+    },
+    {
+      "id": "495",
+      "name": "Z250SL",
+      "slug": "z250sl"
+    },
+    {
+      "slug": "z300",
+      "id": "430",
+      "name": "Z300"
+    },
+    {
+      "id": "1277",
+      "name": "Z500",
+      "slug": "z500"
+    },
+    {
+      "name": "Z500 SE",
+      "slug": "z500-se",
+      "id": "1278"
+    },
+    {
+      "id": "431",
+      "name": "Z750",
+      "slug": "z750"
+    },
+    {
+      "id": "432",
+      "name": "Z750R",
+      "slug": "z750r"
+    },
+    {
+      "id": "673",
+      "name": "Z900 RS",
+      "slug": "z900-rs"
+    },
+    {
+      "name": "Z250 ABS",
+      "slug": "z250-abs",
+      "id": "1027"
+    },
+    {
+      "name": "Z900 ABS",
+      "slug": "z900-abs",
+      "id": "1140"
+    },
+    {
+      "id": "773",
+      "name": "Z900 ABS SE",
+      "slug": "z900-abs-se"
+    },
+    {
+      "id": "975",
+      "name": "Z1000 R Edition",
+      "slug": "z1000-r-edition"
+    },
+    {
+      "slug": "zephyr",
+      "id": "433",
+      "name": "Zephyr"
+    },
+    {
+      "name": "Z H2 SE",
+      "slug": "z-h2-se",
+      "id": "1139"
+    },
+    {
+      "slug": "zg-1200",
+      "id": "434",
+      "name": "ZG 1200"
+    },
+    {
+      "slug": "zg-1300",
+      "id": "435",
+      "name": "ZG 1300"
+    },
+    {
+      "id": "436",
+      "name": "ZR",
+      "slug": "zr"
+    },
+    {
+      "id": "437",
+      "name": "ZRX1100",
+      "slug": "zrx1100"
+    },
+    {
+      "id": "438",
+      "name": "ZRX1200",
+      "slug": "zrx1200"
+    },
+    {
+      "id": "439",
+      "name": "ZX-R",
+      "slug": "zx-r"
+    },
+    {
+      "name": "ZX140",
+      "slug": "zx140",
+      "id": "880"
+    },
+    {
+      "id": "878",
+      "name": "ZX1400",
+      "slug": "zx1400"
+    },
+    {
+      "id": "862",
+      "name": "ZZR 250",
+      "slug": "zzr-250"
+    }
+  ],
+  "kayo": [
+    {
+      "id": "1090",
+      "name": "TT140",
+      "slug": "tt140"
+    }
+  ],
+  "keeway": [
+    {
+      "id": "753",
+      "name": "Brixton 150i",
+      "slug": "brixton-150i"
+    },
+    {
+      "id": "1315",
+      "name": "BX200i",
+      "slug": "bx200i"
+    },
+    {
+      "id": "1316",
+      "name": "BX200i SE",
+      "slug": "bx200i-se"
+    },
+    {
+      "id": "752",
+      "name": "Caferacer 152",
+      "slug": "caferacer-152"
+    },
+    {
+      "id": "156",
+      "name": "Dorado 250",
+      "slug": "dorado-250"
+    },
+    {
+      "id": "157",
+      "name": "Dorado Black Knight 250",
+      "slug": "dorado-black-knight-250"
+    },
+    {
+      "id": "788",
+      "name": "K-Light 202",
+      "slug": "k-light-202"
+    },
+    {
+      "name": "Patagonian Eagle 250",
+      "slug": "patagonian-eagle-250",
+      "id": "789"
+    },
+    {
+      "id": "1317",
+      "name": "RKR250",
+      "slug": "rkr250"
+    },
+    {
+      "id": "158",
+      "name": "RKV 200G",
+      "slug": "rkv-200g"
+    },
+    {
+      "slug": "sixties-250",
+      "id": "1182",
+      "name": "SIXTIES 250"
+    },
+    {
+      "id": "720",
+      "name": "TX 200",
+      "slug": "tx-200"
+    },
+    {
+      "id": "159",
+      "name": "TX 200G",
+      "slug": "tx-200g"
+    },
+    {
+      "slug": "xdv-180-evo",
+      "id": "1287",
+      "name": "XDV 180 EVO"
+    }
+  ],
+  "kove": [
+    {
+      "id": "1325",
+      "name": "450 Rally",
+      "slug": "450-rally"
+    },
+    {
+      "id": "1323",
+      "name": "450R",
+      "slug": "450r"
+    },
+    {
+      "id": "1324",
+      "name": "800X GT",
+      "slug": "800x-gt"
+    }
+  ],
+  "ktm": [
+    {
+      "id": "160",
+      "name": "1050 Adventure",
+      "slug": "1050-adventure"
+    },
+    {
+      "id": "161",
+      "name": "1190 Adventure",
+      "slug": "1190-adventure"
+    },
+    {
+      "id": "162",
+      "name": "1190 Adventure R",
+      "slug": "1190-adventure-r"
+    },
+    {
+      "id": "455",
+      "name": "1190 RC8",
+      "slug": "1190-rc8"
+    },
+    {
+      "id": "163",
+      "name": "125 EXC",
+      "slug": "125-exc"
+    },
+    {
+      "id": "164",
+      "name": "125 EXC Six Days",
+      "slug": "125-exc-six-days"
+    },
+    {
+      "id": "165",
+      "name": "125 SX",
+      "slug": "125-sx"
+    },
+    {
+      "id": "166",
+      "name": "1290 Super Adventure",
+      "slug": "1290-super-adventure"
+    },
+    {
+      "slug": "1290-super-adventure-s",
+      "id": "1057",
+      "name": "1290 Super Adventure S"
+    },
+    {
+      "id": "167",
+      "name": "1290 Super Duke GT",
+      "slug": "1290-super-duke-gt"
+    },
+    {
+      "id": "168",
+      "name": "1290 Super Duke R",
+      "slug": "1290-super-duke-r"
+    },
+    {
+      "id": "169",
+      "name": "1290 Super Duke R Special Edition",
+      "slug": "1290-super-duke-r-special-edition"
+    },
+    {
+      "name": "150 SX",
+      "slug": "150-sx",
+      "id": "170"
+    },
+    {
+      "id": "171",
+      "name": "200 Duke",
+      "slug": "200-duke"
+    },
+    {
+      "id": "172",
+      "name": "200 EXC",
+      "slug": "200-exc"
+    },
+    {
+      "name": "250 Adventure",
+      "slug": "250-adventure",
+      "id": "995"
+    },
+    {
+      "slug": "250-duke",
+      "id": "173",
+      "name": "250 Duke"
+    },
+    {
+      "name": "250 EXC",
+      "slug": "250-exc",
+      "id": "174"
+    },
+    {
+      "id": "175",
+      "name": "250 EXC Six Days",
+      "slug": "250-exc-six-days"
+    },
+    {
+      "id": "955",
+      "name": "250 EXC TPI",
+      "slug": "250-exc-tpi"
+    },
+    {
+      "id": "956",
+      "name": "250 EXC TPI Six Days",
+      "slug": "250-exc-tpi-six-days"
+    },
+    {
+      "id": "176",
+      "name": "250 EXC-F",
+      "slug": "250-exc-f"
+    },
+    {
+      "id": "177",
+      "name": "250 EXC-F Six Days",
+      "slug": "250-exc-f-six-days"
+    },
+    {
+      "id": "178",
+      "name": "250 SX",
+      "slug": "250-sx"
+    },
+    {
+      "id": "960",
+      "name": "250 SX-F",
+      "slug": "250-sx-f"
+    },
+    {
+      "id": "994",
+      "name": "250 SX-F Troy Lee Design",
+      "slug": "250-sx-f-troy-lee-design"
+    },
+    {
+      "id": "179",
+      "name": "300 EXC",
+      "slug": "300-exc"
+    },
+    {
+      "id": "180",
+      "name": "300 EXC Six Days",
+      "slug": "300-exc-six-days"
+    },
+    {
+      "id": "957",
+      "name": "300 EXC TPI",
+      "slug": "300-exc-tpi"
+    },
+    {
+      "slug": "300-exc-tpi-erzberg-rodeo",
+      "id": "959",
+      "name": "300 EXC TPI Erzberg Rodeo"
+    },
+    {
+      "id": "958",
+      "name": "300 EXC TPI Six Days",
+      "slug": "300-exc-tpi-six-days"
+    },
+    {
+      "id": "1110",
+      "name": "250 XC",
+      "slug": "250-xc"
+    },
+    {
+      "id": "1112",
+      "name": "250 XC F",
+      "slug": "250-xc-f"
+    },
+    {
+      "id": "1114",
+      "name": "450 XC F",
+      "slug": "450-xc-f"
+    },
+    {
+      "id": "1047",
+      "name": "300 XC TPI",
+      "slug": "300-xc-tpi"
+    },
+    {
+      "id": "1111",
+      "name": "250 XC W",
+      "slug": "250-xc-w"
+    },
+    {
+      "id": "1048",
+      "name": "300 XC-W TPI",
+      "slug": "300-xc-w-tpi"
+    },
+    {
+      "id": "181",
+      "name": "350 EXC-F",
+      "slug": "350-exc-f"
+    },
+    {
+      "id": "954",
+      "name": "350 EXC-F Wess",
+      "slug": "350-exc-f-wess"
+    },
+    {
+      "id": "182",
+      "name": "350 EXC-F Six Days",
+      "slug": "350-exc-f-six-days"
+    },
+    {
+      "id": "183",
+      "name": "350 SX-F",
+      "slug": "350-sx-f"
+    },
+    {
+      "id": "1049",
+      "name": "350 SX-F",
+      "slug": "350-sx-f"
+    },
+    {
+      "id": "996",
+      "name": "390 Adventure",
+      "slug": "390-adventure"
+    },
+    {
+      "slug": "390-duke",
+      "id": "184",
+      "name": "390 Duke"
+    },
+    {
+      "id": "1128",
+      "name": "450 EXC",
+      "slug": "450-exc"
+    },
+    {
+      "id": "185",
+      "name": "450 EXC",
+      "slug": "450-exc"
+    },
+    {
+      "slug": "450-exc-six-days",
+      "id": "186",
+      "name": "450 EXC Six Days"
+    },
+    {
+      "id": "1051",
+      "name": "450 EXC F",
+      "slug": "450-exc-f"
+    },
+    {
+      "id": "1052",
+      "name": "450 EXC F Six Days",
+      "slug": "450-exc-f-six-days"
+    },
+    {
+      "slug": "450-smr",
+      "id": "1050",
+      "name": "450 SMR"
+    },
+    {
+      "id": "187",
+      "name": "450 SX-F",
+      "slug": "450-sx-f"
+    },
+    {
+      "id": "188",
+      "name": "50 SX",
+      "slug": "50-sx"
+    },
+    {
+      "id": "189",
+      "name": "500 EXC",
+      "slug": "500-exc"
+    },
+    {
+      "slug": "500-exc-six-days",
+      "id": "190",
+      "name": "500 EXC Six Days"
+    },
+    {
+      "id": "1053",
+      "name": "500 EXC F",
+      "slug": "500-exc-f"
+    },
+    {
+      "id": "953",
+      "name": "500 EXC-F Six days",
+      "slug": "500-exc-f-six-days"
+    },
+    {
+      "id": "1055",
+      "name": "530 EXC-R",
+      "slug": "530-exc-r"
+    },
+    {
+      "id": "650",
+      "name": "640 Adventure",
+      "slug": "640-adventure"
+    },
+    {
+      "id": "191",
+      "name": "65 SX",
+      "slug": "65-sx"
+    },
+    {
+      "id": "192",
+      "name": "690 Duke",
+      "slug": "690-duke"
+    },
+    {
+      "id": "193",
+      "name": "690 Duke R",
+      "slug": "690-duke-r"
+    },
+    {
+      "name": "690 Enduro R",
+      "slug": "690-enduro-r",
+      "id": "194"
+    },
+    {
+      "id": "195",
+      "name": "690 SMC R",
+      "slug": "690-smc-r"
+    },
+    {
+      "id": "1014",
+      "name": "790 Adventure",
+      "slug": "790-adventure"
+    },
+    {
+      "id": "951",
+      "name": "790 Adventure S",
+      "slug": "790-adventure-s"
+    },
+    {
+      "id": "952",
+      "name": "790 Adventure R",
+      "slug": "790-adventure-r"
+    },
+    {
+      "id": "708",
+      "name": "790 Duke",
+      "slug": "790-duke"
+    },
+    {
+      "slug": "890-duke",
+      "id": "950",
+      "name": "890 Duke"
+    },
+    {
+      "id": "1105",
+      "name": "890 Duke R",
+      "slug": "890-duke-r"
+    },
+    {
+      "slug": "890-adventure",
+      "id": "1106",
+      "name": "890 Adventure"
+    },
+    {
+      "name": "85 SX",
+      "slug": "85-sx",
+      "id": "196"
+    },
+    {
+      "id": "332",
+      "name": "950",
+      "slug": "950"
+    },
+    {
+      "id": "333",
+      "name": "990",
+      "slug": "990"
+    },
+    {
+      "id": "1265",
+      "name": "BRABUS 1300 R Edition 23",
+      "slug": "brabus-1300-r-edition-23"
+    },
+    {
+      "id": "1214",
+      "name": "EXC 150 TPI",
+      "slug": "exc-150-tpi"
+    },
+    {
+      "id": "197",
+      "name": "Freeride 250 R",
+      "slug": "freeride-250-r"
+    },
+    {
+      "id": "198",
+      "name": "Freeride 350",
+      "slug": "freeride-350"
+    },
+    {
+      "id": "199",
+      "name": "RC 200",
+      "slug": "rc-200"
+    },
+    {
+      "id": "627",
+      "name": "RC 250",
+      "slug": "rc-250"
+    },
+    {
+      "id": "200",
+      "name": "RC 390",
+      "slug": "rc-390"
+    },
+    {
+      "name": "SXF350",
+      "slug": "sxf350",
+      "id": "977"
+    },
+    {
+      "id": "978",
+      "name": "SXF450 FACTORY EDITION",
+      "slug": "sxf450-factory-edition"
+    },
+    {
+      "id": "976",
+      "name": "XC300TPI",
+      "slug": "xc300tpi"
+    }
+  ],
+  "ktns": [
+    {
+      "id": "750",
+      "name": "150",
+      "slug": "150"
+    },
+    {
+      "id": "394",
+      "name": "200 Scrambler",
+      "slug": "200-scrambler"
+    },
+    {
+      "id": "395",
+      "name": "200S Supermotard",
+      "slug": "200s-supermotard"
+    },
+    {
+      "id": "949",
+      "name": "650MT",
+      "slug": "650mt"
+    },
+    {
+      "id": "801",
+      "name": "CFMOTO 250NK(SE)",
+      "slug": "cfmoto-250nk-se"
+    },
+    {
+      "id": "800",
+      "name": "CFMOTO 250NK(STD)",
+      "slug": "cfmoto-250nk-std"
+    },
+    {
+      "id": "396",
+      "name": "GP 125",
+      "slug": "gp-125"
+    },
+    {
+      "id": "647",
+      "name": "GP 250",
+      "slug": "gp-250"
+    },
+    {
+      "id": "875",
+      "name": "NK250",
+      "slug": "nk250"
+    },
+    {
+      "slug": "ra2",
+      "id": "1107",
+      "name": "RA2"
+    },
+    {
+      "id": "897",
+      "name": "RHINO 125",
+      "slug": "rhino-125"
+    },
+    {
+      "id": "397",
+      "name": "RS3",
+      "slug": "rs3"
+    },
+    {
+      "id": "398",
+      "name": "RS3-SE",
+      "slug": "rs3-se"
+    },
+    {
+      "id": "399",
+      "name": "Z One S 200",
+      "slug": "z-one-s-200"
+    },
+    {
+      "id": "400",
+      "name": "Z One S 200R",
+      "slug": "z-one-s-200r"
+    }
+  ],
+  "kymco": [
+    {
+      "id": "1175",
+      "name": "AK 550",
+      "slug": "ak-550"
+    },
+    {
+      "id": "1169",
+      "name": "AK 660",
+      "slug": "ak-660"
+    },
+    {
+      "id": "703",
+      "name": "Bet and Win 150",
+      "slug": "bet-and-win-150"
+    },
+    {
+      "id": "704",
+      "name": "Bet and Win 250",
+      "slug": "bet-and-win-250"
+    },
+    {
+      "id": "702",
+      "name": "Bet and Win 50",
+      "slug": "bet-and-win-50"
+    },
+    {
+      "id": "201",
+      "name": "Downtown 200i",
+      "slug": "downtown-200i"
+    },
+    {
+      "name": "Downtown 250i",
+      "slug": "downtown-250i",
+      "id": "559"
+    },
+    {
+      "id": "1275",
+      "name": "DTX 250",
+      "slug": "dtx-250"
+    },
+    {
+      "id": "202",
+      "name": "K Pipe 125",
+      "slug": "k-pipe-125"
+    },
+    {
+      "id": "203",
+      "name": "K Xct 300i",
+      "slug": "k-xct-300i"
+    },
+    {
+      "slug": "like-150",
+      "id": "204",
+      "name": "Like 150"
+    },
+    {
+      "id": "545",
+      "name": "Venox",
+      "slug": "venox"
+    },
+    {
+      "id": "205",
+      "name": "Xciting-400i",
+      "slug": "xciting-400i"
+    }
+  ],
+  "lambretta": [
+    {
+      "id": "894",
+      "name": "Series 1",
+      "slug": "series-1"
+    },
+    {
+      "id": "895",
+      "name": "Series 2",
+      "slug": "series-2"
+    },
+    {
+      "id": "896",
+      "name": "Series 3",
+      "slug": "series-3"
+    },
+    {
+      "id": "1176",
+      "name": "G350",
+      "slug": "g350"
+    },
+    {
+      "name": "X250",
+      "slug": "x250",
+      "id": "1177"
+    }
+  ],
+  "laverda": [
+    {
+      "id": "817",
+      "name": "Ghost Strike 668",
+      "slug": "ghost-strike-668"
+    }
+  ],
+  "lima": [
+    {
+      "id": "810",
+      "name": "Kpop",
+      "slug": "kpop"
+    },
+    {
+      "slug": "lightning",
+      "id": "809",
+      "name": "Lightning"
+    },
+    {
+      "id": "811",
+      "name": "Lima 2.0",
+      "slug": "lima-2-0"
+    },
+    {
+      "name": "Mele",
+      "slug": "mele",
+      "id": "882"
+    },
+    {
+      "id": "888",
+      "name": "Mika",
+      "slug": "mika"
+    },
+    {
+      "id": "812",
+      "name": "Mio",
+      "slug": "mio"
+    }
+  ],
+  "lytron": [
+    {
+      "id": "1332",
+      "name": "LE-01",
+      "slug": "le-01"
+    },
+    {
+      "name": "LE-01 LITE",
+      "slug": "le-01-lite",
+      "id": "1333"
+    }
+  ],
+  "mbp": [
+    {
+      "id": "1191",
+      "name": "C1002V",
+      "slug": "c1002v"
+    },
+    {
+      "id": "1192",
+      "name": "M502N",
+      "slug": "m502n"
+    }
+  ],
+  "mbp-morbidelli": [
+    {
+      "slug": "f252",
+      "id": "1310",
+      "name": "F252"
+    },
+    {
+      "name": "T1002VX",
+      "slug": "t1002vx",
+      "id": "1247"
+    },
+    {
+      "id": "1311",
+      "name": "T250X SE",
+      "slug": "t250x-se"
+    },
+    {
+      "id": "1312",
+      "name": "T250X STD",
+      "slug": "t250x-std"
+    },
+    {
+      "id": "1313",
+      "name": "T252X",
+      "slug": "t252x"
+    },
+    {
+      "id": "1314",
+      "name": "T502X",
+      "slug": "t502x"
+    }
+  ],
+  "mle": [
+    {
+      "id": "857",
+      "name": "XTM 200",
+      "slug": "xtm-200"
+    }
+  ],
+  "moda": [
+    {
+      "id": "1326",
+      "name": "Aero E",
+      "slug": "aero-e"
+    },
+    {
+      "name": "Moca 110",
+      "slug": "moca-110",
+      "id": "1322"
+    },
+    {
+      "id": "1253",
+      "name": "Sporter S",
+      "slug": "sporter-s"
+    },
+    {
+      "id": "1292",
+      "name": "Shifter 400X",
+      "slug": "shifter-400x"
+    }
+  ],
+  "modenas": [
+    {
+      "id": "206",
+      "name": "118 EFi",
+      "slug": "118-efi"
+    },
+    {
+      "id": "207",
+      "name": "Ace 115",
+      "slug": "ace-115"
+    },
+    {
+      "id": "211",
+      "name": "Ceria 100",
+      "slug": "ceria-100"
+    },
+    {
+      "slug": "ct-110",
+      "id": "208",
+      "name": "CT 110"
+    },
+    {
+      "id": "209",
+      "name": "CT 115S",
+      "slug": "ct-115s"
+    },
+    {
+      "id": "210",
+      "name": "CT100",
+      "slug": "ct100"
+    },
+    {
+      "id": "212",
+      "name": "Ctric",
+      "slug": "ctric"
+    },
+    {
+      "id": "213",
+      "name": "Dinamik",
+      "slug": "dinamik"
+    },
+    {
+      "id": "1154",
+      "name": "Dominar D250",
+      "slug": "dominar-d250"
+    },
+    {
+      "id": "676",
+      "name": "Dominar D400",
+      "slug": "dominar-d400"
+    },
+    {
+      "id": "214",
+      "name": "Elegan",
+      "slug": "elegan"
+    },
+    {
+      "id": "215",
+      "name": "Elegan 200",
+      "slug": "elegan-200"
+    },
+    {
+      "id": "742",
+      "name": "Elegan 250",
+      "slug": "elegan-250"
+    },
+    {
+      "slug": "elit-125",
+      "id": "216",
+      "name": "Elit 125"
+    },
+    {
+      "id": "217",
+      "name": "Elit 150",
+      "slug": "elit-150"
+    },
+    {
+      "id": "218",
+      "name": "Elit Sports",
+      "slug": "elit-sports"
+    },
+    {
+      "id": "219",
+      "name": "GT128",
+      "slug": "gt128"
+    },
+    {
+      "id": "220",
+      "name": "Jaguh",
+      "slug": "jaguh"
+    },
+    {
+      "slug": "karisma-125",
+      "id": "221",
+      "name": "Karisma 125"
+    },
+    {
+      "id": "1015",
+      "name": "Kriss AN110E",
+      "slug": "kriss-an110e"
+    },
+    {
+      "id": "222",
+      "name": "Kriss 100",
+      "slug": "kriss-100"
+    },
+    {
+      "id": "223",
+      "name": "Kriss 110",
+      "slug": "kriss-110"
+    },
+    {
+      "id": "224",
+      "name": "Kriss 120",
+      "slug": "kriss-120"
+    },
+    {
+      "id": "1256",
+      "name": "Kriss 125 Fi",
+      "slug": "kriss-125-fi"
+    },
+    {
+      "slug": "kriss-i",
+      "id": "225",
+      "name": "Kriss I"
+    },
+    {
+      "id": "226",
+      "name": "Kriss II",
+      "slug": "kriss-ii"
+    },
+    {
+      "id": "227",
+      "name": "Kriss MR1",
+      "slug": "kriss-mr1"
+    },
+    {
+      "id": "620",
+      "name": "Kriss MR2",
+      "slug": "kriss-mr2"
+    },
+    {
+      "id": "981",
+      "name": "Kriss MR3",
+      "slug": "kriss-mr3"
+    },
+    {
+      "slug": "kristar",
+      "id": "228",
+      "name": "Kristar"
+    },
+    {
+      "name": "MR1 Sport",
+      "slug": "mr1-sport",
+      "id": "229"
+    },
+    {
+      "slug": "passion-125",
+      "id": "230",
+      "name": "Passion 125"
+    },
+    {
+      "id": "1219",
+      "name": "Perintis 120s classic",
+      "slug": "perintis-120s-classic"
+    },
+    {
+      "name": "Pulsar NS160",
+      "slug": "pulsar-ns160",
+      "id": "900"
+    },
+    {
+      "slug": "pulsar-ns200",
+      "id": "569",
+      "name": "Pulsar NS200"
+    },
+    {
+      "id": "568",
+      "name": "Pulsar RS200",
+      "slug": "pulsar-rs200"
+    },
+    {
+      "id": "1072",
+      "name": "SN150F-BIMY",
+      "slug": "sn150f-bimy"
+    },
+    {
+      "id": "606",
+      "name": "V15",
+      "slug": "v15"
+    },
+    {
+      "id": "231",
+      "name": "X-Cite 130",
+      "slug": "x-cite-130"
+    },
+    {
+      "id": "1304",
+      "name": "Z15GT",
+      "slug": "z15gt"
+    },
+    {
+      "name": "ZX-25R SE",
+      "slug": "zx-25r-se",
+      "id": "1197"
+    }
+  ],
+  "momos": [
+    {
+      "id": "508",
+      "name": "Bobber",
+      "slug": "bobber"
+    },
+    {
+      "name": "Boxer",
+      "slug": "boxer",
+      "id": "505"
+    },
+    {
+      "id": "866",
+      "name": "Daytona 250 Cafe Racer",
+      "slug": "daytona-250-cafe-racer"
+    },
+    {
+      "slug": "daytona-250xl",
+      "id": "762",
+      "name": "Daytona 250XL"
+    },
+    {
+      "id": "506",
+      "name": "Forza",
+      "slug": "forza"
+    },
+    {
+      "id": "507",
+      "name": "Madass",
+      "slug": "madass"
+    },
+    {
+      "id": "504",
+      "name": "Pantera",
+      "slug": "pantera"
+    },
+    {
+      "id": "487",
+      "name": "Tigris",
+      "slug": "tigris"
+    }
+  ],
+  "moto-guzzi": [
+    {
+      "id": "465",
+      "name": "Audace",
+      "slug": "audace"
+    },
+    {
+      "id": "466",
+      "name": "California 1400",
+      "slug": "california-1400"
+    },
+    {
+      "id": "467",
+      "name": "Eldorado",
+      "slug": "eldorado"
+    },
+    {
+      "id": "468",
+      "name": "Griso 8V SE",
+      "slug": "griso-8v-se"
+    },
+    {
+      "id": "469",
+      "name": "MGX-21",
+      "slug": "mgx-21"
+    },
+    {
+      "id": "470",
+      "name": "Norge GT 8",
+      "slug": "norge-gt-8"
+    },
+    {
+      "id": "471",
+      "name": "Stelvio 1200 NTX",
+      "slug": "stelvio-1200-ntx"
+    },
+    {
+      "name": "V11 Le Mans Rosso Corsa",
+      "slug": "v11-le-mans-rosso-corsa",
+      "id": "735"
+    },
+    {
+      "name": "V7",
+      "slug": "v7",
+      "id": "472"
+    },
+    {
+      "slug": "v9",
+      "id": "473",
+      "name": "V9"
+    }
+  ],
+  "moto-morini": [
+    {
+      "id": "1351",
+      "name": "ALLTRHIKE 450",
+      "slug": "alltrhike-450"
+    },
+    {
+      "slug": "calibro-700",
+      "id": "1227",
+      "name": "CALIBRO 700"
+    },
+    {
+      "id": "1186",
+      "name": "SEIEMMEZZO 650 SCR",
+      "slug": "seiemmezzo-650-scr"
+    },
+    {
+      "id": "1098",
+      "name": "X-CAPE 650",
+      "slug": "x-cape-650"
+    },
+    {
+      "slug": "x-cape-650-x",
+      "id": "1099",
+      "name": "X-CAPE 650 X"
+    },
+    {
+      "id": "1344",
+      "name": "X-CAPE 700",
+      "slug": "x-cape-700"
+    },
+    {
+      "id": "1345",
+      "name": "X-CAPE 1200",
+      "slug": "x-cape-1200"
+    }
+  ],
+  "mv-agusta": [
+    {
+      "id": "356",
+      "name": "BRUTALE",
+      "slug": "brutale"
+    },
+    {
+      "id": "355",
+      "name": "F3",
+      "slug": "f3"
+    },
+    {
+      "id": "354",
+      "name": "F4",
+      "slug": "f4"
+    },
+    {
+      "id": "357",
+      "name": "RIVALE",
+      "slug": "rivale"
+    },
+    {
+      "id": "358",
+      "name": "STRADALE",
+      "slug": "stradale"
+    },
+    {
+      "slug": "turismo",
+      "id": "359",
+      "name": "TURISMO"
+    }
+  ],
+  "mz": [
+    {
+      "id": "575",
+      "name": "Moskito",
+      "slug": "moskito"
+    },
+    {
+      "id": "794",
+      "name": "SM 125",
+      "slug": "sm-125"
+    }
+  ],
+  "naza": [
+    {
+      "slug": "125",
+      "id": "526",
+      "name": "125"
+    },
+    {
+      "id": "321",
+      "name": "Blade",
+      "slug": "blade"
+    },
+    {
+      "id": "380",
+      "name": "Blade Naked",
+      "slug": "blade-naked"
+    },
+    {
+      "name": "Blitz 150",
+      "slug": "blitz-150",
+      "id": "1017"
+    },
+    {
+      "id": "378",
+      "name": "Cruise",
+      "slug": "cruise"
+    },
+    {
+      "name": "Flash",
+      "slug": "flash",
+      "id": "379"
+    },
+    {
+      "slug": "gtr",
+      "id": "376",
+      "name": "GTR"
+    },
+    {
+      "id": "536",
+      "name": "N5",
+      "slug": "n5"
+    },
+    {
+      "id": "375",
+      "name": "N5R",
+      "slug": "n5r"
+    },
+    {
+      "id": "377",
+      "name": "Symphony",
+      "slug": "symphony"
+    }
+  ],
+  "nimota": [
+    {
+      "id": "503",
+      "name": "CK9",
+      "slug": "ck9"
+    },
+    {
+      "id": "653",
+      "name": "Evomatic",
+      "slug": "evomatic"
+    },
+    {
+      "id": "634",
+      "name": "LC125",
+      "slug": "lc125"
+    },
+    {
+      "id": "522",
+      "name": "Ranger",
+      "slug": "ranger"
+    }
+  ],
+  "nitro": [
+    {
+      "slug": "nb150x-ranger",
+      "id": "879",
+      "name": "NB150X Ranger"
+    },
+    {
+      "id": "898",
+      "name": "NE150 WINSTAR",
+      "slug": "ne150-winstar"
+    },
+    {
+      "id": "869",
+      "name": "NU 110 Power",
+      "slug": "nu-110-power"
+    }
+  ],
+  "norton": [
+    {
+      "id": "537",
+      "name": "Commando",
+      "slug": "commando"
+    }
+  ],
+  "ottimo": [
+    {
+      "id": "903",
+      "name": "VIZ110",
+      "slug": "viz110"
+    }
+  ],
+  "petronas": [
+    {
+      "id": "868",
+      "name": "FP1",
+      "slug": "fp1"
+    }
+  ],
+  "piaggio": [
+    {
+      "id": "232",
+      "name": "Fly",
+      "slug": "fly"
+    },
+    {
+      "id": "233",
+      "name": "Liberty",
+      "slug": "liberty"
+    },
+    {
+      "id": "576",
+      "name": "Medley S",
+      "slug": "medley-s"
+    },
+    {
+      "id": "388",
+      "name": "VX",
+      "slug": "vx"
+    },
+    {
+      "id": "387",
+      "name": "VXR",
+      "slug": "vxr"
+    },
+    {
+      "id": "260",
+      "name": "X9",
+      "slug": "x9"
+    },
+    {
+      "id": "234",
+      "name": "Xevo",
+      "slug": "xevo"
+    }
+  ],
+  "royal-alloy": [
+    {
+      "id": "1008",
+      "name": "GP 125",
+      "slug": "gp-125"
+    },
+    {
+      "id": "1009",
+      "name": "GP 180",
+      "slug": "gp-180"
+    },
+    {
+      "id": "1352",
+      "name": "GT125S",
+      "slug": "gt125s"
+    },
+    {
+      "id": "1353",
+      "name": "GT160S",
+      "slug": "gt160s"
+    },
+    {
+      "id": "1010",
+      "name": "TG 200",
+      "slug": "tg-200"
+    },
+    {
+      "slug": "tg-250",
+      "id": "1011",
+      "name": "TG 250"
+    }
+  ],
+  "royal-enfield": [
+    {
+      "name": "Classic",
+      "slug": "classic",
+      "id": "512"
+    },
+    {
+      "slug": "classic-500",
+      "id": "987",
+      "name": "Classic 500"
+    },
+    {
+      "slug": "continental-gt-650",
+      "id": "989",
+      "name": "Continental GT 650"
+    },
+    {
+      "id": "988",
+      "name": "Himalayan 410",
+      "slug": "himalayan-410"
+    },
+    {
+      "id": "1204",
+      "name": "Hunter 350",
+      "slug": "hunter-350"
+    },
+    {
+      "id": "990",
+      "name": "Interceptor 650",
+      "slug": "interceptor-650"
+    },
+    {
+      "name": "Interceptor 650 Special",
+      "slug": "interceptor-650-special",
+      "id": "907"
+    },
+    {
+      "id": "1174",
+      "name": "Meteor 350",
+      "slug": "meteor-350"
+    },
+    {
+      "id": "1205",
+      "name": "Shotgun 650",
+      "slug": "shotgun-650"
+    },
+    {
+      "name": "Super Meteor 650",
+      "slug": "super-meteor-650",
+      "id": "1203"
+    },
+    {
+      "id": "513",
+      "name": "Thunderbird",
+      "slug": "thunderbird"
+    }
+  ],
+  "qj-motor": [
+    {
+      "id": "1318",
+      "name": "ATX250",
+      "slug": "atx250"
+    },
+    {
+      "slug": "atx250x",
+      "id": "1319",
+      "name": "ATX250X"
+    },
+    {
+      "id": "1259",
+      "name": "AX200 ABS",
+      "slug": "ax200-abs"
+    },
+    {
+      "id": "1269",
+      "name": "AX200s",
+      "slug": "ax200s"
+    },
+    {
+      "id": "1187",
+      "name": "FORT 350",
+      "slug": "fort-350"
+    },
+    {
+      "id": "1168",
+      "name": "LTR 150",
+      "slug": "ltr-150"
+    },
+    {
+      "id": "1188",
+      "name": "LTR 150 (N1)",
+      "slug": "ltr-150-n1"
+    },
+    {
+      "id": "1218",
+      "name": "SRF15",
+      "slug": "srf15"
+    },
+    {
+      "id": "1115",
+      "name": "SRK250",
+      "slug": "srk250"
+    },
+    {
+      "id": "1320",
+      "name": "SRK250RD",
+      "slug": "srk250rd"
+    },
+    {
+      "id": "1114",
+      "name": "SRK250RR",
+      "slug": "srk250rr"
+    },
+    {
+      "id": "1321",
+      "name": "SRK450R",
+      "slug": "srk450r"
+    },
+    {
+      "id": "1100",
+      "name": "SRK600",
+      "slug": "srk600"
+    },
+    {
+      "id": "1146",
+      "name": "SRK600RC",
+      "slug": "srk600rc"
+    },
+    {
+      "id": "1101",
+      "name": "SRT800",
+      "slug": "srt800"
+    },
+    {
+      "name": "SRT800",
+      "slug": "srt800",
+      "id": "1102"
+    },
+    {
+      "id": "1116",
+      "name": "SRV250",
+      "slug": "srv250"
+    },
+    {
+      "id": "1293",
+      "name": "SRV600V",
+      "slug": "srv600v"
+    },
+    {
+      "slug": "srv-700",
+      "id": "1189",
+      "name": "SRV 700"
+    },
+    {
+      "id": "1190",
+      "name": "SVT 650 X",
+      "slug": "svt-650-x"
+    }
+  ],
+  "scomadi": [
+    {
+      "id": "402",
+      "name": "TL125",
+      "slug": "tl125"
+    },
+    {
+      "id": "403",
+      "name": "TL200",
+      "slug": "tl200"
+    },
+    {
+      "id": "401",
+      "name": "TL50",
+      "slug": "tl50"
+    }
+  ],
+  "sherco": [
+    {
+      "id": "594",
+      "name": "125 SE-R Racing",
+      "slug": "125-se-r-racing"
+    },
+    {
+      "id": "595",
+      "name": "125 ST",
+      "slug": "125-st"
+    },
+    {
+      "id": "596",
+      "name": "125 X-Ride",
+      "slug": "125-x-ride"
+    },
+    {
+      "id": "1248",
+      "name": "250 SE",
+      "slug": "250-se"
+    },
+    {
+      "slug": "250-se-factory",
+      "id": "1231",
+      "name": "250 SE Factory"
+    },
+    {
+      "id": "597",
+      "name": "250 SE-R",
+      "slug": "250-se-r"
+    },
+    {
+      "id": "1249",
+      "name": "250 SEF",
+      "slug": "250-sef"
+    },
+    {
+      "id": "1232",
+      "name": "250 SEF Factory",
+      "slug": "250-sef-factory"
+    },
+    {
+      "id": "598",
+      "name": "250 SEF-R",
+      "slug": "250-sef-r"
+    },
+    {
+      "id": "599",
+      "name": "250 ST",
+      "slug": "250-st"
+    },
+    {
+      "id": "600",
+      "name": "290 X-Ride",
+      "slug": "290-x-ride"
+    },
+    {
+      "id": "854",
+      "name": "300 SC Cross Country",
+      "slug": "300-sc-cross-country"
+    },
+    {
+      "name": "300 SE",
+      "slug": "300-se",
+      "id": "1250"
+    },
+    {
+      "id": "1230",
+      "name": "300 SE Factory",
+      "slug": "300-se-factory"
+    },
+    {
+      "id": "601",
+      "name": "300 SE-R",
+      "slug": "300-se-r"
+    },
+    {
+      "slug": "300-sef",
+      "id": "1251",
+      "name": "300 SEF"
+    },
+    {
+      "id": "1229",
+      "name": "300 SEF Factory",
+      "slug": "300-sef-factory"
+    },
+    {
+      "slug": "300-sef-r",
+      "id": "602",
+      "name": "300 SEF-R"
+    },
+    {
+      "id": "603",
+      "name": "300 ST",
+      "slug": "300-st"
+    },
+    {
+      "id": "604",
+      "name": "450 SEF-R",
+      "slug": "450-sef-r"
+    },
+    {
+      "id": "1252",
+      "name": "500 SEF",
+      "slug": "500-sef"
+    },
+    {
+      "id": "1228",
+      "name": "500 SEF Factory",
+      "slug": "500-sef-factory"
+    },
+    {
+      "id": "590",
+      "name": "50 E-Kid Enduro",
+      "slug": "50-e-kid-enduro"
+    },
+    {
+      "id": "591",
+      "name": "50 E-Kid Trial",
+      "slug": "50-e-kid-trial"
+    },
+    {
+      "name": "50 SE-R",
+      "slug": "50-se-r",
+      "id": "592"
+    },
+    {
+      "id": "593",
+      "name": "50 SM-R",
+      "slug": "50-sm-r"
+    }
+  ],
+  "skyteam": [
+    {
+      "id": "652",
+      "name": "ACE 125",
+      "slug": "ace-125"
+    },
+    {
+      "slug": "bongo-125",
+      "id": "905",
+      "name": "BONGO 125"
+    },
+    {
+      "id": "560",
+      "name": "Lady",
+      "slug": "lady"
+    },
+    {
+      "slug": "pbr110",
+      "id": "651",
+      "name": "PBR110"
+    },
+    {
+      "id": "561",
+      "name": "Skymax",
+      "slug": "skymax"
+    },
+    {
+      "slug": "t-rex-125",
+      "id": "766",
+      "name": "T-Rex 125"
+    },
+    {
+      "id": "562",
+      "name": "Urban",
+      "slug": "urban"
+    },
+    {
+      "id": "563",
+      "name": "Vintage",
+      "slug": "vintage"
+    }
+  ],
+  "sm-sport": [
+    {
+      "slug": "110e",
+      "id": "993",
+      "name": "110E"
+    },
+    {
+      "id": "787",
+      "name": "110R",
+      "slug": "110r"
+    }
+  ],
+  "steyr-daimler": [
+    {
+      "id": "1043",
+      "name": "Puch AG-Graz VS50L",
+      "slug": "puch-ag-graz-vs50l"
+    }
+  ],
+  "superlux": [
+    {
+      "id": "1233",
+      "name": "Bos2000",
+      "slug": "bos2000"
+    },
+    {
+      "id": "1234",
+      "name": "EB1",
+      "slug": "eb1"
+    },
+    {
+      "id": "1236",
+      "name": "Sarkcyber HC200",
+      "slug": "sarkcyber-hc200"
+    },
+    {
+      "id": "1235",
+      "name": "Super Soco CPX",
+      "slug": "super-soco-cpx"
+    }
+  ],
+  "suzuki": [
+    {
+      "id": "235",
+      "name": "Address",
+      "slug": "address"
+    },
+    {
+      "id": "548",
+      "name": "AG100",
+      "slug": "ag100"
+    },
+    {
+      "id": "765",
+      "name": "AN 125",
+      "slug": "an-125"
+    },
+    {
+      "id": "1179",
+      "name": "Avenis 125",
+      "slug": "avenis-125"
+    },
+    {
+      "id": "1180",
+      "name": "Avenis GP Edition",
+      "slug": "avenis-gp-edition"
+    },
+    {
+      "id": "1070",
+      "name": "Bandit",
+      "slug": "bandit"
+    },
+    {
+      "id": "769",
+      "name": "B-King",
+      "slug": "b-king"
+    },
+    {
+      "id": "236",
+      "name": "Belang R150",
+      "slug": "belang-r150"
+    },
+    {
+      "id": "540",
+      "name": "Best",
+      "slug": "best"
+    },
+    {
+      "id": "582",
+      "name": "Burgman 400 ABS",
+      "slug": "burgman-400-abs"
+    },
+    {
+      "id": "1181",
+      "name": "Burgman Street 125EX",
+      "slug": "burgman-street-125ex"
+    },
+    {
+      "id": "683",
+      "name": "Choinori",
+      "slug": "choinori"
+    },
+    {
+      "name": "FanFan",
+      "slug": "fanfan",
+      "id": "705"
+    },
+    {
+      "id": "916",
+      "name": "FR-80",
+      "slug": "fr-80"
+    },
+    {
+      "id": "330",
+      "name": "FX110",
+      "slug": "fx110"
+    },
+    {
+      "id": "566",
+      "name": "FX125",
+      "slug": "fx125"
+    },
+    {
+      "id": "546",
+      "name": "FXR 150",
+      "slug": "fxr-150"
+    },
+    {
+      "id": "567",
+      "name": "GFX750",
+      "slug": "gfx750"
+    },
+    {
+      "id": "1148",
+      "name": "Gixxer 250",
+      "slug": "gixxer-250"
+    },
+    {
+      "id": "1149",
+      "name": "Gixxer SF250",
+      "slug": "gixxer-sf250"
+    },
+    {
+      "id": "1153",
+      "name": "Gixxer SF250 GP Edition",
+      "slug": "gixxer-sf250-gp-edition"
+    },
+    {
+      "id": "242",
+      "name": "Gladius",
+      "slug": "gladius"
+    },
+    {
+      "id": "541",
+      "name": "GS1000 G",
+      "slug": "gs1000-g"
+    },
+    {
+      "id": "628",
+      "name": "GS550",
+      "slug": "gs550"
+    },
+    {
+      "id": "237",
+      "name": "GSR-750",
+      "slug": "gsr-750"
+    },
+    {
+      "id": "1143",
+      "name": "GSX-8S",
+      "slug": "gsx-8s"
+    },
+    {
+      "id": "922",
+      "name": "GSX 250",
+      "slug": "gsx-250"
+    },
+    {
+      "id": "238",
+      "name": "GSX 1250",
+      "slug": "gsx-1250"
+    },
+    {
+      "id": "669",
+      "name": "GSX 650F",
+      "slug": "gsx-650f"
+    },
+    {
+      "id": "239",
+      "name": "GSX S1000",
+      "slug": "gsx-s1000"
+    },
+    {
+      "id": "240",
+      "name": "GSX S1000 F",
+      "slug": "gsx-s1000-f"
+    },
+    {
+      "id": "1091",
+      "name": "GSX-R 150",
+      "slug": "gsx-r-150"
+    },
+    {
+      "id": "538",
+      "name": "GSX-R 600",
+      "slug": "gsx-r-600"
+    },
+    {
+      "id": "1069",
+      "name": "GSX-R 750",
+      "slug": "gsx-r-750"
+    },
+    {
+      "slug": "gsx-r-1000",
+      "id": "241",
+      "name": "GSX-R 1000"
+    },
+    {
+      "slug": "gsx-r1000-r",
+      "id": "584",
+      "name": "GSX-R1000 R"
+    },
+    {
+      "id": "1092",
+      "name": "GSX-S 150",
+      "slug": "gsx-s-150"
+    },
+    {
+      "id": "583",
+      "name": "GSX-S 750",
+      "slug": "gsx-s-750"
+    },
+    {
+      "id": "1016",
+      "name": "GT100",
+      "slug": "gt100"
+    },
+    {
+      "id": "1007",
+      "name": "GT250",
+      "slug": "gt250"
+    },
+    {
+      "id": "243",
+      "name": "Hayabusa",
+      "slug": "hayabusa"
+    },
+    {
+      "slug": "intruder",
+      "id": "320",
+      "name": "Intruder"
+    },
+    {
+      "id": "870",
+      "name": "Katana",
+      "slug": "katana"
+    },
+    {
+      "id": "244",
+      "name": "Nex",
+      "slug": "nex"
+    },
+    {
+      "id": "547",
+      "name": "Nex",
+      "slug": "nex"
+    },
+    {
+      "id": "502",
+      "name": "Panther TXR 150",
+      "slug": "panther-txr-150"
+    },
+    {
+      "slug": "raider-fu150",
+      "id": "1094",
+      "name": "Raider FU150"
+    },
+    {
+      "id": "1093",
+      "name": "Raider R150",
+      "slug": "raider-r150"
+    },
+    {
+      "id": "1095",
+      "name": "Raider R150 FI",
+      "slug": "raider-r150-fi"
+    },
+    {
+      "id": "733",
+      "name": "RC100",
+      "slug": "rc100"
+    },
+    {
+      "id": "521",
+      "name": "RC80",
+      "slug": "rc80"
+    },
+    {
+      "slug": "rg-sport",
+      "id": "578",
+      "name": "RG Sport"
+    },
+    {
+      "id": "696",
+      "name": "RG250",
+      "slug": "rg250"
+    },
+    {
+      "id": "697",
+      "name": "RG250 Gamma Walter Wolf",
+      "slug": "rg250-gamma-walter-wolf"
+    },
+    {
+      "id": "304",
+      "name": "RGV",
+      "slug": "rgv"
+    },
+    {
+      "id": "1127",
+      "name": "RM125",
+      "slug": "rm125"
+    },
+    {
+      "id": "554",
+      "name": "RM-Z450",
+      "slug": "rm-z450"
+    },
+    {
+      "id": "539",
+      "name": "RR Sport",
+      "slug": "rr-sport"
+    },
+    {
+      "id": "865",
+      "name": "RU110",
+      "slug": "ru110"
+    },
+    {
+      "id": "962",
+      "name": "RV 90 VAN VAN",
+      "slug": "rv-90-van-van"
+    },
+    {
+      "id": "245",
+      "name": "Shogun Axelo",
+      "slug": "shogun-axelo"
+    },
+    {
+      "id": "813",
+      "name": "Shogun RR",
+      "slug": "shogun-rr"
+    },
+    {
+      "id": "557",
+      "name": "Shogun SP",
+      "slug": "shogun-sp"
+    },
+    {
+      "name": "Skydrive",
+      "slug": "skydrive",
+      "id": "246"
+    },
+    {
+      "id": "908",
+      "name": "Skywave 650",
+      "slug": "skywave-650"
+    },
+    {
+      "id": "247",
+      "name": "Smash",
+      "slug": "smash"
+    },
+    {
+      "name": "Smash Revo",
+      "slug": "smash-revo",
+      "id": "248"
+    },
+    {
+      "id": "249",
+      "name": "Step125",
+      "slug": "step125"
+    },
+    {
+      "name": "SV 1000",
+      "slug": "sv-1000",
+      "id": "796"
+    },
+    {
+      "id": "585",
+      "name": "SV 650 ABS",
+      "slug": "sv-650-abs"
+    },
+    {
+      "id": "830",
+      "name": "SV 650 S",
+      "slug": "sv-650-s"
+    },
+    {
+      "id": "738",
+      "name": "SV 650 XA",
+      "slug": "sv-650-xa"
+    },
+    {
+      "id": "1037",
+      "name": "T500",
+      "slug": "t500"
+    },
+    {
+      "id": "718",
+      "name": "TRS",
+      "slug": "trs"
+    },
+    {
+      "slug": "ts250",
+      "id": "648",
+      "name": "TS250"
+    },
+    {
+      "slug": "txr-150",
+      "id": "795",
+      "name": "TXR 150"
+    },
+    {
+      "id": "251",
+      "name": "V-Strom 650",
+      "slug": "v-strom-650"
+    },
+    {
+      "id": "1276",
+      "name": "V-Strom 800",
+      "slug": "v-strom-800"
+    },
+    {
+      "slug": "v-strom-800de",
+      "id": "1142",
+      "name": "V-Strom 800DE"
+    },
+    {
+      "slug": "v-strom-1000",
+      "id": "250",
+      "name": "V-Strom 1000"
+    },
+    {
+      "id": "1058",
+      "name": "V-Strom 1050",
+      "slug": "v-strom-1050"
+    },
+    {
+      "id": "1059",
+      "name": "V-Strom 1050XT",
+      "slug": "v-strom-1050xt"
+    },
+    {
+      "id": "1217",
+      "name": "V-Strom SX 250",
+      "slug": "v-strom-sx-250"
+    },
+    {
+      "name": "V100",
+      "slug": "v100",
+      "id": "386"
+    },
+    {
+      "id": "605",
+      "name": "VR125",
+      "slug": "vr125"
+    },
+    {
+      "name": "VR150",
+      "slug": "vr150",
+      "id": "306"
+    },
+    {
+      "id": "305",
+      "name": "VS125",
+      "slug": "vs125"
+    },
+    {
+      "id": "331",
+      "name": "VS150",
+      "slug": "vs150"
+    },
+    {
+      "id": "928",
+      "name": "VZ 800 Marauder",
+      "slug": "vz-800-marauder"
+    },
+    {
+      "id": "929",
+      "name": "VZ 800 Z Marauder",
+      "slug": "vz-800-z-marauder"
+    },
+    {
+      "id": "930",
+      "name": "VZ 1600 Marauder",
+      "slug": "vz-1600-marauder"
+    },
+    {
+      "id": "931",
+      "name": "VZ Marauder 1600 S",
+      "slug": "vz-marauder-1600-s"
+    }
+  ],
+  "sym": [
+    {
+      "id": "1270",
+      "name": "ADXTG 400",
+      "slug": "adxtg-400"
+    },
+    {
+      "name": "Attila Elizabeth",
+      "slug": "attila-elizabeth",
+      "id": "252"
+    },
+    {
+      "id": "253",
+      "name": "Bonus 110 SR",
+      "slug": "bonus-110-sr"
+    },
+    {
+      "slug": "bonus-110-sr-n1",
+      "id": "778",
+      "name": "Bonus 110 SR N1"
+    },
+    {
+      "name": "Cruisym 250i",
+      "slug": "cruisym-250i",
+      "id": "679"
+    },
+    {
+      "slug": "cruisym-250i-se",
+      "id": "779",
+      "name": "Cruisym 250i SE"
+    },
+    {
+      "id": "1329",
+      "name": "Cruisym 400i",
+      "slug": "cruisym-400i"
+    },
+    {
+      "id": "254",
+      "name": "E Bonus 110 E3",
+      "slug": "e-bonus-110-e3"
+    },
+    {
+      "id": "255",
+      "name": "E Smart 110",
+      "slug": "e-smart-110"
+    },
+    {
+      "id": "782",
+      "name": "E-Bonus 110 H",
+      "slug": "e-bonus-110-h"
+    },
+    {
+      "name": "E-Bonus 110 H E3",
+      "slug": "e-bonus-110-h-e3",
+      "id": "783"
+    },
+    {
+      "id": "780",
+      "name": "E-Bonus 110 H U",
+      "slug": "e-bonus-110-h-u"
+    },
+    {
+      "id": "781",
+      "name": "E-Bonus 110 N1",
+      "slug": "e-bonus-110-n1"
+    },
+    {
+      "id": "256",
+      "name": "E-SR110",
+      "slug": "e-sr110"
+    },
+    {
+      "id": "264",
+      "name": "Evo 250i",
+      "slug": "evo-250i"
+    },
+    {
+      "id": "784",
+      "name": "Evo 250i SE",
+      "slug": "evo-250i-se"
+    },
+    {
+      "id": "1246",
+      "name": "Husky ADV 300",
+      "slug": "husky-adv-300"
+    },
+    {
+      "id": "971",
+      "name": "GTS 200",
+      "slug": "gts-200"
+    },
+    {
+      "name": "Husky ADV 150",
+      "slug": "husky-adv-150",
+      "id": "1171"
+    },
+    {
+      "id": "257",
+      "name": "Jet Power 125",
+      "slug": "jet-power-125"
+    },
+    {
+      "id": "785",
+      "name": "Jet Power 125 SE",
+      "slug": "jet-power-125-se"
+    },
+    {
+      "id": "680",
+      "name": "JET14 125i",
+      "slug": "jet14-125i"
+    },
+    {
+      "id": "886",
+      "name": "JET14 200",
+      "slug": "jet14-200"
+    },
+    {
+      "id": "1038",
+      "name": "JET X 150",
+      "slug": "jet-x-150"
+    },
+    {
+      "id": "1039",
+      "name": "JET X SE 150",
+      "slug": "jet-x-se-150"
+    },
+    {
+      "id": "258",
+      "name": "Joyride 110",
+      "slug": "joyride-110"
+    },
+    {
+      "name": "MAXSYM 400i",
+      "slug": "maxsym-400i",
+      "id": "259"
+    },
+    {
+      "id": "1032",
+      "name": "MAXSYM TL500",
+      "slug": "maxsym-tl500"
+    },
+    {
+      "id": "1172",
+      "name": "MAXSYM TL508",
+      "slug": "maxsym-tl508"
+    },
+    {
+      "id": "260",
+      "name": "Mio 100",
+      "slug": "mio-100"
+    },
+    {
+      "id": "1211",
+      "name": "Mio 110",
+      "slug": "mio-110"
+    },
+    {
+      "id": "1296",
+      "name": "NAGA 150",
+      "slug": "naga-150"
+    },
+    {
+      "name": "SM Sport 110",
+      "slug": "sm-sport-110",
+      "id": "746"
+    },
+    {
+      "id": "261",
+      "name": "Sport Bonus 110",
+      "slug": "sport-bonus-110"
+    },
+    {
+      "id": "262",
+      "name": "Sport Bonus 110 SR",
+      "slug": "sport-bonus-110-sr"
+    },
+    {
+      "slug": "sport-bonus-115-sr",
+      "id": "558",
+      "name": "Sport Bonus 115 SR"
+    },
+    {
+      "id": "551",
+      "name": "Sport Rider 125i",
+      "slug": "sport-rider-125i"
+    },
+    {
+      "id": "786",
+      "name": "Sport Rider 125i SE",
+      "slug": "sport-rider-125i-se"
+    },
+    {
+      "name": "Sym400",
+      "slug": "sym400",
+      "id": "303"
+    },
+    {
+      "id": "263",
+      "name": "Symphony 150",
+      "slug": "symphony-150"
+    },
+    {
+      "id": "265",
+      "name": "T2 250i",
+      "slug": "t2-250i"
+    },
+    {
+      "id": "1144",
+      "name": "Tuscany 150",
+      "slug": "tuscany-150"
+    },
+    {
+      "id": "678",
+      "name": "VF3i 185",
+      "slug": "vf3i-185"
+    },
+    {
+      "id": "689",
+      "name": "VF3i 185 SE",
+      "slug": "vf3i-185-se"
+    },
+    {
+      "id": "1295",
+      "name": "VFE 185",
+      "slug": "vfe-185"
+    },
+    {
+      "name": "VFE 185i",
+      "slug": "vfe-185i",
+      "id": "1307"
+    },
+    {
+      "id": "1026",
+      "name": "VTS 200",
+      "slug": "vts-200"
+    },
+    {
+      "id": "266",
+      "name": "VTS 200 LE",
+      "slug": "vts-200-le"
+    }
+  ],
+  "thunder": [
+    {
+      "id": "1334",
+      "name": "LS250-S",
+      "slug": "ls250-s"
+    }
+  ],
+  "tm-moto": [
+    {
+      "id": "1237",
+      "name": "TM MX 85 Junior 2T",
+      "slug": "tm-mx-85-junior-2t"
+    },
+    {
+      "id": "1238",
+      "name": "TM MX 125 2T",
+      "slug": "tm-mx-125-2t"
+    },
+    {
+      "id": "1239",
+      "name": "TM MX 125 Fi 2T",
+      "slug": "tm-mx-125-fi-2t"
+    },
+    {
+      "id": "1240",
+      "name": "TM MX 250 ES 2T",
+      "slug": "tm-mx-250-es-2t"
+    },
+    {
+      "id": "1241",
+      "name": "TM MX 250 ES Fi 4T",
+      "slug": "tm-mx-250-es-fi-4t"
+    },
+    {
+      "id": "1242",
+      "name": "TM MX 300 ES 2T",
+      "slug": "tm-mx-300-es-2t"
+    },
+    {
+      "id": "1243",
+      "name": "TM MX 300 ES Fi 4T",
+      "slug": "tm-mx-300-es-fi-4t"
+    },
+    {
+      "id": "1244",
+      "name": "TM MX 450 ES Fi 4T",
+      "slug": "tm-mx-450-es-fi-4t"
+    }
+  ],
+  "treeletrik": [
+    {
+      "id": "616",
+      "name": "T-70",
+      "slug": "t-70"
+    },
+    {
+      "id": "617",
+      "name": "T-90",
+      "slug": "t-90"
+    },
+    {
+      "id": "618",
+      "name": "T-Cargo",
+      "slug": "t-cargo"
+    }
+  ],
+  "triumph": [
+    {
+      "id": "267",
+      "name": "America",
+      "slug": "america"
+    },
+    {
+      "id": "268",
+      "name": "Bonneville",
+      "slug": "bonneville"
+    },
+    {
+      "id": "1286",
+      "name": "Daytona 660",
+      "slug": "daytona-660"
+    },
+    {
+      "id": "269",
+      "name": "Daytona 675",
+      "slug": "daytona-675"
+    },
+    {
+      "id": "270",
+      "name": "Rocket Iii",
+      "slug": "rocket-iii"
+    },
+    {
+      "slug": "scrambler",
+      "id": "271",
+      "name": "Scrambler"
+    },
+    {
+      "slug": "speed-master",
+      "id": "272",
+      "name": "Speed Master"
+    },
+    {
+      "id": "273",
+      "name": "Speed Triple",
+      "slug": "speed-triple"
+    },
+    {
+      "id": "1045",
+      "name": "Speed Twin",
+      "slug": "speed-twin"
+    },
+    {
+      "id": "274",
+      "name": "Street Triple",
+      "slug": "street-triple"
+    },
+    {
+      "id": "1096",
+      "name": "Street Twin",
+      "slug": "street-twin"
+    },
+    {
+      "slug": "t20",
+      "id": "856",
+      "name": "T20"
+    },
+    {
+      "id": "275",
+      "name": "Thruxton",
+      "slug": "thruxton"
+    },
+    {
+      "id": "276",
+      "name": "Thunderbird",
+      "slug": "thunderbird"
+    },
+    {
+      "id": "277",
+      "name": "Tiger",
+      "slug": "tiger"
+    },
+    {
+      "id": "1097",
+      "name": "Trident",
+      "slug": "trident"
+    },
+    {
+      "id": "278",
+      "name": "Trophy",
+      "slug": "trophy"
+    }
+  ],
+  "tvs": [
+    {
+      "name": "Apache RTR 200 4V",
+      "slug": "apache-rtr-200-4v",
+      "id": "876"
+    },
+    {
+      "id": "843",
+      "name": "Neo X3i 110",
+      "slug": "neo-x3i-110"
+    },
+    {
+      "id": "842",
+      "name": "Neo X3i CW 110cc",
+      "slug": "neo-x3i-cw-110cc"
+    },
+    {
+      "id": "609",
+      "name": "XL 100",
+      "slug": "xl-100"
+    }
+  ],
+  "vespa": [
+    {
+      "id": "716",
+      "name": "946",
+      "slug": "946"
+    },
+    {
+      "id": "968",
+      "name": "EXCEL 150",
+      "slug": "excel-150"
+    },
+    {
+      "name": "GTS 150",
+      "slug": "gts-150",
+      "id": "556"
+    },
+    {
+      "id": "279",
+      "name": "GTS 300",
+      "slug": "gts-300"
+    },
+    {
+      "id": "462",
+      "name": "GTS Super 125",
+      "slug": "gts-super-125"
+    },
+    {
+      "id": "452",
+      "name": "GTS Super 300",
+      "slug": "gts-super-300"
+    },
+    {
+      "id": "449",
+      "name": "LT 150",
+      "slug": "lt-150"
+    },
+    {
+      "id": "280",
+      "name": "LX 150",
+      "slug": "lx-150"
+    },
+    {
+      "id": "281",
+      "name": "LXV 150",
+      "slug": "lxv-150"
+    },
+    {
+      "id": "454",
+      "name": "Primavera 125",
+      "slug": "primavera-125"
+    },
+    {
+      "id": "282",
+      "name": "Primavera 150",
+      "slug": "primavera-150"
+    },
+    {
+      "id": "453",
+      "name": "Primavera 50",
+      "slug": "primavera-50"
+    },
+    {
+      "slug": "ps-150",
+      "id": "884",
+      "name": "PS 150"
+    },
+    {
+      "id": "451",
+      "name": "PX 125",
+      "slug": "px-125"
+    },
+    {
+      "id": "450",
+      "name": "PX 150",
+      "slug": "px-150"
+    },
+    {
+      "id": "885",
+      "name": "PX 200",
+      "slug": "px-200"
+    },
+    {
+      "id": "448",
+      "name": "S 125",
+      "slug": "s-125"
+    },
+    {
+      "id": "314",
+      "name": "Sprint 125",
+      "slug": "sprint-125"
+    },
+    {
+      "slug": "sprint-150",
+      "id": "315",
+      "name": "Sprint 150"
+    },
+    {
+      "slug": "sprint-50",
+      "id": "313",
+      "name": "Sprint 50"
+    },
+    {
+      "id": "883",
+      "name": "Super 150",
+      "slug": "super-150"
+    },
+    {
+      "id": "384",
+      "name": "VBB150",
+      "slug": "vbb150"
+    }
+  ],
+  "victory": [
+    {
+      "id": "655",
+      "name": "Broadwalk",
+      "slug": "broadwalk"
+    },
+    {
+      "name": "Hammer S",
+      "slug": "hammer-s",
+      "id": "629"
+    },
+    {
+      "name": "Magnum",
+      "slug": "magnum",
+      "id": "656"
+    },
+    {
+      "slug": "vision",
+      "id": "833",
+      "name": "Vision"
+    }
+  ],
+  "voge": [
+    {
+      "slug": "cu525",
+      "id": "1193",
+      "name": "CU525"
+    },
+    {
+      "slug": "ds900x",
+      "id": "1262",
+      "name": "DS900X"
+    },
+    {
+      "id": "1194",
+      "name": "FORMICA ROSSA 150",
+      "slug": "formica-rossa-150"
+    },
+    {
+      "id": "1336",
+      "name": "SR3",
+      "slug": "sr3"
+    }
+  ],
+  "wmoto": [
+    {
+      "id": "1131",
+      "name": "Bobbie VII",
+      "slug": "bobbie-vii"
+    },
+    {
+      "id": "1285",
+      "name": "Bobbie VII 3 Wheeler",
+      "slug": "bobbie-vii-3-wheeler"
+    },
+    {
+      "id": "1297",
+      "name": "CRUISER AMT 125",
+      "slug": "cruiser-amt-125"
+    },
+    {
+      "slug": "cub-classic-110",
+      "id": "847",
+      "name": "Cub Classic 110"
+    },
+    {
+      "slug": "es125",
+      "id": "1020",
+      "name": "ES125"
+    },
+    {
+      "id": "1133",
+      "name": "ES250i",
+      "slug": "es250i"
+    },
+    {
+      "id": "1341",
+      "name": "EZ125",
+      "slug": "ez125"
+    },
+    {
+      "id": "1089",
+      "name": "F15",
+      "slug": "f15"
+    },
+    {
+      "id": "1104",
+      "name": "GA200",
+      "slug": "ga200"
+    },
+    {
+      "id": "1134",
+      "name": "Gemma 125",
+      "slug": "gemma-125"
+    },
+    {
+      "id": "1348",
+      "name": "Hawk 200i",
+      "slug": "hawk-200i"
+    },
+    {
+      "id": "1349",
+      "name": "ISLAND 150",
+      "slug": "island-150"
+    },
+    {
+      "id": "1306",
+      "name": "Nexy+180",
+      "slug": "nexy-180"
+    },
+    {
+      "id": "1340",
+      "name": "NX150S",
+      "slug": "nx150s"
+    },
+    {
+      "name": "RT1",
+      "slug": "rt1",
+      "id": "1065"
+    },
+    {
+      "slug": "rt2",
+      "id": "1066",
+      "name": "RT2"
+    },
+    {
+      "id": "1061",
+      "name": "RT3",
+      "slug": "rt3"
+    },
+    {
+      "id": "1067",
+      "name": "SM125i",
+      "slug": "sm125i"
+    },
+    {
+      "slug": "sx2-300",
+      "id": "1103",
+      "name": "SX2-300"
+    },
+    {
+      "id": "1054",
+      "name": "V16",
+      "slug": "v16"
+    },
+    {
+      "id": "899",
+      "name": "VE1",
+      "slug": "ve1"
+    },
+    {
+      "id": "1081",
+      "name": "WM110",
+      "slug": "wm110"
+    },
+    {
+      "slug": "xdv-250i",
+      "id": "1132",
+      "name": "XDV 250i"
+    },
+    {
+      "id": "1056",
+      "name": "XTREME 150I",
+      "slug": "xtreme-150i"
+    }
+  ],
+  "x-moto": [
+    {
+      "id": "1130",
+      "name": "250F",
+      "slug": "250f"
+    }
+  ],
+  "x-wedge": [
+    {
+      "id": "1291",
+      "name": "RANGER RX2000",
+      "slug": "ranger-rx2000"
+    },
+    {
+      "slug": "rover-rl2000",
+      "id": "1288",
+      "name": "ROVER RL2000"
+    },
+    {
+      "id": "1290",
+      "name": "VANGUARD VT2000",
+      "slug": "vanguard-vt2000"
+    },
+    {
+      "id": "1289",
+      "name": "WALKER WR1000",
+      "slug": "walker-wr1000"
+    }
+  ],
+  "yamaha": [
+    {
+      "id": "793",
+      "name": "115Z",
+      "slug": "115z"
+    },
+    {
+      "id": "298",
+      "name": "115ZR",
+      "slug": "115zr"
+    },
+    {
+      "id": "389",
+      "name": "125Z",
+      "slug": "125z"
+    },
+    {
+      "id": "283",
+      "name": "125ZR",
+      "slug": "125zr"
+    },
+    {
+      "id": "284",
+      "name": "135LC",
+      "slug": "135lc"
+    },
+    {
+      "slug": "dt125",
+      "id": "635",
+      "name": "DT125"
+    },
+    {
+      "id": "285",
+      "name": "E115M-E",
+      "slug": "e115m-e"
+    },
+    {
+      "id": "715",
+      "name": "E115M-K",
+      "slug": "e115m-k"
+    },
+    {
+      "name": "EGO",
+      "slug": "ego",
+      "id": "286"
+    },
+    {
+      "id": "490",
+      "name": "EGO AVANTIZ",
+      "slug": "ego-avantiz"
+    },
+    {
+      "id": "1082",
+      "name": "EGO GEAR",
+      "slug": "ego-gear"
+    },
+    {
+      "id": "300",
+      "name": "EGO LC",
+      "slug": "ego-lc"
+    },
+    {
+      "slug": "ego-s",
+      "id": "701",
+      "name": "EGO S"
+    },
+    {
+      "id": "572",
+      "name": "EGO SOLARIZ",
+      "slug": "ego-solariz"
+    },
+    {
+      "id": "1350",
+      "name": "EZ115",
+      "slug": "ez115"
+    },
+    {
+      "id": "324",
+      "name": "FJR 1300",
+      "slug": "fjr-1300"
+    },
+    {
+      "slug": "fz",
+      "id": "287",
+      "name": "FZ"
+    },
+    {
+      "id": "814",
+      "name": "FZ1000",
+      "slug": "fz1000"
+    },
+    {
+      "name": "FZ150i",
+      "slug": "fz150i",
+      "id": "625"
+    },
+    {
+      "id": "881",
+      "name": "FZ6R",
+      "slug": "fz6r"
+    },
+    {
+      "id": "821",
+      "name": "FZ8",
+      "slug": "fz8"
+    },
+    {
+      "id": "299",
+      "name": "FZi",
+      "slug": "fzi"
+    },
+    {
+      "id": "743",
+      "name": "Jupiter MX 135",
+      "slug": "jupiter-mx-135"
+    },
+    {
+      "slug": "lagenda-110",
+      "id": "997",
+      "name": "Lagenda 110"
+    },
+    {
+      "name": "Lagenda 110Z",
+      "slug": "lagenda-110z",
+      "id": "643"
+    },
+    {
+      "id": "288",
+      "name": "Lagenda 115",
+      "slug": "lagenda-115"
+    },
+    {
+      "name": "Lagenda SRL 110",
+      "slug": "lagenda-srl-110",
+      "id": "1033"
+    },
+    {
+      "id": "1034",
+      "name": "Lagenda SRL 110Z",
+      "slug": "lagenda-srl-110z"
+    },
+    {
+      "id": "1035",
+      "name": "Lagenda SRL 110ZR",
+      "slug": "lagenda-srl-110zr"
+    },
+    {
+      "id": "714",
+      "name": "LE115Z",
+      "slug": "le115z"
+    },
+    {
+      "id": "289",
+      "name": "MT-07",
+      "slug": "mt-07"
+    },
+    {
+      "id": "290",
+      "name": "MT-09",
+      "slug": "mt-09"
+    },
+    {
+      "id": "713",
+      "name": "MT-09 Tracer",
+      "slug": "mt-09-tracer"
+    },
+    {
+      "id": "726",
+      "name": "MT-10",
+      "slug": "mt-10"
+    },
+    {
+      "id": "963",
+      "name": "MT150",
+      "slug": "mt150"
+    },
+    {
+      "id": "964",
+      "name": "MT250",
+      "slug": "mt250"
+    },
+    {
+      "id": "491",
+      "name": "NMAX",
+      "slug": "nmax"
+    },
+    {
+      "slug": "nouvo-lc",
+      "id": "291",
+      "name": "Nouvo LC"
+    },
+    {
+      "id": "322",
+      "name": "Nouvo S",
+      "slug": "nouvo-s"
+    },
+    {
+      "id": "577",
+      "name": "NVX",
+      "slug": "nvx"
+    },
+    {
+      "name": "Passola",
+      "slug": "passola",
+      "id": "768"
+    },
+    {
+      "id": "1220",
+      "name": "PG-1",
+      "slug": "pg-1"
+    },
+    {
+      "id": "694",
+      "name": "R1-Z",
+      "slug": "r1-z"
+    },
+    {
+      "id": "737",
+      "name": "R15",
+      "slug": "r15"
+    },
+    {
+      "id": "730",
+      "name": "R25",
+      "slug": "r25"
+    },
+    {
+      "id": "867",
+      "name": "RD500 V4",
+      "slug": "rd500-v4"
+    },
+    {
+      "id": "980",
+      "name": "Royal Star",
+      "slug": "royal-star"
+    },
+    {
+      "id": "805",
+      "name": "RX100",
+      "slug": "rx100"
+    },
+    {
+      "slug": "rxs",
+      "id": "529",
+      "name": "RXS"
+    },
+    {
+      "id": "302",
+      "name": "RXZ",
+      "slug": "rxz"
+    },
+    {
+      "id": "692",
+      "name": "RZ250",
+      "slug": "rz250"
+    },
+    {
+      "slug": "rz250r",
+      "id": "693",
+      "name": "RZ250R"
+    },
+    {
+      "id": "301",
+      "name": "Sport",
+      "slug": "sport"
+    },
+    {
+      "id": "458",
+      "name": "SRV",
+      "slug": "srv"
+    },
+    {
+      "id": "914",
+      "name": "SRX",
+      "slug": "srx"
+    },
+    {
+      "name": "SS",
+      "slug": "ss",
+      "id": "296"
+    },
+    {
+      "id": "297",
+      "name": "SS2",
+      "slug": "ss2"
+    },
+    {
+      "id": "543",
+      "name": "Super Tenere",
+      "slug": "super-tenere"
+    },
+    {
+      "name": "Tenere",
+      "slug": "tenere",
+      "id": "542"
+    },
+    {
+      "id": "520",
+      "name": "TMAX",
+      "slug": "tmax"
+    },
+    {
+      "id": "945",
+      "name": "Tracer 900",
+      "slug": "tracer-900"
+    },
+    {
+      "id": "902",
+      "name": "Tracer 900GT",
+      "slug": "tracer-900gt"
+    },
+    {
+      "id": "382",
+      "name": "TW200",
+      "slug": "tw200"
+    },
+    {
+      "id": "381",
+      "name": "TZM",
+      "slug": "tzm"
+    },
+    {
+      "id": "388",
+      "name": "TZM 150",
+      "slug": "tzm-150"
+    },
+    {
+      "name": "TZR125",
+      "slug": "tzr125",
+      "id": "841"
+    },
+    {
+      "id": "695",
+      "name": "TZR250",
+      "slug": "tzr250"
+    },
+    {
+      "id": "544",
+      "name": "V-MAX",
+      "slug": "v-max"
+    },
+    {
+      "id": "649",
+      "name": "V90 Super 88",
+      "slug": "v90-super-88"
+    },
+    {
+      "id": "480",
+      "name": "Virago 1000",
+      "slug": "virago-1000"
+    },
+    {
+      "slug": "virago-1100",
+      "id": "481",
+      "name": "Virago 1100"
+    },
+    {
+      "slug": "virago-125",
+      "id": "475",
+      "name": "Virago 125"
+    },
+    {
+      "name": "Virago 250",
+      "slug": "virago-250",
+      "id": "476"
+    },
+    {
+      "name": "Virago 500",
+      "slug": "virago-500",
+      "id": "477"
+    },
+    {
+      "id": "478",
+      "name": "Virago 535",
+      "slug": "virago-535"
+    },
+    {
+      "id": "479",
+      "name": "Virago 750",
+      "slug": "virago-750"
+    },
+    {
+      "id": "482",
+      "name": "Virago Dragstar",
+      "slug": "virago-dragstar"
+    },
+    {
+      "id": "670",
+      "name": "WR200",
+      "slug": "wr200"
+    },
+    {
+      "id": "589",
+      "name": "WR400",
+      "slug": "wr400"
+    },
+    {
+      "id": "1062",
+      "name": "WR250F",
+      "slug": "wr250f"
+    },
+    {
+      "id": "644",
+      "name": "WR450F",
+      "slug": "wr450f"
+    },
+    {
+      "id": "292",
+      "name": "XJ6",
+      "slug": "xj6"
+    },
+    {
+      "name": "XJ6 Diversion",
+      "slug": "xj6-diversion",
+      "id": "325"
+    },
+    {
+      "id": "326",
+      "name": "XJ6 Diversion F",
+      "slug": "xj6-diversion-f"
+    },
+    {
+      "id": "974",
+      "name": "XJR1300",
+      "slug": "xjr1300"
+    },
+    {
+      "name": "XMAX",
+      "slug": "xmax",
+      "id": "674"
+    },
+    {
+      "id": "887",
+      "name": "XS1100",
+      "slug": "xs1100"
+    },
+    {
+      "id": "1024",
+      "name": "XSR900",
+      "slug": "xsr900"
+    },
+    {
+      "id": "457",
+      "name": "XTZ1200",
+      "slug": "xtz1200"
+    },
+    {
+      "slug": "xv1900-raider",
+      "id": "657",
+      "name": "XV1900 Raider"
+    },
+    {
+      "id": "483",
+      "name": "XV920R",
+      "slug": "xv920r"
+    },
+    {
+      "id": "293",
+      "name": "XV950R BOLT",
+      "slug": "xv950r-bolt"
+    },
+    {
+      "id": "317",
+      "name": "Y100",
+      "slug": "y100"
+    },
+    {
+      "id": "318",
+      "name": "Y110",
+      "slug": "y110"
+    },
+    {
+      "name": "Y110ss2",
+      "slug": "y110ss2",
+      "id": "319"
+    },
+    {
+      "slug": "y15zr",
+      "id": "295",
+      "name": "Y15ZR"
+    },
+    {
+      "id": "840",
+      "name": "Y15ZR Movistar",
+      "slug": "y15zr-movistar"
+    },
+    {
+      "id": "1029",
+      "name": "Y16ZR",
+      "slug": "y16zr"
+    },
+    {
+      "id": "459",
+      "name": "Y80",
+      "slug": "y80"
+    },
+    {
+      "id": "919",
+      "name": "YX600 Radian",
+      "slug": "yx600-radian"
+    },
+    {
+      "name": "YZ125",
+      "slug": "yz125",
+      "id": "519"
+    },
+    {
+      "id": "871",
+      "name": "YZ250",
+      "slug": "yz250"
+    },
+    {
+      "slug": "yz250f",
+      "id": "671",
+      "name": "YZ250F"
+    },
+    {
+      "id": "492",
+      "name": "YZ450",
+      "slug": "yz450"
+    },
+    {
+      "slug": "yzf-r1",
+      "id": "312",
+      "name": "YZF-R1"
+    },
+    {
+      "id": "818",
+      "name": "YZF-R15",
+      "slug": "yzf-r15"
+    },
+    {
+      "id": "845",
+      "name": "YZF-R1M",
+      "slug": "yzf-r1m"
+    },
+    {
+      "id": "294",
+      "name": "YZF-R25",
+      "slug": "yzf-r25"
+    },
+    {
+      "slug": "yzf-r6",
+      "id": "323",
+      "name": "YZF-R6"
+    }
+  ],
+  "yadea": [
+    {
+      "id": "1155",
+      "name": "E8S Pro",
+      "slug": "e8s-pro"
+    },
+    {
+      "id": "1279",
+      "name": "GT20",
+      "slug": "gt20"
+    },
+    {
+      "name": "RS20",
+      "slug": "rs20",
+      "id": "1300"
+    }
+  ],
+  "zeeho": [
+    {
+      "name": "AE4",
+      "slug": "ae4",
+      "id": "1212"
+    },
+    {
+      "slug": "ae8-s",
+      "id": "1213",
+      "name": "AE8 S+"
+    }
+  ],
+  "zero-engineering": [
+    {
+      "id": "1065",
+      "name": "Type 5",
+      "slug": "type-5"
+    },
+    {
+      "name": "Type 6",
+      "slug": "type-6",
+      "id": "1066"
+    },
+    {
+      "id": "1067",
+      "name": "Type 9",
+      "slug": "type-9"
+    }
+  ],
+  "zesparii": [
+    {
+      "id": "905",
+      "name": "Beta ZES",
+      "slug": "beta-zes"
+    }
+  ],
+  "zontes": [
+    {
+      "name": "368D",
+      "slug": "368d",
+      "id": "1346"
+    },
+    {
+      "id": "1347",
+      "name": "368E",
+      "slug": "368e"
+    },
+    {
+      "id": "1245",
+      "name": "368G",
+      "slug": "368g"
+    },
+    {
+      "id": "1075",
+      "name": "ZT155U",
+      "slug": "zt155u"
+    },
+    {
+      "id": "1076",
+      "name": "ZT155U1",
+      "slug": "zt155u1"
+    },
+    {
+      "name": "ZT155G",
+      "slug": "zt155g",
+      "id": "1077"
+    },
+    {
+      "id": "824",
+      "name": "ZT310-R",
+      "slug": "zt310-r"
+    },
+    {
+      "id": "825",
+      "name": "ZT310-T",
+      "slug": "zt310-t"
+    },
+    {
+      "id": "933",
+      "name": "ZT310-V",
+      "slug": "zt310-v"
+    },
+    {
+      "name": "ZT310-X",
+      "slug": "zt310-x",
+      "id": "826"
+    },
+    {
+      "id": "827",
+      "name": "ZT310-X GP",
+      "slug": "zt310-x-gp"
+    },
+    {
+      "id": "1206",
+      "name": "ZT350D",
+      "slug": "zt350d"
+    },
+    {
+      "id": "1207",
+      "name": "ZT350E",
+      "slug": "zt350e"
+    }
+  ]
+}

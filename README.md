@@ -24,6 +24,7 @@ CarData/
 │   ├── migrate_xlsx_to_db.py              # Excel → SQLite migration
 │   ├── db.py                              # Database connection helper
 │   ├── clean.py                           # Data cleanup utility
+│   ├── scrape_makes_models.py             # Reference make/model list scraper
 │   └── mudah_client.py                    # Shared HTTP client
 │
 ├── docs/                                  # Documentation
@@ -31,6 +32,11 @@ CarData/
 │
 ├── data/
 │   ├── raw/                               # Raw CSV outputs from script.py
+│   ├── reference/                         # Canonical make/model lists from Mudah
+│   │   ├── cars_makes.json
+│   │   ├── cars_models.json
+│   │   ├── motorcycles_makes.json
+│   │   └── motorcycles_models.json
 │   └── master/                            # Production SQLite databases
 │       ├── cardata_cars.db
 │       ├── cardata_motorcycles.db
@@ -208,6 +214,43 @@ python src/migrate_xlsx_to_db.py --xlsx ../data/master/MasterMudahCarData.xlsx -
 
 ---
 
+## Reference Data — Makes & Models
+
+`scrape_makes_models.py` pulls Mudah's canonical make + model lists from the cars and motorcycles category landing pages and writes them to `data/reference/` as JSON. Run manually whenever the brand list needs refreshing (Mudah adds new makes roughly once a year).
+
+```bash
+python src/scrape_makes_models.py
+```
+
+### Output files
+
+| File | Shape | Sample |
+|---|---|---|
+| `cars_makes.json` | List of `{id, name, slug, founding_country, icon_png, icon_svg}` | 128 entries (Alfa Romeo, Alpine, ...) |
+| `cars_models.json` | `{make_slug: [{id, name, slug}, ...]}` | Toyota: 99 models, total 1,533 |
+| `motorcycles_makes.json` | List of `{id, name, slug}` (no `founding_country`) | 93 entries (Adiva, Aprilia, ...) |
+| `motorcycles_models.json` | `{make_slug: [{id, name, slug}, ...]}` | Yamaha: 109 models, total 1,362 |
+
+### How it works
+
+Two HTTP requests total (one per category). Both lists are embedded in the search-page HTML inside `__NEXT_DATA__`-style filter blobs:
+
+```
+"<name>":{"filter":{...inner config...},"values":[...data...]}
+```
+
+The script anchors on the filter object (`"make":{`, `"motorcycle_make":{`, `"model":{`, `"motorcycle_model":{`), then bracket-matches the next `"values":[ ... ]` array.
+
+Mudah serves a stripped HTML variant (no filterOptions blob) most of the time. The script retries with a fresh `cloudscraper` session up to 8 times, detecting the full response by presence of a known make name (`"Alfa Romeo"` for cars, `"Adiva"` for motos).
+
+### Suggested uses
+
+- **Validation** — `clean.py` could fuzzy-match scraped `make`/`model` strings against the canonical list to fix typos and casing variants.
+- **Coverage planning** — feed the make slugs into a state × brand grid runner to bypass Mudah's 250-page-per-query cap.
+- **URL construction** — slugs map directly to Mudah filter URLs (`/cars-for-sale/{make_slug}/{model_slug}`).
+
+---
+
 ## Data Cleaning
 
 `clean.py` normalizes raw scraped fields, strips noise, redacts PII, and removes duplicate listings. Cleans a category SQLite DB in place.
@@ -345,6 +388,9 @@ Every probe appends one row to the `availability_checks` table in the same DB:
 ## Changelog
 
 This section tracks every revision of this README. Add a new entry at the top whenever the document is updated.
+
+### 2026-04-30
+- Added `src/scrape_makes_models.py` and the **Reference Data — Makes & Models** section. Two-request scraper pulls Mudah's canonical make + model lists for cars (128 makes / 1,533 models) and motorcycles (93 makes / 1,362 models) from the category landing pages and writes them to `data/reference/{cars,motorcycles}_{makes,models}.json`. Mudah serves a stripped HTML variant most of the time, so the script retries with a fresh `cloudscraper` session up to 8 times, detecting the full response by presence of a known make name. Filter-object anchors plus a bracket-matching JSON array extractor avoid relying on full `__NEXT_DATA__` parsing (Next.js 13 RSC streaming would break that anyway).
 
 ### 2026-04-29
 - Added the **Data Cleaning** section. `clean.py` rewritten to clean SQLite DBs in place via `--category {cars,motorcycles}`. Adds: `manufactured_date` `"1995 or older"` mapping, `company_ad` int normalization, `subject` emoji + trailing sales-noise stripping, `body` phone-number redaction + emoji + separator-line + blank-line collapse + short-body NULLing, true-repost deduplication on `(subject + price + make)`, price-outlier flagging at < 1000 MYR. Stamps `meta.last_cleaned_at`. Legacy xlsx mode preserved.
