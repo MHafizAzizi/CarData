@@ -18,17 +18,6 @@ from fake_useragent import UserAgent
 from tqdm import tqdm
 
 
-def _clean_body(text: Optional[str]) -> str:
-    """Normalize Mudah's HTML-flavored ad body to plain text."""
-    if not text:
-        return ''
-    # Mudah uses <br>, <br/>, <br /> as line breaks; collapse all to \n
-    text = re.sub(r'<br\s*/?>', '\n', text, flags=re.IGNORECASE)
-    # Strip any other stray HTML tags (rare, but defensive)
-    text = re.sub(r'<[^>]+>', '', text)
-    return text.strip()
-
-
 def _parse_published(text: str) -> str:
     """Convert Mudah's relative date strings ('Today 15:49', 'Yesterday 10:30',
     '22 Apr 09:15') to absolute 'YYYY-MM-DD HH:MM'."""
@@ -105,7 +94,7 @@ class MudahScraper:
 
         self.keys = [
             "url",
-            "ads_id", "subject", "body", "price",
+            "ads_id", "subject", "price",
             "condition", "make", "model", "motorcycle_make", "motorcycle_model",
             "manufactured_date", "mileage",
             "location", "region", "subregion",
@@ -307,7 +296,6 @@ class MudahScraper:
                 {'id': 'url', 'value': url, 'realValue': '', 'label': 'Listing URL'},
                 {'id': 'ads_id', 'value': car_ads_no, 'realValue': '', 'label': 'Ad ID'},
                 {'id': 'subject', 'value': attributes.get('subject', ''), 'realValue': '', 'label': 'Subject'},
-                {'id': 'body', 'value': _clean_body(attributes.get('body')), 'realValue': '', 'label': 'Description'},
                 {'id': 'region', 'value': attributes.get('regionName', ''), 'realValue': '', 'label': 'Region'},
                 {'id': 'subregion', 'value': attributes.get('subregionName', ''), 'realValue': '', 'label': 'Subregion'},
                 {'id': 'seller_name', 'value': attributes.get('name', ''), 'realValue': '', 'label': 'Seller'},

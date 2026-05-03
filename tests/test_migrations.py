@@ -1,4 +1,4 @@
-"""Tests for migrations/run_migrations.py — schema v1 -> v2 runner."""
+"""Tests for migrations/run_migrations.py — schema v1 -> v3 runner."""
 
 import sqlite3
 import sys
@@ -135,7 +135,7 @@ class TestMigrate:
             assert col in cols, f"missing {col}"
         for col, _type in rm.CAR_EXTRA_COLS:
             assert col in cols, f"missing {col}"
-        assert _schema_version(conn) == 2
+        assert _schema_version(conn) == 3
 
     def test_migrate_motorcycles_adds_only_shared(self, patched_connect):
         rm.migrate("motorcycles", dry_run=False)
@@ -147,7 +147,7 @@ class TestMigrate:
         # Car-only cols MUST NOT be present
         for col, _type in rm.CAR_EXTRA_COLS:
             assert col not in cols, f"{col} should not be in motorcycles DB"
-        assert _schema_version(conn) == 2
+        assert _schema_version(conn) == 3
 
     def test_migrate_idempotent(self, patched_connect):
         rm.migrate("cars", dry_run=False)
@@ -155,7 +155,7 @@ class TestMigrate:
         rm.migrate("cars", dry_run=False)
         conn = sqlite3.connect(patched_connect / "cardata_cars.db")
         conn.row_factory = sqlite3.Row
-        assert _schema_version(conn) == 2
+        assert _schema_version(conn) == 3
         # All columns still present, no duplicates (sqlite would raise if duplicated)
         cols = _columns_of(conn, "listings")
         for col, _type in rm.SHARED_NEW_COLS + rm.CAR_EXTRA_COLS:
@@ -175,3 +175,64 @@ class TestMigrate:
     def test_migrate_unknown_category_raises(self, patched_connect):
         with pytest.raises(ValueError, match="Unknown category"):
             rm.migrate("trucks", dry_run=False)
+
+
+# ---------------------------------------------------------------------------
+# v2 -> v3: drop body column
+# ---------------------------------------------------------------------------
+
+class TestV3DropBody:
+    def _make_v2_db_with_body(self, tmp_path: Path, category: str) -> Path:
+        """Construct a v2-state DB that still carries the legacy body column."""
+        db_file = tmp_path / f"cardata_{category}.db"
+        conn = sqlite3.connect(db_file, isolation_level=None)
+        conn.row_factory = sqlite3.Row
+        conn.executescript(_read_schema(category))
+        conn.execute("ALTER TABLE listings ADD COLUMN body TEXT")
+        # Add v2 cols so schema is consistent
+        for col, ctype in rm.SHARED_NEW_COLS:
+            conn.execute(f"ALTER TABLE listings ADD COLUMN {col} {ctype}")
+        if category == "cars":
+            for col, ctype in rm.CAR_EXTRA_COLS:
+                conn.execute(f"ALTER TABLE listings ADD COLUMN {col} {ctype}")
+        conn.execute(
+            "INSERT INTO meta (key, value) VALUES ('schema_version', '2') "
+            "ON CONFLICT(key) DO UPDATE SET value = excluded.value"
+        )
+        conn.close()
+        return db_file
+
+    def test_drops_body_and_bumps_version(self, tmp_path, monkeypatch):
+        self._make_v2_db_with_body(tmp_path, "cars")
+
+        def fake_connect(category, *, path=None, init=True):
+            db_file = tmp_path / f"cardata_{category}.db"
+            conn = sqlite3.connect(db_file, isolation_level=None)
+            conn.row_factory = sqlite3.Row
+            return conn
+
+        monkeypatch.setattr(rm, "connect", fake_connect)
+        rm.migrate("cars", dry_run=False)
+
+        conn = sqlite3.connect(tmp_path / "cardata_cars.db")
+        conn.row_factory = sqlite3.Row
+        cols = _columns_of(conn, "listings")
+        assert "body" not in cols
+        assert _schema_version(conn) == 3
+
+    def test_dry_run_keeps_body(self, tmp_path, monkeypatch):
+        self._make_v2_db_with_body(tmp_path, "cars")
+
+        def fake_connect(category, *, path=None, init=True):
+            db_file = tmp_path / f"cardata_{category}.db"
+            conn = sqlite3.connect(db_file, isolation_level=None)
+            conn.row_factory = sqlite3.Row
+            return conn
+
+        monkeypatch.setattr(rm, "connect", fake_connect)
+        rm.migrate("cars", dry_run=True)
+
+        conn = sqlite3.connect(tmp_path / "cardata_cars.db")
+        conn.row_factory = sqlite3.Row
+        assert "body" in _columns_of(conn, "listings")
+        assert _schema_version(conn) == 2

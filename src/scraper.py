@@ -2,8 +2,8 @@
 
 Two-phase pipeline:
     Phase 1: collect basic metadata via EagleSearch /v1/search (200 ads/req)
-    Phase 2: fetch HTML .htm detail page for ads needing depth (body, exact
-             mileage, chassis specs)
+    Phase 2: fetch HTML .htm detail page for ads needing depth (exact mileage,
+             chassis specs, model taxonomy)
 
 Designed to replace src/script.py while keeping the CSV-first workflow
 compatible. Output goes to data/raw/<category>/ as before.
@@ -14,8 +14,8 @@ Usage:
     python src/scraper.py                                   # interactive prompts
 
 --depth modes:
-    none     -> API only, fastest, no body/specs
-    missing  -> fetch HTML only when body is absent (default)
+    none     -> API only, fastest, no specs
+    missing  -> fetch HTML only when exact mileage is absent (default)
     all      -> fetch HTML for every ad
 
 API auth fallback:
@@ -156,14 +156,14 @@ class HybridScraper:
 
         depth="none"    -> always False
         depth="all"     -> always True
-        depth="missing" -> True when ad['body'] is absent or empty
+        depth="missing" -> True when ad['mileage'] (exact) is absent or empty
         """
         if depth == "none":
             return False
         if depth == "all":
             return True
         # depth == "missing"
-        return not ad.get("body")
+        return not ad.get("mileage")
 
     def _phase2_enrich(
         self,

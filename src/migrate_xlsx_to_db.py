@@ -59,7 +59,7 @@ logging.basicConfig(
 # ---------------------------------------------------------------------------
 
 SHARED_COLUMNS: List[str] = [
-    "ads_id", "url", "subject", "body", "price",
+    "ads_id", "url", "subject", "price",
     "condition", "manufactured_date", "mileage",
     "location", "region", "subregion",
     "seller_name", "company_ad", "published",

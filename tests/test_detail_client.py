@@ -20,38 +20,11 @@ import detail_client as dc  # noqa: E402
 from detail_client import (  # noqa: E402
     DETAIL_FIELDS,
     DetailClient,
-    _clean_body,
     _extract_detail_fields,
     _parse_categoryparams,
     _parse_mcdparams,
     _parse_published,
 )
-
-
-# ---------------------------------------------------------------------------
-# _clean_body
-# ---------------------------------------------------------------------------
-
-class TestCleanBody:
-    def test_br_to_newline(self):
-        assert _clean_body("line1<br>line2") == "line1\nline2"
-
-    def test_self_closing_br(self):
-        assert _clean_body("a<br/>b<br />c") == "a\nb\nc"
-
-    def test_strips_other_html(self):
-        assert _clean_body("<b>bold</b> text") == "bold text"
-
-    def test_strips_outer_whitespace(self):
-        assert _clean_body("   hello   ") == "hello"
-
-    def test_empty_input(self):
-        assert _clean_body("") == ""
-        assert _clean_body(None) == ""
-
-    def test_mixed(self):
-        out = _clean_body("Title<br/><p>desc</p><br>line2")
-        assert out == "Title\ndesc\nline2"
 
 
 # ---------------------------------------------------------------------------
@@ -163,7 +136,7 @@ class TestParseCategoryparams:
 # _extract_detail_fields
 # ---------------------------------------------------------------------------
 
-def _build_next_data(ads_id, *, body=None, cat_params=None, mcd_params=None):
+def _build_next_data(ads_id, *, cat_params=None, mcd_params=None):
     return {
         "props": {
             "initialState": {
@@ -171,7 +144,6 @@ def _build_next_data(ads_id, *, body=None, cat_params=None, mcd_params=None):
                     "byID": {
                         str(ads_id): {
                             "attributes": {
-                                "body": body,
                                 "categoryParams": cat_params or [],
                                 "mcdParams": mcd_params or [],
                             }
@@ -187,7 +159,6 @@ class TestExtractDetailFields:
     def test_full_car_extraction(self):
         nd = _build_next_data(
             114522690,
-            body="Selling my Myvi<br/>Good condition",
             cat_params=[
                 {"id": "mileage", "realValue": "84000", "value": "84,000 km"},
                 {"id": "variant", "value": "EZL"},
@@ -203,7 +174,6 @@ class TestExtractDetailFields:
             ],
         )
         out = _extract_detail_fields(nd, 114522690)
-        assert out["body"] == "Selling my Myvi\nGood condition"
         assert out["mileage"] == "84000"
         assert out["variant"] == "EZL"
         assert out["family"] == "Compact"
@@ -216,25 +186,14 @@ class TestExtractDetailFields:
         out = _extract_detail_fields(nd, 12345)
         assert out == {}
 
-    def test_no_body_no_params(self):
+    def test_no_params(self):
         nd = _build_next_data(1)
         out = _extract_detail_fields(nd, 1)
         assert out == {}
 
-    def test_body_html_cleaned(self):
-        nd = _build_next_data(1, body="<b>hello</b><br/>world")
-        out = _extract_detail_fields(nd, 1)
-        assert out["body"] == "hello\nworld"
-
     def test_invalid_input_raises(self):
         with pytest.raises(ValueError):
             _extract_detail_fields("not a dict", 1)
-
-    def test_empty_body_dropped(self):
-        nd = _build_next_data(1, body="   ", cat_params=[{"id": "mileage", "value": "5"}])
-        out = _extract_detail_fields(nd, 1)
-        assert "body" not in out  # whitespace-only excluded
-        assert out["mileage"] == "5"
 
 
 # ---------------------------------------------------------------------------
@@ -266,7 +225,6 @@ class TestDetailClientFetch:
     def test_ok_path(self, mock_client):
         nd = _build_next_data(
             114522690,
-            body="Hello",
             cat_params=[{"id": "mileage", "realValue": "12345"}],
             mcd_params=[{"params": [{"id": "kw", "realValue": 100}]}],
         )
@@ -276,7 +234,6 @@ class TestDetailClientFetch:
         out = dc_.fetch("https://www.mudah.my/foo-114522690.htm", 114522690)
         assert out["detail_fetch_status"] == "ok"
         assert "last_detail_fetched_at" in out
-        assert out["body"] == "Hello"
         assert out["mileage"] == "12345"
         assert out["kw"] == 100
 
@@ -287,7 +244,7 @@ class TestDetailClientFetch:
         assert out["detail_fetch_status"] == "error"
         assert "last_detail_fetched_at" in out
         # No data fields when error
-        assert "body" not in out
+        assert "mileage" not in out
 
     def test_missing_script_tag_returns_error(self, mock_client):
         mock_client.get.return_value = _make_response("<html><body>No script here</body></html>")
@@ -310,13 +267,13 @@ class TestDetailClientFetch:
 
     def test_status_ok_but_ad_not_in_payload(self, mock_client):
         # Detail page reachable but the requested ad_id is not in byID
-        nd = _build_next_data(99999, body="other ad")
+        nd = _build_next_data(99999, cat_params=[{"id": "mileage", "value": "9"}])
         mock_client.get.return_value = _make_response(_wrap_in_html(nd))
         dc_ = DetailClient(mock_client)
         out = dc_.fetch("https://www.mudah.my/foo-1.htm", 1)
         # Still 'ok' (no error parsing) but no detail fields populated
         assert out["detail_fetch_status"] == "ok"
-        assert "body" not in out
+        assert "mileage" not in out
 
 
 # ---------------------------------------------------------------------------
@@ -325,9 +282,9 @@ class TestDetailClientFetch:
 
 class TestDetailFields:
     def test_contains_expected_categories(self):
-        # body, mileage from attributes/categoryParams
-        assert "body" in DETAIL_FIELDS
+        # mileage from attributes/categoryParams
         assert "mileage" in DETAIL_FIELDS
+        assert "body" not in DETAIL_FIELDS
         # chassis specs from mcdParams
         for field in ("kw", "torque", "length", "wheelbase", "tyres_front",
                       "wheel_rim_rear", "brake_front", "suspension_rear"):
