@@ -195,6 +195,14 @@ class HybridScraper:
             detail = self.detail.fetch(url, int(ads_id))
             ad.update(detail)
 
+            status = detail.get("detail_fetch_status", "?")
+            log_interval = max(1, min(10, len(targets) // 10))
+            if done_n % log_interval == 0 or done_n == 1 or done_n == len(targets):
+                logging.info(
+                    f"[{self.category}] Phase 2: {done_n}/{len(targets)} "
+                    f"ads_id={ads_id} status={status}"
+                )
+
             if done_n % checkpoint_every == 0:
                 self._write_csv(ads, timestamp, suffix=f"phase2_partial_{done_n}")
                 logging.info(
