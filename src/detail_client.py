@@ -3,7 +3,6 @@
 Carved from src/script.py's MudahScraper.get_car_info(). Extracts only the
 fields that EagleSearch API does NOT return:
 
-- body (full seller description)
 - mileage (exact, not the API's bucket)
 - chassis specs from mcdParams (kw, torque, length, wheelbase, ...)
 - car classification fields not always in API (family, variant, series, ...)
@@ -17,12 +16,11 @@ Public API:
 loop stays simple. Use `detail_fetch_status` field ('ok' / 'error') to branch.
 
 Module-level pure functions are exposed for testing without HTTP:
-    _clean_body, _parse_published, _parse_mcdparams, _extract_detail_fields
+    _parse_published, _parse_mcdparams, _extract_detail_fields
 """
 
 import json
 import logging
-import re
 from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional
 
@@ -37,9 +35,8 @@ from mudah_client import MudahClient
 # ---------------------------------------------------------------------------
 
 # Fields we expect to populate ONLY from the HTML detail page.
-# Order is descriptive (body first), not significant.
 DETAIL_FIELDS = (
-    "body", "mileage", "kw", "torque", "cc", "comp_ratio",
+    "mileage", "kw", "torque", "cc", "comp_ratio",
     "length", "width", "height", "wheelbase", "kerbwt", "fueltk",
     "brake_front", "brake_rear", "suspension_front", "suspension_rear",
     "steering", "tyres_front", "tyres_rear", "wheel_rim_front",
@@ -53,17 +50,6 @@ _DETAIL_FIELD_SET = frozenset(DETAIL_FIELDS)
 # ---------------------------------------------------------------------------
 # Pure helpers (carved from script.py — kept identical for behavior parity)
 # ---------------------------------------------------------------------------
-
-def _clean_body(text: Optional[str]) -> str:
-    """Normalize Mudah's HTML-flavored ad body to plain text."""
-    if not text:
-        return ""
-    # Mudah uses <br>, <br/>, <br /> as line breaks; collapse all to \n
-    text = re.sub(r"<br\s*/?>", "\n", text, flags=re.IGNORECASE)
-    # Strip any other stray HTML tags (rare, but defensive)
-    text = re.sub(r"<[^>]+>", "", text)
-    return text.strip()
-
 
 def _parse_published(text: str) -> str:
     """Convert Mudah's relative date strings ('Today 15:49', 'Yesterday 10:30',
@@ -159,13 +145,6 @@ def _extract_detail_fields(next_data: Dict, ads_id: int) -> Dict[str, Any]:
     attributes = ad_block.get("attributes") or {}
 
     out: Dict[str, Any] = {}
-
-    # Body lives directly on attributes
-    body_raw = attributes.get("body")
-    if body_raw:
-        cleaned = _clean_body(body_raw)
-        if cleaned:
-            out["body"] = cleaned
 
     # categoryParams (mileage, family, variant, series, style, seat, ...)
     out.update(_parse_categoryparams(attributes.get("categoryParams") or []))

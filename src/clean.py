@@ -39,17 +39,6 @@ _EMOJI_PAT = re.compile(
     flags=re.UNICODE,
 )
 
-# Malaysian mobile: 01x-xxxxxxx or +601x-xxxxxxx
-_PHONE_PAT = re.compile(
-    r"\b(01[0-9][-\s]?\d{7,8}|\+?60\s?1[0-9][-\s]?\d{7,8})\b"
-)
-
-# Decorative separator lines (====, ----, ****, ~~~~ etc.)
-_SEPARATOR_PAT = re.compile(r"^[=\-*_~]{5,}\s*$", re.MULTILINE)
-
-# 3+ consecutive blank lines → collapse
-_MULTI_BLANK_PAT = re.compile(r"\n{3,}")
-
 # Trailing sales noise after a separator char in subject
 # e.g. "Yamaha MT15 - Full Loan Ready Stock" → "Yamaha MT15"
 _SUBJECT_NOISE_PAT = re.compile(
@@ -140,22 +129,6 @@ def clean_subject(series: pd.Series) -> pd.Series:
     return series.apply(_clean)
 
 
-def clean_body(series: pd.Series) -> pd.Series:
-    """Redact phone numbers, strip emoji + decorators, collapse blanks, null if empty."""
-
-    def _clean(text: object) -> object:
-        if not isinstance(text, str) or not text.strip():
-            return pd.NA
-        text = _PHONE_PAT.sub("[PHONE]", text)
-        text = _EMOJI_PAT.sub("", text)
-        text = _SEPARATOR_PAT.sub("", text)
-        text = _MULTI_BLANK_PAT.sub("\n\n", text)
-        text = text.strip()
-        return text if len(text) >= 20 else pd.NA
-
-    return series.apply(_clean)
-
-
 # ---------------------------------------------------------------------------
 # Dedup helper
 # ---------------------------------------------------------------------------
@@ -220,7 +193,6 @@ _CARS_CLEANERS: Dict[str, object] = {
     "fueltk":            clean_numeric,
     "company_ad":        clean_company_ad,
     "subject":           clean_subject,
-    "body":              clean_body,
 }
 
 _MOTO_CLEANERS: Dict[str, object] = {
@@ -233,7 +205,6 @@ _MOTO_CLEANERS: Dict[str, object] = {
     "condition":         clean_text,
     "company_ad":        clean_company_ad,
     "subject":           clean_subject,
-    "body":              clean_body,
 }
 
 CATEGORY_CLEANERS: Dict[str, Dict] = {

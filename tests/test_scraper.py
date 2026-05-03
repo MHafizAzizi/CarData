@@ -21,7 +21,7 @@ from eagle_client import EagleAuthError  # noqa: E402
 # Fixtures
 # ---------------------------------------------------------------------------
 
-def _api_ad(ads_id: int, *, with_body: bool = False) -> dict:
+def _api_ad(ads_id: int, *, with_mileage: bool = False) -> dict:
     out = {
         "ads_id": ads_id,
         "subject": f"Listing {ads_id}",
@@ -32,14 +32,13 @@ def _api_ad(ads_id: int, *, with_body: bool = False) -> dict:
         "manufactured_date": "2020",
         "mileage_bucket": "50000-59999",
     }
-    if with_body:
-        out["body"] = "Already populated body"
+    if with_mileage:
+        out["mileage"] = "55000"
     return out
 
 
 def _detail_payload() -> dict:
     return {
-        "body": "Detailed seller body",
         "mileage": "55000",
         "kw": 70,
         "torque": 117,
@@ -91,26 +90,26 @@ class TestInit:
 
 class TestNeedsDetail:
     def test_depth_none_always_false(self, scraper):
-        ad_with_body = _api_ad(1, with_body=True)
+        ad_with = _api_ad(1, with_mileage=True)
         ad_without = _api_ad(2)
-        assert scraper._needs_detail(ad_with_body, "none") is False
+        assert scraper._needs_detail(ad_with, "none") is False
         assert scraper._needs_detail(ad_without, "none") is False
 
     def test_depth_all_always_true(self, scraper):
-        ad_with_body = _api_ad(1, with_body=True)
+        ad_with = _api_ad(1, with_mileage=True)
         ad_without = _api_ad(2)
-        assert scraper._needs_detail(ad_with_body, "all") is True
+        assert scraper._needs_detail(ad_with, "all") is True
         assert scraper._needs_detail(ad_without, "all") is True
 
-    def test_depth_missing_true_when_body_absent(self, scraper):
+    def test_depth_missing_true_when_mileage_absent(self, scraper):
         assert scraper._needs_detail(_api_ad(1), "missing") is True
 
-    def test_depth_missing_false_when_body_present(self, scraper):
-        assert scraper._needs_detail(_api_ad(1, with_body=True), "missing") is False
+    def test_depth_missing_false_when_mileage_present(self, scraper):
+        assert scraper._needs_detail(_api_ad(1, with_mileage=True), "missing") is False
 
-    def test_depth_missing_true_when_body_empty_string(self, scraper):
+    def test_depth_missing_true_when_mileage_empty_string(self, scraper):
         ad = _api_ad(1)
-        ad["body"] = ""
+        ad["mileage"] = ""
         assert scraper._needs_detail(ad, "missing") is True
 
 
@@ -153,13 +152,13 @@ class TestPhase2Enrich:
         out = scraper._phase2_enrich(ads, "all", checkpoint_every=100, timestamp="t")
         assert mock_detail.fetch.call_count == 3
         assert all(ad.get("detail_fetch_status") == "ok" for ad in out)
-        # body populated from detail
-        assert all(ad.get("body") == "Detailed seller body" for ad in out)
+        # mileage populated from detail
+        assert all(ad.get("mileage") == "55000" for ad in out)
 
-    def test_depth_missing_skips_ads_with_body(self, scraper, mock_detail):
-        ads = [_api_ad(0, with_body=True), _api_ad(1), _api_ad(2, with_body=True)]
+    def test_depth_missing_skips_ads_with_mileage(self, scraper, mock_detail):
+        ads = [_api_ad(0, with_mileage=True), _api_ad(1), _api_ad(2, with_mileage=True)]
         out = scraper._phase2_enrich(ads, "missing", checkpoint_every=100, timestamp="t")
-        # Only 1 fetch — for the one without body
+        # Only 1 fetch — for the one without mileage
         assert mock_detail.fetch.call_count == 1
         # The skipped ones get 'skipped' status
         statuses = [ad["detail_fetch_status"] for ad in out]
@@ -217,15 +216,15 @@ class TestWriteCsv:
 
 class TestRun:
     def test_full_run_depth_missing(self, scraper, mock_eagle, mock_detail, tmp_path):
-        # 3 ads from API, 1 already has body
-        page = [_api_ad(0, with_body=True), _api_ad(1), _api_ad(2)]
+        # 3 ads from API, 1 already has mileage
+        page = [_api_ad(0, with_mileage=True), _api_ad(1), _api_ad(2)]
         mock_eagle.fetch_all.return_value = iter([page])
 
         path = scraper.run(max_ads=None, depth="missing", checkpoint_every=100)
 
         assert path.exists()
         assert "final" in path.name
-        # 2 fetches (only ads without body)
+        # 2 fetches (only ads without mileage)
         assert mock_detail.fetch.call_count == 2
         # Phase-1 checkpoint should be cleaned up
         phase1_files = list(tmp_path.glob("*phase1*.csv"))
@@ -239,11 +238,11 @@ class TestRun:
         mock_detail.fetch.assert_not_called()
 
     def test_run_depth_all_fetches_all(self, scraper, mock_eagle, mock_detail):
-        page = [_api_ad(i, with_body=True) for i in range(3)]  # all have body
+        page = [_api_ad(i, with_mileage=True) for i in range(3)]  # all have mileage
         mock_eagle.fetch_all.return_value = iter([page])
 
         scraper.run(max_ads=None, depth="all", checkpoint_every=100)
-        # depth=all overrides body presence
+        # depth=all overrides mileage presence
         assert mock_detail.fetch.call_count == 3
 
     def test_run_invalid_depth_raises(self, scraper):

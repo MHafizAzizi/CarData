@@ -1,7 +1,7 @@
 """Integration comparison: new HybridScraper vs old script.py MudahScraper.
 
 Runs both scrapers on a small overlapping set of cars and asserts that
-shared fields (ads_id, subject, body, make, model) are populated and that
+shared fields (ads_id, subject, make, model) are populated and that
 new API-only fields appear in the new output.
 
 Strategy:
@@ -41,7 +41,6 @@ from script import MudahScraper  # noqa: E402
 SHARED_FIELDS_TO_COMPARE = (
     "ads_id",
     "subject",
-    "body",
     "make",
     "model",
 )
@@ -138,17 +137,6 @@ def compare(df_new: pd.DataFrame, df_old: pd.DataFrame) -> int:
             # Coerce blank/NaN to None for fair comparison
             v_new_norm = None if pd.isna(v_new) or v_new == "" else str(v_new).strip()
             v_old_norm = None if pd.isna(v_old) or v_old == "" else str(v_old).strip()
-
-            if field == "body":
-                # Body comparison is fuzzy: compare first 80 chars after
-                # collapsing whitespace.
-                def _norm_body(s):
-                    if s is None:
-                        return None
-                    return " ".join(str(s).split())[:80].lower()
-
-                v_new_norm = _norm_body(v_new_norm)
-                v_old_norm = _norm_body(v_old_norm)
 
             if field in CASE_INSENSITIVE_FIELDS:
                 v_new_cmp = v_new_norm.lower() if v_new_norm else None

@@ -5,7 +5,6 @@ import pytest
 
 from src.clean import (
     clean,
-    clean_body,
     clean_company_ad,
     clean_engine_capacity,
     clean_manufactured_date,
@@ -168,69 +167,6 @@ class TestCleanSubject:
 
 
 # ---------------------------------------------------------------------------
-# clean_body
-# ---------------------------------------------------------------------------
-
-
-class TestCleanBody:
-    def test_redacts_phone_numbers(self):
-        s = pd.Series(["Call us at 018-7690060 for more info about this motorcycle."])
-        result = clean_body(s)
-        assert "018-7690060" not in result[0]
-        assert "[PHONE]" in result[0]
-
-    def test_redacts_phone_without_dash(self):
-        s = pd.Series(["Contact 0128637378 now to buy this great bike today!"])
-        result = clean_body(s)
-        assert "0128637378" not in result[0]
-        assert "[PHONE]" in result[0]
-
-    def test_strips_emoji(self):
-        s = pd.Series(["Ready Stock ✅ Low Deposit 🤗 Full Loan available now for all!"])
-        result = clean_body(s)
-        assert "✅" not in result[0]
-        assert "🤗" not in result[0]
-
-    def test_strips_separator_lines(self):
-        body = "Some content here\n============================\nMore content follows below."
-        s = pd.Series([body])
-        result = clean_body(s)
-        assert "====" not in result[0]
-
-    def test_strips_star_separator_lines(self):
-        body = "Header info\n*****************************\nDetail info below."
-        s = pd.Series([body])
-        result = clean_body(s)
-        assert "*****" not in result[0]
-
-    def test_collapses_multiple_blank_lines(self):
-        body = "Line one\n\n\n\n\nLine two more content here is available."
-        s = pd.Series([body])
-        result = clean_body(s)
-        assert "\n\n\n" not in result[0]
-
-    def test_short_body_becomes_na(self):
-        s = pd.Series(["Pm", "Nego", "berminat pm je"])
-        result = clean_body(s)
-        assert result.isna().all()
-
-    def test_empty_becomes_na(self):
-        s = pd.Series([None, "", "   "])
-        assert clean_body(s).isna().all()
-
-    def test_normal_body_preserved(self):
-        body = (
-            "2022 Yamaha Y15ZR in excellent condition. "
-            "Mileage low, well maintained, original parts. "
-            "Serious buyer only. Price negotiable for cash."
-        )
-        s = pd.Series([body])
-        result = clean_body(s)
-        assert isinstance(result[0], str)
-        assert len(result[0]) > 20
-
-
-# ---------------------------------------------------------------------------
 # dedup_reposts
 # ---------------------------------------------------------------------------
 
@@ -292,11 +228,6 @@ class TestCleanPipelineMotorcycles:
         return pd.DataFrame({
             "ads_id":           [1, 2, 3],
             "subject":          ["New R25  ", "Z250 🌕 RAYA ✅", "Yamaha MT15 - Full Loan Ready Stock"],
-            "body":             [
-                "Call 018-7690060 for info about this motorcycle available now today!",
-                "Ready Stock ✅ great bike for daily use. Low deposit and full loan available.",
-                None,
-            ],
             "price":            ["RM 5,000", "RM 21,000", "RM 12,498"],
             "manufactured_date": ["2023", "1995 or older", "2024"],
             "company_ad":       ["1", "0", "1"],
@@ -325,15 +256,6 @@ class TestCleanPipelineMotorcycles:
         assert df["subject"].iloc[0] == "New R25"
         assert "🌕" not in str(df["subject"].iloc[1])
         assert "Full Loan" not in str(df["subject"].iloc[2])
-
-    def test_body_phone_redacted(self):
-        df = clean(self._base_df(), category="motorcycles")
-        assert "018-7690060" not in str(df["body"].iloc[0])
-        assert "[PHONE]" in str(df["body"].iloc[0])
-
-    def test_body_null_when_short(self):
-        df = clean(self._base_df(), category="motorcycles")
-        assert pd.isna(df["body"].iloc[2])
 
     def test_location_title_cased(self):
         df = clean(self._base_df(), category="motorcycles")

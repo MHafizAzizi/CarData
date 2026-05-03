@@ -13,7 +13,6 @@ CREATE TABLE IF NOT EXISTS listings (
     url                 TEXT UNIQUE,
     -- listing content (shared with motorcycles)
     subject             TEXT,
-    body                TEXT,
     price               TEXT,
     condition           TEXT,
     manufactured_date   TEXT,

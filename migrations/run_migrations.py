@@ -10,6 +10,10 @@ Shared columns (cars + motorcycles):
 Cars only:
     car_loan_eligible, car_loan_payment, car_loan_tenure, has_car_grant
 
+v2 -> v3: Drops the `body` column from listings (cars + motorcycles).
+The full seller description is no longer stored — see commit history for
+rationale.
+
 Usage:
     python migrations/run_migrations.py                       # interactive prompt
     python migrations/run_migrations.py --category cars
@@ -46,7 +50,7 @@ from db import CATEGORIES, connect, schema_version, set_meta  # noqa: E402
 # Migration spec — v1 -> v2
 # ---------------------------------------------------------------------------
 
-TARGET_VERSION = 2
+TARGET_VERSION = 3
 
 # (column_name, sqlite_type) — applied to BOTH cars and motorcycles
 SHARED_NEW_COLS: List[Tuple[str, str]] = [
@@ -67,6 +71,9 @@ CAR_EXTRA_COLS: List[Tuple[str, str]] = [
     ("car_loan_tenure",   "INTEGER"),
     ("has_car_grant",     "INTEGER"),
 ]
+
+# v2 -> v3: columns to drop from `listings` (both categories)
+DROPPED_COLS_V3: List[str] = ["body"]
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -101,6 +108,29 @@ def _safe_add_column(
     return True
 
 
+def _safe_drop_column(
+    conn: sqlite3.Connection,
+    table: str,
+    column: str,
+    *,
+    dry_run: bool,
+) -> bool:
+    """ALTER TABLE ... DROP COLUMN, guarded by existence check.
+
+    Requires SQLite >= 3.35 (2021-03). Returns True if the drop ran (or would
+    run in dry-run).
+    """
+    if not _column_exists(conn, table, column):
+        logging.debug(f"  · {table}.{column} already absent, skipping")
+        return False
+    if dry_run:
+        logging.info(f"  - [DRY-RUN] would drop {table}.{column}")
+        return True
+    conn.execute(f"ALTER TABLE {table} DROP COLUMN {column}")
+    logging.info(f"  - dropped {table}.{column}")
+    return True
+
+
 def _columns_for(category: str) -> List[Tuple[str, str]]:
     cols = list(SHARED_NEW_COLS)
     if category == "cars":
@@ -112,8 +142,79 @@ def _columns_for(category: str) -> List[Tuple[str, str]]:
 # Per-category migrate
 # ---------------------------------------------------------------------------
 
+def _migrate_v1_to_v2(
+    conn: sqlite3.Connection, category: str, *, dry_run: bool
+) -> None:
+    """Add EagleSearch + hybrid-tracking columns."""
+    cols = _columns_for(category)
+    logging.info(
+        f"[{category}] step v1 -> v2 ({len(cols)} columns to evaluate)"
+    )
+
+    added = 0
+    with conn:
+        for col_name, col_type in cols:
+            if _safe_add_column(conn, "listings", col_name, col_type, dry_run=dry_run):
+                added += 1
+
+        if dry_run:
+            logging.info(
+                f"[{category}] DRY-RUN v1->v2: would add {added} column(s)"
+            )
+            return
+
+        conn.execute(
+            "INSERT INTO meta (key, value) VALUES ('schema_version', '2') "
+            "ON CONFLICT(key) DO UPDATE SET value = excluded.value"
+        )
+
+    logging.info(
+        f"[{category}] v1 -> v2 complete — added {added} column(s)"
+    )
+    set_meta(
+        conn,
+        "last_migration_v2_at",
+        __import__("datetime").datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+    )
+
+
+def _migrate_v2_to_v3(
+    conn: sqlite3.Connection, category: str, *, dry_run: bool
+) -> None:
+    """Drop columns no longer stored (currently: body)."""
+    logging.info(
+        f"[{category}] step v2 -> v3 ({len(DROPPED_COLS_V3)} column(s) to drop)"
+    )
+
+    dropped = 0
+    with conn:
+        for col_name in DROPPED_COLS_V3:
+            if _safe_drop_column(conn, "listings", col_name, dry_run=dry_run):
+                dropped += 1
+
+        if dry_run:
+            logging.info(
+                f"[{category}] DRY-RUN v2->v3: would drop {dropped} column(s)"
+            )
+            return
+
+        conn.execute(
+            "INSERT INTO meta (key, value) VALUES ('schema_version', '3') "
+            "ON CONFLICT(key) DO UPDATE SET value = excluded.value"
+        )
+
+    logging.info(
+        f"[{category}] v2 -> v3 complete — dropped {dropped} column(s)"
+    )
+    set_meta(
+        conn,
+        "last_migration_v3_at",
+        __import__("datetime").datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+    )
+
+
 def migrate(category: str, *, dry_run: bool = False) -> None:
-    """Run v1 -> v2 migration on the given category's DB."""
+    """Run all pending migrations on the given category's DB."""
     if category not in CATEGORIES:
         raise ValueError(
             f"Unknown category: {category!r}. Expected one of {CATEGORIES}."
@@ -131,43 +232,18 @@ def migrate(category: str, *, dry_run: bool = False) -> None:
         )
         return
 
-    cols = _columns_for(category)
     logging.info(
-        f"[{category}] migrating v{current} -> v{TARGET_VERSION} "
-        f"({len(cols)} columns to evaluate)"
+        f"[{category}] migrating v{current} -> v{TARGET_VERSION}"
     )
 
-    added = 0
-    # All ADDs in one transaction so a partial failure rolls back cleanly.
-    with conn:
-        for col_name, col_type in cols:
-            if _safe_add_column(conn, "listings", col_name, col_type, dry_run=dry_run):
-                added += 1
-
-        if dry_run:
-            logging.info(
-                f"[{category}] DRY-RUN: would add {added} column(s); "
-                f"schema_version unchanged"
-            )
-            return
-
-        # Bump schema_version inside the same transaction
-        conn.execute(
-            "INSERT INTO meta (key, value) VALUES ('schema_version', ?) "
-            "ON CONFLICT(key) DO UPDATE SET value = excluded.value",
-            (str(TARGET_VERSION),),
-        )
+    if current < 2:
+        _migrate_v1_to_v2(conn, category, dry_run=dry_run)
+    if current < 3:
+        _migrate_v2_to_v3(conn, category, dry_run=dry_run)
 
     logging.info(
-        f"[{category}] migration complete — added {added} column(s); "
-        f"schema_version now {TARGET_VERSION}"
-    )
-
-    # Audit trail
-    set_meta(
-        conn,
-        "last_migration_v2_at",
-        __import__("datetime").datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        f"[{category}] migration complete; "
+        f"schema_version now {TARGET_VERSION if not dry_run else current}"
     )
 
 
