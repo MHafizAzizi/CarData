@@ -82,50 +82,87 @@ class HybridScraper:
         max_ads: Optional[int] = None,
         depth: str = "missing",
         checkpoint_every: int = 100,
+        resume: bool = False,
     ) -> Path:
-        """Execute Phase 1 + Phase 2; return final CSV path."""
+        """Execute Phase 1 + Phase 2; return final CSV path.
+
+        If `resume` is True, skip Phase 1 and load the most recent checkpoint
+        CSV in the output dir for this category (prefers phase2_partial over
+        phase1). Phase 2 continues from there; already-enriched ads are
+        skipped naturally by `_needs_detail` when depth='missing'.
+        """
         if depth not in DEPTH_CHOICES:
             raise ValueError(f"Invalid depth {depth!r}. Expected {DEPTH_CHOICES}.")
 
         timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
         logging.info(
             f"[{self.category}] HybridScraper starting "
-            f"(max_ads={max_ads}, depth={depth}, ts={timestamp})"
+            f"(max_ads={max_ads}, depth={depth}, resume={resume}, ts={timestamp})"
         )
 
-        # ---------- Phase 1: API ----------
-        try:
-            ads = self._phase1_collect(max_ads)
-        except EagleAuthError:
-            logging.warning(
-                "EagleSearch returned auth error — falling back to HTML-only "
-                "mode is not implemented in this orchestrator. Aborting. "
-                "Use src/script.py for HTML-only scraping."
+        # Track intermediate checkpoint files so they can be cleaned up after final
+        checkpoint_paths: List[Path] = []
+
+        if resume:
+            resume_path = self._find_resume_checkpoint()
+            if resume_path is None:
+                raise FileNotFoundError(
+                    f"No checkpoint CSV found for category {self.category!r} "
+                    f"in {self.output_dir}. Looked for phase2_partial_*.csv "
+                    f"and phase1_*.csv."
+                )
+            ads = self._load_checkpoint(resume_path)
+            logging.info(
+                f"[{self.category}] Resuming from {resume_path.name} "
+                f"({len(ads)} ads loaded)"
             )
-            raise
+            checkpoint_paths.append(resume_path)
+            if max_ads is not None:
+                logging.info(
+                    f"[{self.category}] --max-ads ignored in resume mode "
+                    f"(checkpoint defines the working set)"
+                )
+        else:
+            # ---------- Phase 1: API ----------
+            # _phase1_collect writes the phase1 CSV incrementally per page so
+            # a mid-Phase-1 crash still leaves a usable checkpoint on disk.
+            try:
+                ads = self._phase1_collect(max_ads, timestamp=timestamp)
+            except EagleAuthError:
+                logging.warning(
+                    "EagleSearch returned auth error — falling back to HTML-only "
+                    "mode is not implemented in this orchestrator. Aborting. "
+                    "Use src/script.py for HTML-only scraping."
+                )
+                raise
 
-        if not ads:
-            logging.warning(f"[{self.category}] Phase 1 returned 0 ads; aborting")
-            return self._write_csv([], timestamp, suffix="empty")
+            if not ads:
+                logging.warning(f"[{self.category}] Phase 1 returned 0 ads; aborting")
+                return self._write_csv([], timestamp, suffix="empty")
 
-        # Phase-1 checkpoint: write CSV immediately so API data survives Phase 2 crash
-        phase1_path = self._write_csv(ads, timestamp, suffix="phase1")
-        logging.info(
-            f"[{self.category}] Phase 1 complete — {len(ads)} ads "
-            f"checkpointed to {phase1_path.name}"
-        )
+            phase1_path = (
+                self.output_dir
+                / f"mudah_eagle_{self.category}_phase1_{timestamp}.csv"
+            )
+            logging.info(
+                f"[{self.category}] Phase 1 complete — {len(ads)} ads "
+                f"checkpointed to {phase1_path.name}"
+            )
+            checkpoint_paths.append(phase1_path)
 
         # ---------- Phase 2: HTML enrichment ----------
         if depth == "none":
             logging.info(f"[{self.category}] Phase 2 skipped (depth=none)")
             final_path = self._write_csv(ads, timestamp, suffix="final")
-            self._cleanup_checkpoint(phase1_path)
+            self._cleanup_checkpoints(checkpoint_paths)
             return final_path
 
-        ads = self._phase2_enrich(ads, depth, checkpoint_every, timestamp)
+        ads = self._phase2_enrich(
+            ads, depth, checkpoint_every, timestamp, checkpoint_paths
+        )
 
         final_path = self._write_csv(ads, timestamp, suffix="final")
-        self._cleanup_checkpoint(phase1_path)
+        self._cleanup_checkpoints(checkpoint_paths)
         logging.info(
             f"[{self.category}] HybridScraper complete — "
             f"final CSV: {final_path.name}"
@@ -136,14 +173,27 @@ class HybridScraper:
     # Phase 1: API collection
     # ------------------------------------------------------------------
 
-    def _phase1_collect(self, max_ads: Optional[int]) -> List[Dict[str, Any]]:
-        """Paginate EagleSearch and return flat list of normalized ad dicts."""
+    def _phase1_collect(
+        self,
+        max_ads: Optional[int],
+        timestamp: Optional[str] = None,
+    ) -> List[Dict[str, Any]]:
+        """Paginate EagleSearch and return flat list of normalized ad dicts.
+
+        When `timestamp` is provided, the phase1 checkpoint CSV is rewritten
+        after each page so a mid-Phase-1 crash still leaves a usable
+        checkpoint on disk (rewriting is cheap with at most ~50 pages).
+        """
         all_ads: List[Dict[str, Any]] = []
         for page in self.eagle.fetch_all(self.category, max_ads=max_ads):
             all_ads.extend(page)
             if max_ads is not None and len(all_ads) >= max_ads:
                 all_ads = all_ads[:max_ads]
+                if timestamp is not None:
+                    self._write_csv(all_ads, timestamp, suffix="phase1")
                 break
+            if timestamp is not None:
+                self._write_csv(all_ads, timestamp, suffix="phase1")
         logging.info(f"[{self.category}] Phase 1 collected {len(all_ads)} ads")
         return all_ads
 
@@ -171,8 +221,13 @@ class HybridScraper:
         depth: str,
         checkpoint_every: int,
         timestamp: str,
+        checkpoint_paths: Optional[List[Path]] = None,
     ) -> List[Dict[str, Any]]:
-        """Fetch HTML detail for ads needing it. Mutates ads in place + returns."""
+        """Fetch HTML detail for ads needing it. Mutates ads in place + returns.
+
+        If `checkpoint_paths` is provided, partial-CSV paths are appended to it
+        so the caller can clean them up after the final write.
+        """
         targets = [(i, ad) for i, ad in enumerate(ads) if self._needs_detail(ad, depth)]
         skipped = len(ads) - len(targets)
         logging.info(
@@ -204,11 +259,19 @@ class HybridScraper:
                 )
 
             if done_n % checkpoint_every == 0:
-                self._write_csv(ads, timestamp, suffix=f"phase2_partial_{done_n}")
+                partial_path = self._write_csv(
+                    ads, timestamp, suffix=f"phase2_partial_{done_n}"
+                )
+                if checkpoint_paths is not None:
+                    checkpoint_paths.append(partial_path)
                 logging.info(
                     f"[{self.category}] Phase 2 progress: {done_n}/{len(targets)} "
                     f"detail fetches completed (checkpointed)"
                 )
+
+        # One-shot retry pass: re-attempt ads that errored above. The shared
+        # MudahClient throttle is enough spacing; no extra sleep needed.
+        self._phase2_retry_errors(ads)
 
         # Mark non-targets as 'skipped' so DB layer can distinguish from 'error'
         for i, ad in enumerate(ads):
@@ -216,6 +279,39 @@ class HybridScraper:
                 ad["detail_fetch_status"] = "skipped"
 
         return ads
+
+    def _phase2_retry_errors(self, ads: List[Dict[str, Any]]) -> None:
+        """One-shot retry pass for ads marked detail_fetch_status='error'.
+
+        Mutates ads in place. Ads missing url/ads_id are skipped — they can't
+        be retried, and `last_detail_fetched_at` already records the failure.
+        """
+        retry_targets = [
+            ad
+            for ad in ads
+            if ad.get("detail_fetch_status") == "error"
+            and ad.get("url")
+            and ad.get("ads_id") is not None
+        ]
+        if not retry_targets:
+            return
+
+        logging.info(
+            f"[{self.category}] Phase 2 retry pass: "
+            f"re-attempting {len(retry_targets)} errored ads"
+        )
+
+        recovered = 0
+        for ad in retry_targets:
+            detail = self.detail.fetch(ad["url"], int(ad["ads_id"]))
+            ad.update(detail)
+            if detail.get("detail_fetch_status") == "ok":
+                recovered += 1
+
+        logging.info(
+            f"[{self.category}] Phase 2 retry pass: "
+            f"recovered {recovered}/{len(retry_targets)}"
+        )
 
     # ------------------------------------------------------------------
     # CSV output
@@ -239,13 +335,55 @@ class HybridScraper:
         df.to_csv(path, index=False, encoding="utf-8")
         return path
 
-    def _cleanup_checkpoint(self, path: Path) -> None:
-        """Remove an intermediate checkpoint CSV after the final one is written."""
-        try:
-            if path.exists():
-                path.unlink()
-        except OSError as e:
-            logging.warning(f"Could not remove checkpoint {path}: {e}")
+    # ------------------------------------------------------------------
+    # Resume helpers
+    # ------------------------------------------------------------------
+
+    def _find_resume_checkpoint(self) -> Optional[Path]:
+        """Locate the most recent checkpoint CSV to resume from.
+
+        Prefers phase2_partial files (most progress) over phase1 files. Among
+        either kind, the most recently modified one wins.
+        """
+        partials = sorted(
+            self.output_dir.glob(
+                f"mudah_eagle_{self.category}_phase2_partial_*.csv"
+            ),
+            key=lambda p: p.stat().st_mtime,
+        )
+        if partials:
+            return partials[-1]
+        phase1s = sorted(
+            self.output_dir.glob(f"mudah_eagle_{self.category}_phase1_*.csv"),
+            key=lambda p: p.stat().st_mtime,
+        )
+        if phase1s:
+            return phase1s[-1]
+        return None
+
+    def _load_checkpoint(self, path: Path) -> List[Dict[str, Any]]:
+        """Read a checkpoint CSV into a list of ad dicts.
+
+        Converts pandas NaN to None so `_needs_detail` and downstream checks
+        treat missing values consistently (NaN is truthy, which would skew
+        the mileage-presence test).
+        """
+        df = pd.read_csv(path, encoding="utf-8")
+        records = df.to_dict(orient="records")
+        for r in records:
+            for k, v in list(r.items()):
+                if isinstance(v, float) and pd.isna(v):
+                    r[k] = None
+        return records
+
+    def _cleanup_checkpoints(self, paths: List[Path]) -> None:
+        """Remove intermediate checkpoint CSVs after the final one is written."""
+        for path in paths:
+            try:
+                if path.exists():
+                    path.unlink()
+            except OSError as e:
+                logging.warning(f"Could not remove checkpoint {path}: {e}")
 
 
 # ---------------------------------------------------------------------------
@@ -309,6 +447,11 @@ def parse_args() -> argparse.Namespace:
         help="Write Phase-2 checkpoint CSV every N detail fetches (default: 100)",
     )
     p.add_argument(
+        "--resume",
+        action="store_true",
+        help="Resume from the latest checkpoint CSV in output_dir (skip Phase 1)",
+    )
+    p.add_argument(
         "--output-dir",
         default=None,
         help="Output dir for CSVs (default: data/raw/<category>/)",
@@ -328,7 +471,9 @@ def _interactive_fill(args: argparse.Namespace) -> argparse.Namespace:
     print("\n=== Hybrid Mudah Scraper ===")
     if args.category is None:
         args.category = _prompt_choice("Category", CATEGORY_CHOICES)
-    if args.max_ads is None:
+    # In resume mode the checkpoint defines the working set, so skip the
+    # max_ads prompt — it's a no-op.
+    if args.max_ads is None and not args.resume:
         args.max_ads = _prompt_int(
             "Max ads to fetch [default: 1000]: ", min_val=1, default=1000
         )
@@ -397,6 +542,7 @@ def main() -> None:
         max_ads=args.max_ads,
         depth=args.depth,
         checkpoint_every=args.checkpoint_every,
+        resume=args.resume,
     )
     print(f"\nDone. Output: {final_path}")
 

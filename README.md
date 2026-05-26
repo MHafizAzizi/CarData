@@ -167,9 +167,20 @@ Flags:
 | `--max-ads` | *prompted* | Max ads to collect via API (Phase 1 cap) |
 | `--depth` | `missing` | `none` = API only; `missing` = HTML only when `mileage` absent; `all` = HTML for every ad |
 | `--checkpoint-every` | `100` | Write Phase-2 partial CSV every N detail fetches |
+| `--resume` | *off* | Resume from the latest checkpoint CSV in `output_dir` (skip Phase 1) |
 | `--output-dir` | `data/raw/<category>/` | Where to save CSVs |
 
 CSV filename: `mudah_eagle_{category}_final_{timestamp}.csv`.
+
+**Resuming a crashed run.** If Phase 2 dies partway through, re-run with `--resume`:
+
+```bash
+python src/scraper.py --category cars --depth missing --resume
+```
+
+The scraper auto-detects the most recent `phase2_partial_*.csv` (or `phase1_*.csv` if Phase 2 never started) in the output dir, loads it as the working set, and continues from there. `depth=missing` skips ads that already have exact `mileage` populated, so previously-enriched ads are not re-fetched. Phase 1 is reused, not re-run, and `--max-ads` is ignored in resume mode (the checkpoint defines the working set).
+
+**Phase 2 also retries errored ads automatically.** At the end of the main loop, any ad with `detail_fetch_status='error'` gets one more attempt — useful for recovering transient network blips without a full re-run.
 
 ### HTML-only scraper — `script.py` (fallback)
 
@@ -307,6 +318,8 @@ To stay friendly with mudah.my and avoid 403 blocks, both scrapers pace themselv
 - **Detail-page retries:** same schedule
 
 The two clients (`eagle_client.py` and `mudah_client.py`) own independent locks so the API throttle never blocks the HTML throttle (or vice versa) when running in the same process.
+
+**429 Too Many Requests** is handled separately from the fixed retry schedule. If the server sends `Retry-After`, the client sleeps for that many seconds (or until that HTTP-date), capped at 5 minutes. Without the header, the client falls back to a 60s back-off. This applies to both `eagle_client.py` and `mudah_client.py`.
 
 Logs go to `logs/scraper_hybrid.log` (new) and `logs/scraper.log` (legacy), both UTF-8 to preserve non-ASCII titles.
 
@@ -516,6 +529,16 @@ Every probe appends one row to the `availability_checks` table in the same DB:
 ## Changelog
 
 This section tracks every revision of this README. Add a new entry at the top whenever the document is updated.
+
+### 2026-05-26
+- **Scraping smoothness pass.** Six resilience improvements to `scraper.py`, `eagle_client.py`, `mudah_client.py`:
+  - **`--resume` flag** auto-detects the latest `phase2_partial_*.csv` (or `phase1_*.csv`) in the output dir and continues from there; `depth=missing` skips already-enriched ads naturally.
+  - **429 / Retry-After awareness** in both HTTP clients — honors the header (capped at 5 min) or falls back to 60s, independent of the normal 2s/3s/5s retry schedule.
+  - **End-of-Phase-2 retry pass** re-attempts ads marked `detail_fetch_status='error'` once before final write — recovers most transient blips.
+  - **Incremental Phase 1 checkpoint** — `phase1_*.csv` is rewritten per page during Phase 1 so a mid-Phase-1 crash still leaves usable data on disk.
+  - **Cleaned up partial checkpoints** — `phase2_partial_*.csv` files are now removed after the final CSV is written (previously they leaked).
+  - **Added `Referer` header** to `MudahClient` and synced `Sec-Fetch-Site=same-origin` for parity with `EagleClient`.
+- **Test coverage:** +24 tests across `test_scraper.py` (15) and `test_eagle_client.py` (9). Total: 184 passing.
 
 ### 2026-05-02
 - **Hybrid scraper landed.** New `src/scraper.py` orchestrates a two-phase pipeline: Phase 1 pulls 200 ads/request from the discovered EagleSearch JSON API (`https://search.mudah.my/v1/search`, ~500ms for 200 ads) and Phase 2 fetches `.htm` pages only for ads needing deep fields (body, exact mileage, chassis specs). New `--depth {none|missing|all}` flag controls Phase 2 scope. API-only mode is ~1500× faster per listing than `script.py`. Also added `src/eagle_client.py` (API wrapper with own 0.5–1s throttle) and `src/detail_client.py` (HTML parser carved from `script.py`). `script.py` retained as fallback when EagleSearch is unavailable.

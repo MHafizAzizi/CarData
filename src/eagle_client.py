@@ -40,6 +40,12 @@ import requests
 from fake_useragent import UserAgent
 from requests.exceptions import RequestException
 
+from mudah_client import (
+    RATE_LIMIT_DEFAULT_WAIT,
+    RATE_LIMIT_MAX_WAIT,
+    parse_retry_after,
+)
+
 
 # ---------------------------------------------------------------------------
 # Constants — discovered via probe_api scripts
@@ -271,6 +277,19 @@ class EagleClient:
                     raise EagleAuthError(
                         f"EagleSearch returned {resp.status_code}; auth required or blocked"
                     )
+
+                # Rate-limited: honor Retry-After if present, else default back-off
+                if resp.status_code == 429 and attempt < self.max_retries:
+                    wait = parse_retry_after(resp.headers.get("Retry-After"))
+                    if wait is None:
+                        wait = RATE_LIMIT_DEFAULT_WAIT
+                    wait = min(wait, RATE_LIMIT_MAX_WAIT)
+                    logging.warning(
+                        f"EagleSearch returned 429; backing off {wait:.1f}s "
+                        f"(attempt {attempt + 1}/{self.max_retries})"
+                    )
+                    time.sleep(wait)
+                    continue
 
                 resp.raise_for_status()
                 return resp
