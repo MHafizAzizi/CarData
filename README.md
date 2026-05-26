@@ -25,7 +25,7 @@ EagleSearch is Mudah's internal JSON API (discovered via JS bundle inspection). 
 
 **Hybrid scraper (`scraper.py`)** — two-phase pipeline:
 - **Phase 1 (API)** — paginates EagleSearch (offset/limit 200/req). Returns normalized records with: `ads_id`, `subject`, `price`, `make`, `model`, `mileage_bucket`, `region`, `subarea`, `condition`, plus API-only fields (`old_price`, `year_verified`, `store_verified`, `bundle`, `media_count`, `car_loan_eligible`, `car_loan_payment`, `car_loan_tenure`, `has_car_grant`).
-- **Phase 2 (HTML)** — fetches each `.htm` detail page only when needed. Adds: `body` (full description), exact `mileage`, chassis specs (`kw`, `torque`, `length`, `wheelbase`, `kerbwt`, `fueltk`, `brake_*`, `suspension_*`, `tyres_*`, `wheel_rim_*`, `steering`), `family`, `variant`, `series`, `style`, `seat`, `country_origin`, `engine`.
+- **Phase 2 (HTML)** — fetches each `.htm` detail page only when needed. Adds: exact `mileage`, chassis specs (`kw`, `torque`, `length`, `wheelbase`, `kerbwt`, `fueltk`, `brake_*`, `suspension_*`, `tyres_*`, `wheel_rim_*`, `steering`), `family`, `variant`, `series`, `style`, `seat`, `country_origin`, `engine`.
 
 **HTML-only scraper (`script.py`)** — reads `__NEXT_DATA__` from HTML search pages (40 listings/page) and detail pages. Slower (~3-4s throttle per request) but kept as a complete fallback if EagleSearch is ever auth'd or blocked.
 
@@ -39,7 +39,7 @@ EagleSearch API (search.mudah.my)
         │
         ▼                          .htm detail pages
                               ┌────────────│
-                              │  Phase 2 (body, exact mileage, chassis specs;
+                              │  Phase 2 (exact mileage, chassis specs;
                               │   only when --depth != none)
                               ▼
                           scraper.py
@@ -165,7 +165,7 @@ Flags:
 |---|---|---|
 | `--category` | *prompted* | `cars` or `motorcycles` |
 | `--max-ads` | *prompted* | Max ads to collect via API (Phase 1 cap) |
-| `--depth` | `missing` | `none` = API only; `missing` = HTML only when `body` absent; `all` = HTML for every ad |
+| `--depth` | `missing` | `none` = API only; `missing` = HTML only when `mileage` absent; `all` = HTML for every ad |
 | `--checkpoint-every` | `100` | Write Phase-2 partial CSV every N detail fetches |
 | `--output-dir` | `data/raw/<category>/` | Where to save CSVs |
 
@@ -237,7 +237,6 @@ Each row in the output CSV/Excel represents one listing. Columns vary slightly b
 | `url` | Full Mudah.my listing URL |
 | `ads_id` | Unique Mudah listing ID |
 | `subject` | Full listing title |
-| `body` | Full seller-written description (HTML `<br>` collapsed to newlines) |
 | `price` | Listed price (MYR) |
 | `condition` | New / Used |
 | `manufactured_date` | Year of manufacture |
@@ -423,13 +422,6 @@ python src/clean.py --category cars
 - Strip leading/trailing whitespace
 - Strip emoji (🌕 ✅ 😊 …)
 - Strip trailing dealer sales noise after `-`/`~`/`|` separator: `Full Loan`, `Ready Stock`, `Low Deposit`, `90% Credit`, `Free Delivery`, `Ready`, `KHM <location>`
-
-**Body cleaning**
-- Redact Malaysian phone numbers (`01x-xxxxxxx`, `+601x…`) → `[PHONE]`
-- Strip emoji
-- Strip decorative separator lines (`====`, `****`, `----`, `~~~~` of length 5+)
-- Collapse 3+ blank lines → 1
-- Null-out effectively-empty body (< 20 chars after cleanup, e.g. `"Pm"`, `"Nego"`)
 
 **Row-level**
 - Drop rows missing all of `ads_id`/`make`/`model` (or `motorcycle_make`/`motorcycle_model`)
