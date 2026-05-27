@@ -503,8 +503,31 @@ def _parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+def _prompt_category() -> str:
+    """Interactive category prompt (matches scraper.py / migrate_xlsx_to_db.py)."""
+    choices = ["cars", "motorcycles"]
+    print("\nSelect category to clean:")
+    for i, c in enumerate(choices, 1):
+        print(f"  {i}. {c}")
+    while True:
+        raw = input("Enter 1 or 2 [default: 1]: ").strip()
+        if raw == "":
+            return choices[0]
+        try:
+            idx = int(raw)
+            if 1 <= idx <= len(choices):
+                return choices[idx - 1]
+        except ValueError:
+            pass
+        print("Please enter 1 or 2.")
+
+
 def main() -> None:
     args = _parse_args()
+
+    # Default to DB mode; only fall into legacy xlsx mode if --input was given.
+    if args.category is None and args.input is None:
+        args.category = _prompt_category()
 
     if args.category:
         clean_db(args.category, dry_run=args.dry_run)
@@ -520,9 +543,14 @@ def main() -> None:
                 conn.close()
         return
 
-    # Legacy xlsx mode
-    input_path = args.input or str(_ROOT / "data" / "master" / "MasterMudahCarData.xlsx")
+    # Legacy xlsx mode (only entered when --input was explicitly provided)
+    input_path = args.input
     output_path = args.output or input_path
+
+    if not Path(input_path).exists():
+        print(f"ERROR: xlsx not found: {input_path}")
+        print("       For DB cleaning use:  python src/clean.py --category cars")
+        sys.exit(1)
 
     print(f"Reading {input_path} ...")
     df = pd.read_excel(input_path)
