@@ -6,6 +6,55 @@ Car listing data scraped from [Mudah.my](https://www.mudah.my), Malaysia's large
 
 ---
 
+## Quick Start — what to run and when
+
+### Normal run (repeat every 1–2 days)
+
+```bash
+# 1. Scrape new listings → data/raw/<category>/
+python src/scraper.py --category cars --max-ads 1000
+
+# 2. Load CSVs into SQLite → data/master/cardata_cars.db
+python src/migrate_xlsx_to_db.py --category cars
+
+# 3. Normalize the DB (strip noise, dedup)
+python src/clean.py --category cars
+
+# 4. (Optional) Re-check whether old listings are still live
+python src/recheck.py --category cars
+
+# 5. (Optional) Regenerate the dashboard
+python src/dashboard_aggregate.py
+```
+
+Motorcycles: swap `--category cars` → `--category motorcycles` in steps 1–4.
+
+### One-time / occasional
+
+| Script | When to run |
+|---|---|
+| `src/scrape_makes_models.py` | Once to seed `data/reference/`; re-run when Mudah adds new brands (~annually) |
+| `migrations/run_migrations.py` | Once after pulling a schema change from git |
+
+### Script reference at a glance
+
+| Script | Role | Run it? |
+|---|---|---|
+| `src/scraper.py` | **Primary scraper** — EagleSearch API + HTML enrichment | Yes — step 1 |
+| `src/migrate_xlsx_to_db.py` | Load scraped CSVs into SQLite | Yes — step 2 |
+| `src/clean.py` | Normalize / dedup the DB | Yes — step 3 |
+| `src/recheck.py` | Re-check listing availability | Yes — maintenance |
+| `src/dashboard_aggregate.py` | Generate `mockups/dashboard.html` from DB | Yes — on demand |
+| `src/scrape_makes_models.py` | Refresh make/model reference lists | Occasionally |
+| `src/script.py` | HTML-only scraper (fallback if EagleSearch is down) | Only as fallback |
+| `src/eagle_client.py` | EagleSearch API wrapper | Library — do not run directly |
+| `src/mudah_client.py` | Shared HTTP client | Library — do not run directly |
+| `src/detail_client.py` | HTML detail-page parser | Library — do not run directly |
+| `src/db.py` | DB connection helper | Library — do not run directly |
+| `src/test_eaglesearch.py` | Manual API connectivity check | Dev/debug only |
+
+---
+
 ## Data Pipeline
 
 The project supports two collection paths. The **hybrid scraper** (`scraper.py`) is the new primary collector; the **HTML-only scraper** (`script.py`) is kept as a fallback.
@@ -96,16 +145,18 @@ pip install -r requirements.txt
 ```
 CarData/
 ├── src/                                   # All scripts
-│   ├── scraper.py                         # NEW: hybrid scraper (API + HTML)
-│   ├── eagle_client.py                    # NEW: EagleSearch API wrapper
-│   ├── detail_client.py                   # NEW: HTML detail-page parser
-│   ├── script.py                          # HTML-only scraper (fallback)
+│   ├── scraper.py                         # Primary scraper (EagleSearch API + HTML)
+│   ├── migrate_xlsx_to_db.py              # CSV → SQLite migration
+│   ├── clean.py                           # Data normalization + dedup
 │   ├── recheck.py                         # Availability re-checker
-│   ├── migrate_xlsx_to_db.py              # CSV/Excel → SQLite migration
-│   ├── db.py                              # Database connection helper
-│   ├── clean.py                           # Data cleanup utility
-│   ├── scrape_makes_models.py             # Reference make/model list scraper
-│   └── mudah_client.py                    # Shared HTTP client (HTML, 3-4s throttle)
+│   ├── dashboard_aggregate.py             # Generate mockups/dashboard.html from DB
+│   ├── scrape_makes_models.py             # Reference make/model list scraper (occasional)
+│   ├── script.py                          # HTML-only scraper (fallback)
+│   ├── eagle_client.py                    # EagleSearch API wrapper (library)
+│   ├── detail_client.py                   # HTML detail-page parser (library)
+│   ├── mudah_client.py                    # Shared HTTP client (library)
+│   ├── db.py                              # Database connection helper (library)
+│   └── test_eaglesearch.py                # Manual API connectivity check (dev)
 │
 ├── migrations/                            # NEW: schema migration runners
 │   └── run_migrations.py                  # v1 → v2: adds API-only columns
@@ -122,8 +173,7 @@ CarData/
 │   │   └── motorcycles_models.json
 │   └── master/                            # Production SQLite databases
 │       ├── cardata_cars.db
-│       ├── cardata_motorcycles.db
-│       └── MasterMudahCarData.xlsx        # Legacy Excel master (optional)
+│       └── cardata_motorcycles.db
 │
 ├── logs/                                  # Log files
 │   ├── scraper_hybrid.log                 # scraper.py logs (NEW)
