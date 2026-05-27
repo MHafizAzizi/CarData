@@ -419,6 +419,13 @@ def parse_args() -> argparse.Namespace:
         help="Resume from the latest phase1 checkpoint CSV in output_dir (skip re-scrape)",
     )
     p.add_argument(
+        "--list-active-makes",
+        action="store_true",
+        help="Probe every make in the reference data and print only those with "
+             ">0 active listings, sorted by count. Requires --category. "
+             "Takes ~1-2 min (one API call per make, throttled).",
+    )
+    p.add_argument(
         "--output-dir",
         default=None,
         help="Output dir for CSVs (default: data/raw/<category>/)",
@@ -432,6 +439,53 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--pages", type=int, default=None, help="(compat) ignored")
     p.add_argument("--workers", type=int, default=1, help="(compat) ignored")
     return p.parse_args()
+
+
+def list_active_makes(category: str, eagle: EagleClient) -> None:
+    """Probe each make in the reference data and print those with >0 listings.
+
+    Output is a two-column table sorted by listing count (descending), plus
+    a summary line. Makes with 0 listings (or that error out) are skipped.
+    """
+    makes = _load_makes(category)
+    if not makes:
+        print(f"No reference data for category {category!r}. "
+              f"Expected {_REF_DIR / f'{category}_makes.json'}.")
+        return
+
+    print(f"\nProbing {len(makes)} {category} makes via EagleSearch "
+          f"(~{len(makes) * 0.75:.0f}s with throttle)...\n")
+
+    results: List[Tuple[str, str, int]] = []  # (slug, name, count)
+    for i, make in enumerate(makes, 1):
+        slug = make.get("slug", "")
+        name = make.get("name", "")
+        mid = make.get("id", "")
+        try:
+            _, meta = eagle.fetch_page(category, offset=0, limit=1, make_id=mid)
+            total = int(meta.get("total-results", 0) or 0)
+        except Exception as e:
+            logging.warning(f"[{slug}] probe failed: {e}")
+            continue
+        if total > 0:
+            results.append((slug, name, total))
+        # Lightweight progress indicator every 10 makes
+        if i % 10 == 0 or i == len(makes):
+            print(f"  ...probed {i}/{len(makes)}", flush=True)
+
+    results.sort(key=lambda r: r[2], reverse=True)
+    grand_total = sum(c for _, _, c in results)
+
+    print(f"\nActive makes — {category} ({len(results)} of {len(makes)}):\n")
+    print(f"  {'slug':<22} {'name':<24} {'listings':>10}")
+    print(f"  {'-' * 22} {'-' * 24} {'-' * 10}")
+    for slug, name, count in results:
+        print(f"  {slug:<22} {name:<24} {count:>10,}")
+
+    print(
+        f"\nTotal active listings across all makes: {grand_total:,}  "
+        f"({len(makes) - len(results)} makes have 0 listings)"
+    )
 
 
 def _preview_count(
@@ -515,6 +569,13 @@ def main() -> None:
 
     args = parse_args()
     eagle = EagleClient()
+
+    # --list-active-makes: discovery-only mode, no scrape.
+    if args.list_active_makes:
+        category = args.category or _prompt_choice("Category", CATEGORY_CHOICES)
+        list_active_makes(category, eagle)
+        return
+
     args = _interactive_fill(args, eagle)
 
     # Compat flag warnings
