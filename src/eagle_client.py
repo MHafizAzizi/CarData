@@ -100,6 +100,7 @@ _RENAME_SHARED: Dict[str, str] = {
 _RENAME_CARS: Dict[str, str] = {
     "make_name": "make",
     "model_name": "model",
+    "car_type_name": "car_type",
     "transmission_name": "transmission",
     "fueltype": "fuel_type",
     "engine_capacity": "engine_capacity",

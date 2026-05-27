@@ -5,11 +5,16 @@ Usage — DB mode (recommended):
     python clean.py --category cars
     python clean.py --category motorcycles --dry-run   # preview only
 
+Usage — variant enrichment (cars only, requires cars_variants.json):
+    python clean.py --category cars --enrich-variants
+    python clean.py --category cars --enrich-variants --dry-run
+
 Usage — legacy xlsx mode:
     python clean.py --input raw.xlsx --output clean.xlsx
 """
 
 import argparse
+import json
 import re
 import sys
 from datetime import datetime
@@ -280,6 +285,110 @@ def clean(df: pd.DataFrame, category: str = "cars") -> pd.DataFrame:
 
 
 # ---------------------------------------------------------------------------
+# Variant resolution (cars only)
+# ---------------------------------------------------------------------------
+
+_VARIANTS_REF_PATH = _ROOT / "data" / "reference" / "cars_variants.json"
+
+
+def resolve_variant(
+    model: str,
+    engine_capacity,
+    subject: str,
+    variants_ref: Dict,
+) -> Optional[str]:
+    """Return the best-match variant token for a listing, or None.
+
+    Looks up the model in cars_variants.json, narrows candidates to those
+    associated with the given engine_capacity (falling back to all variants
+    for the model), then finds the longest candidate that appears in the
+    listing subject.
+
+    Longest-match-first prevents "G" matching before "GR Sport".
+    """
+    model_slug = re.sub(r"[^a-z0-9]+", "-", (model or "").lower()).strip("-")
+    entry = variants_ref.get(model_slug)
+    if not entry:
+        return None
+
+    cc_str = ""
+    if engine_capacity is not None:
+        try:
+            cc_str = str(int(float(engine_capacity)))
+        except (ValueError, TypeError):
+            cc_str = str(engine_capacity)
+
+    candidates: List[str] = (
+        (entry.get("by_cc") or {}).get(cc_str)
+        or entry.get("_all")
+        or []
+    )
+    if not candidates:
+        return None
+
+    subject_upper = (subject or "").upper()
+    for variant in sorted(candidates, key=len, reverse=True):
+        if variant.upper() in subject_upper:
+            return variant
+    return None
+
+
+def apply_variant_hints(
+    conn,
+    *,
+    variants_ref_path: Path = _VARIANTS_REF_PATH,
+    dry_run: bool = False,
+) -> Dict:
+    """Populate the `variant` column for fresh-schema rows where it is NULL,
+    using the vocabulary in cars_variants.json.
+
+    Only touches rows where variant IS NULL and region IS NOT NULL
+    (i.e. fresh API-scraped rows, not legacy xlsx rows).
+
+    Returns stats dict: {candidates, filled, skipped}.
+    """
+    if not variants_ref_path.exists():
+        raise FileNotFoundError(
+            f"{variants_ref_path} not found — run:\n"
+            "  python src/scrape_makes_models.py --variants --makes toyota honda ..."
+        )
+
+    variants_ref: Dict = json.loads(
+        variants_ref_path.read_text(encoding="utf-8")
+    )
+
+    rows = conn.execute(
+        "SELECT ads_id, make, model, engine_capacity, subject "
+        "FROM listings "
+        "WHERE variant IS NULL AND region IS NOT NULL"
+    ).fetchall()
+
+    candidates = len(rows)
+    filled = 0
+    updates: List[Tuple] = []
+
+    for ads_id, make, model, engine_capacity, subject in rows:
+        variant = resolve_variant(model, engine_capacity, subject, variants_ref)
+        if variant:
+            updates.append((variant, ads_id))
+            filled += 1
+
+    skipped = candidates - filled
+    print(
+        f"  Variant hints: {candidates} candidates, "
+        f"{filled} filled, {skipped} unresolved"
+    )
+
+    if not dry_run and updates:
+        with conn:
+            conn.executemany(
+                "UPDATE listings SET variant = ? WHERE ads_id = ?", updates
+            )
+
+    return {"candidates": candidates, "filled": filled, "skipped": skipped}
+
+
+# ---------------------------------------------------------------------------
 # DB clean-in-place
 # ---------------------------------------------------------------------------
 
@@ -385,6 +494,12 @@ def _parse_args() -> argparse.Namespace:
         action="store_true",
         help="Preview what would change; do not write anything",
     )
+    parser.add_argument(
+        "--enrich-variants",
+        action="store_true",
+        help="Populate the variant column for NULL rows using cars_variants.json "
+             "(cars only; run scrape_makes_models.py --variants first).",
+    )
     return parser.parse_args()
 
 
@@ -393,6 +508,16 @@ def main() -> None:
 
     if args.category:
         clean_db(args.category, dry_run=args.dry_run)
+
+        if args.enrich_variants:
+            if args.category != "cars":
+                print("[enrich-variants] Only supported for --category cars; skipping.")
+            else:
+                sys.path.insert(0, str(_ROOT / "src"))
+                from db import connect  # noqa: PLC0415
+                conn = connect("cars")
+                apply_variant_hints(conn, dry_run=args.dry_run)
+                conn.close()
         return
 
     # Legacy xlsx mode
