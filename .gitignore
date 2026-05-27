@@ -64,3 +64,6 @@ Thumbs.db
 
 # Claude Code session metadata
 .claude/
+
+# Local project context (living document — not for the repo)
+CONTEXT.md
