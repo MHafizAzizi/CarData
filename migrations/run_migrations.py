@@ -14,6 +14,16 @@ v2 -> v3: Drops the `body` column from listings (cars + motorcycles).
 The full seller description is no longer stored — see commit history for
 rationale.
 
+v3 -> v4: Retypes text-stored numeric columns to INTEGER so SQL MIN/MAX/
+ORDER BY work without explicit CAST. SQLite has no ALTER COLUMN TYPE, so
+we do a table swap: create new table with proper types, copy data with
+CAST, drop old, rename.
+
+Retyped columns (both categories):
+    price, mileage, manufactured_date, company_ad
+Cars only:
+    engine_capacity, cc
+
 Usage:
     python migrations/run_migrations.py                       # interactive prompt
     python migrations/run_migrations.py --category cars
@@ -50,7 +60,7 @@ from db import CATEGORIES, connect, schema_version, set_meta  # noqa: E402
 # Migration spec — v1 -> v2
 # ---------------------------------------------------------------------------
 
-TARGET_VERSION = 3
+TARGET_VERSION = 4
 
 # (column_name, sqlite_type) — applied to BOTH cars and motorcycles
 SHARED_NEW_COLS: List[Tuple[str, str]] = [
@@ -74,6 +84,10 @@ CAR_EXTRA_COLS: List[Tuple[str, str]] = [
 
 # v2 -> v3: columns to drop from `listings` (both categories)
 DROPPED_COLS_V3: List[str] = ["body"]
+
+# v3 -> v4: columns to retype from TEXT to INTEGER (numeric data stored as text).
+RETYPE_COLS_BOTH: List[str] = ["price", "mileage", "manufactured_date", "company_ad"]
+RETYPE_COLS_CARS: List[str] = ["engine_capacity", "cc"]
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -213,6 +227,103 @@ def _migrate_v2_to_v3(
     )
 
 
+def _migrate_v3_to_v4(
+    conn: sqlite3.Connection, category: str, *, dry_run: bool
+) -> None:
+    """Retype TEXT columns that hold numeric values to INTEGER.
+
+    SQLite has no `ALTER COLUMN TYPE`, so we do the standard table-swap:
+        1. CREATE TABLE listings_new with proper INTEGER types
+        2. INSERT INTO listings_new SELECT ... CAST(...) ... FROM listings
+        3. DROP TABLE listings; ALTER TABLE listings_new RENAME TO listings
+        4. Recreate indexes
+
+    The new column definitions preserve everything from the existing schema
+    (PRIMARY KEY, NOT NULL, DEFAULT, CHECK) and only flip the type for the
+    columns listed in RETYPE_COLS_*.
+    """
+    retype = set(RETYPE_COLS_BOTH)
+    if category == "cars":
+        retype.update(RETYPE_COLS_CARS)
+
+    # Snapshot the current schema so we can rebuild it faithfully
+    cols_info = conn.execute("PRAGMA table_info(listings)").fetchall()
+    present_retypes = sorted(c["name"] for c in cols_info if c["name"] in retype)
+
+    logging.info(
+        f"[{category}] step v3 -> v4 "
+        f"({len(present_retypes)} column(s) to retype: {present_retypes})"
+    )
+
+    if not present_retypes:
+        logging.info(f"[{category}] v3 -> v4: no columns to retype")
+    elif dry_run:
+        logging.info(
+            f"[{category}] DRY-RUN v3->v4: would retype {present_retypes} to INTEGER"
+        )
+        return
+    else:
+        # Build new column clauses, preserving constraints
+        col_clauses: List[str] = []
+        col_names: List[str] = []
+        for col in cols_info:
+            name = col["name"]
+            new_type = "INTEGER" if name in retype else (col["type"] or "TEXT")
+            clause = f"{name} {new_type}"
+            if col["pk"]:
+                clause += " PRIMARY KEY"
+            if col["notnull"]:
+                clause += " NOT NULL"
+            if col["dflt_value"] is not None:
+                clause += f" DEFAULT {col['dflt_value']}"
+            # availability_status has a CHECK constraint we must preserve
+            if name == "availability_status":
+                clause += (
+                    " CHECK (availability_status IN "
+                    "('available','unavailable','unknown'))"
+                )
+            col_clauses.append(clause)
+            col_names.append(name)
+
+        # Build SELECT expressions: CAST retyped cols, pass-through the rest.
+        # Wrap CAST in NULLIF to keep empty strings as NULL after coercion.
+        select_exprs = [
+            f"CAST(NULLIF({n}, '') AS INTEGER) AS {n}" if n in retype else n
+            for n in col_names
+        ]
+
+        create_sql = f"CREATE TABLE listings_new ({', '.join(col_clauses)})"
+        insert_sql = (
+            f"INSERT INTO listings_new ({', '.join(col_names)}) "
+            f"SELECT {', '.join(select_exprs)} FROM listings"
+        )
+
+        with conn:
+            conn.execute(create_sql)
+            conn.execute(insert_sql)
+            conn.execute("DROP TABLE listings")
+            conn.execute("ALTER TABLE listings_new RENAME TO listings")
+            # Recreate the listings index (availability_checks index survives)
+            conn.execute(
+                "CREATE INDEX IF NOT EXISTS idx_listings_status "
+                "ON listings(availability_status, last_checked_at)"
+            )
+
+    # Bump schema_version (no-op DRY-RUN already returned above)
+    with conn:
+        conn.execute(
+            "INSERT INTO meta (key, value) VALUES ('schema_version', '4') "
+            "ON CONFLICT(key) DO UPDATE SET value = excluded.value"
+        )
+
+    logging.info(f"[{category}] v3 -> v4 complete — retyped {len(present_retypes)} column(s)")
+    set_meta(
+        conn,
+        "last_migration_v4_at",
+        __import__("datetime").datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+    )
+
+
 def migrate(category: str, *, dry_run: bool = False) -> None:
     """Run all pending migrations on the given category's DB."""
     if category not in CATEGORIES:
@@ -240,6 +351,8 @@ def migrate(category: str, *, dry_run: bool = False) -> None:
         _migrate_v1_to_v2(conn, category, dry_run=dry_run)
     if current < 3:
         _migrate_v2_to_v3(conn, category, dry_run=dry_run)
+    if current < 4:
+        _migrate_v3_to_v4(conn, category, dry_run=dry_run)
 
     logging.info(
         f"[{category}] migration complete; "

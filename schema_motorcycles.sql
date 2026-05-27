@@ -13,15 +13,15 @@ CREATE TABLE IF NOT EXISTS listings (
     url                 TEXT UNIQUE,
     -- listing content (shared with cars)
     subject             TEXT,
-    price               TEXT,
+    price               INTEGER,   -- MYR, no commas (was TEXT pre-v4)
     condition           TEXT,
-    manufactured_date   TEXT,
-    mileage             TEXT,
+    manufactured_date   INTEGER,   -- 4-digit year (was TEXT pre-v4)
+    mileage             INTEGER,   -- km (was TEXT pre-v4)
     location            TEXT,
     region              TEXT,
     subregion           TEXT,
     seller_name         TEXT,
-    company_ad          TEXT,
+    company_ad          INTEGER,   -- 0/1 (was TEXT pre-v4)
     published           TEXT,
     -- motorcycle-specific
     motorcycle_make     TEXT,
