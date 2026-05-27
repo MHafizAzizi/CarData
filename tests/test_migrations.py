@@ -135,7 +135,7 @@ class TestMigrate:
             assert col in cols, f"missing {col}"
         for col, _type in rm.CAR_EXTRA_COLS:
             assert col in cols, f"missing {col}"
-        assert _schema_version(conn) == 3
+        assert _schema_version(conn) == 4
 
     def test_migrate_motorcycles_adds_only_shared(self, patched_connect):
         rm.migrate("motorcycles", dry_run=False)
@@ -147,7 +147,7 @@ class TestMigrate:
         # Car-only cols MUST NOT be present
         for col, _type in rm.CAR_EXTRA_COLS:
             assert col not in cols, f"{col} should not be in motorcycles DB"
-        assert _schema_version(conn) == 3
+        assert _schema_version(conn) == 4
 
     def test_migrate_idempotent(self, patched_connect):
         rm.migrate("cars", dry_run=False)
@@ -155,7 +155,7 @@ class TestMigrate:
         rm.migrate("cars", dry_run=False)
         conn = sqlite3.connect(patched_connect / "cardata_cars.db")
         conn.row_factory = sqlite3.Row
-        assert _schema_version(conn) == 3
+        assert _schema_version(conn) == 4
         # All columns still present, no duplicates (sqlite would raise if duplicated)
         cols = _columns_of(conn, "listings")
         for col, _type in rm.SHARED_NEW_COLS + rm.CAR_EXTRA_COLS:
@@ -218,7 +218,7 @@ class TestV3DropBody:
         conn.row_factory = sqlite3.Row
         cols = _columns_of(conn, "listings")
         assert "body" not in cols
-        assert _schema_version(conn) == 3
+        assert _schema_version(conn) == 4
 
     def test_dry_run_keeps_body(self, tmp_path, monkeypatch):
         self._make_v2_db_with_body(tmp_path, "cars")
@@ -236,3 +236,133 @@ class TestV3DropBody:
         conn.row_factory = sqlite3.Row
         assert "body" in _columns_of(conn, "listings")
         assert _schema_version(conn) == 2
+
+
+# ---------------------------------------------------------------------------
+# v3 -> v4: retype TEXT numeric columns to INTEGER
+# ---------------------------------------------------------------------------
+
+class TestV4Retype:
+    def _column_type(self, conn: sqlite3.Connection, table: str, col: str) -> str:
+        for row in conn.execute(f"PRAGMA table_info({table})").fetchall():
+            if row["name"] == col:
+                return row["type"]
+        return ""
+
+    def test_retypes_numeric_columns_to_integer(self, patched_connect):
+        # Run full v1 -> v4 chain on a fresh DB
+        rm.migrate("motorcycles", dry_run=False)
+
+        conn = sqlite3.connect(patched_connect / "cardata_motorcycles.db")
+        conn.row_factory = sqlite3.Row
+
+        assert _schema_version(conn) == 4
+        for col in rm.RETYPE_COLS_BOTH:
+            assert self._column_type(conn, "listings", col) == "INTEGER", (
+                f"motorcycles.{col} should be INTEGER post-v4"
+            )
+
+    def test_cars_retypes_extra_columns(self, patched_connect):
+        rm.migrate("cars", dry_run=False)
+
+        conn = sqlite3.connect(patched_connect / "cardata_cars.db")
+        conn.row_factory = sqlite3.Row
+
+        for col in rm.RETYPE_COLS_BOTH + rm.RETYPE_COLS_CARS:
+            assert self._column_type(conn, "listings", col) == "INTEGER"
+
+    def test_existing_string_data_is_cast(self, patched_connect):
+        # Insert TEXT data before running v4 to verify CAST during table swap.
+        db_file = patched_connect / "cardata_motorcycles.db"
+        conn = sqlite3.connect(db_file, isolation_level=None)
+        conn.row_factory = sqlite3.Row
+        conn.executescript(_read_schema("motorcycles"))
+        # Note: schema files were already updated to INTEGER for these cols,
+        # so insert via TEXT-affinity-typed values to simulate a pre-v4 DB
+        # state. We force the column types back to TEXT for the test.
+        conn.execute("ALTER TABLE listings RENAME TO listings_old")
+        conn.executescript("""
+            CREATE TABLE listings (
+                ads_id INTEGER PRIMARY KEY,
+                url TEXT UNIQUE,
+                price TEXT,
+                mileage TEXT,
+                manufactured_date TEXT,
+                company_ad TEXT,
+                first_seen_at TEXT NOT NULL,
+                availability_status TEXT NOT NULL DEFAULT 'unknown'
+                    CHECK (availability_status IN ('available','unavailable','unknown'))
+            );
+        """)
+        # Add v2 + drop body so we're a clean v3 with TEXT numeric cols
+        for col, ctype in rm.SHARED_NEW_COLS:
+            conn.execute(f"ALTER TABLE listings ADD COLUMN {col} {ctype}")
+        conn.execute(
+            "INSERT INTO meta (key, value) VALUES ('schema_version', '3') "
+            "ON CONFLICT(key) DO UPDATE SET value = excluded.value"
+        )
+        conn.execute(
+            "INSERT INTO listings (ads_id, price, mileage, manufactured_date, "
+            "company_ad, first_seen_at) "
+            "VALUES (1, '12500', '50000', '2020', '0', '2026-01-01')"
+        )
+        conn.close()
+
+        # Now run v4 migration via patched_connect (already monkeypatched)
+        rm.migrate("motorcycles", dry_run=False)
+
+        conn = sqlite3.connect(db_file)
+        conn.row_factory = sqlite3.Row
+        row = conn.execute(
+            "SELECT price, typeof(price) AS pt, "
+            "       mileage, typeof(mileage) AS mt, "
+            "       manufactured_date, typeof(manufactured_date) AS dt, "
+            "       company_ad, typeof(company_ad) AS ct "
+            "FROM listings WHERE ads_id = 1"
+        ).fetchone()
+        assert row["pt"] == "integer", f"price typeof={row['pt']}"
+        assert row["mt"] == "integer", f"mileage typeof={row['mt']}"
+        assert row["dt"] == "integer", f"manufactured_date typeof={row['dt']}"
+        assert row["ct"] == "integer", f"company_ad typeof={row['ct']}"
+        assert row["price"] == 12500
+        assert row["mileage"] == 50000
+
+    def test_empty_string_becomes_null(self, patched_connect):
+        # Empty strings in TEXT columns should NULLIF to NULL, not 0.
+        db_file = patched_connect / "cardata_motorcycles.db"
+        conn = sqlite3.connect(db_file, isolation_level=None)
+        conn.executescript(_read_schema("motorcycles"))
+        conn.execute("ALTER TABLE listings RENAME TO listings_old")
+        conn.executescript("""
+            CREATE TABLE listings (
+                ads_id INTEGER PRIMARY KEY,
+                url TEXT UNIQUE,
+                price TEXT,
+                mileage TEXT,
+                manufactured_date TEXT,
+                company_ad TEXT,
+                first_seen_at TEXT NOT NULL,
+                availability_status TEXT NOT NULL DEFAULT 'unknown'
+                    CHECK (availability_status IN ('available','unavailable','unknown'))
+            );
+        """)
+        for col, ctype in rm.SHARED_NEW_COLS:
+            conn.execute(f"ALTER TABLE listings ADD COLUMN {col} {ctype}")
+        conn.execute(
+            "INSERT INTO meta (key, value) VALUES ('schema_version', '3') "
+            "ON CONFLICT(key) DO UPDATE SET value = excluded.value"
+        )
+        conn.execute(
+            "INSERT INTO listings (ads_id, price, mileage, first_seen_at) "
+            "VALUES (2, '', '', '2026-01-01')"
+        )
+        conn.close()
+
+        rm.migrate("motorcycles", dry_run=False)
+
+        conn = sqlite3.connect(db_file)
+        row = conn.execute(
+            "SELECT price, mileage FROM listings WHERE ads_id = 2"
+        ).fetchone()
+        assert row[0] is None
+        assert row[1] is None

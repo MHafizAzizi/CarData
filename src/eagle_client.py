@@ -58,6 +58,14 @@ CATEGORY_IDS: Dict[str, int] = {
     "motorcycles": 1040,
 }
 
+# Per-category API filter parameter names. Cars use the bare `make_id`/
+# `model_id`; motorcycles use the prefixed `motorcycle_make_id`/`motorcycle_model_id`
+# (verified empirically — passing `make_id` to category=1040 returns 0 results).
+_FILTER_PARAM_NAMES: Dict[str, Dict[str, str]] = {
+    "cars":        {"make_id": "make_id",            "model_id": "model_id"},
+    "motorcycles": {"make_id": "motorcycle_make_id", "model_id": "motorcycle_model_id"},
+}
+
 MAX_LIMIT = 200       # Server hard cap; >200 silently truncates to ~24
 MAX_OFFSET = 10_000   # Empirical depth cap; offset >= this returns empty
 
@@ -321,8 +329,14 @@ class EagleClient:
         category: str,
         offset: int = 0,
         limit: int = MAX_LIMIT,
+        make_id: Optional[str] = None,
+        model_id: Optional[str] = None,
     ) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
         """Fetch one page of normalized ads.
+
+        Args:
+            make_id:  Optional Mudah make ID to filter results (e.g. "6" for Toyota)
+            model_id: Optional Mudah model ID to filter results (e.g. "1702" for Vios)
 
         Returns:
             (ads, meta) where:
@@ -351,6 +365,12 @@ class EagleClient:
             "from": offset,
             "limit": limit,
         }
+        # Cars use bare make_id/model_id; motorcycles use the motorcycle_ prefix.
+        filter_keys = _FILTER_PARAM_NAMES[category]
+        if make_id:
+            params[filter_keys["make_id"]] = make_id
+        if model_id:
+            params[filter_keys["model_id"]] = model_id
 
         resp = self._get(params)
 
@@ -383,11 +403,17 @@ class EagleClient:
         self,
         category: str,
         max_ads: Optional[int] = None,
+        make_id: Optional[str] = None,
+        model_id: Optional[str] = None,
     ) -> Iterator[List[Dict[str, Any]]]:
         """Yield pages of normalized ads until depth cap, empty batch, or max_ads.
 
         Each yielded item is one page (list of dicts), not a flat stream.
         Caller can checkpoint per page.
+
+        Args:
+            make_id:  Optional Mudah make ID to narrow results to one make.
+            model_id: Optional Mudah model ID to narrow results to one model.
 
         Stops when:
             - empty batch returned (normal end of pagination)
@@ -414,7 +440,10 @@ class EagleClient:
                 return
             limit = MAX_LIMIT if remaining is None else min(MAX_LIMIT, remaining)
 
-            ads, meta = self.fetch_page(category, offset=offset, limit=limit)
+            ads, meta = self.fetch_page(
+                category, offset=offset, limit=limit,
+                make_id=make_id, model_id=model_id,
+            )
             logging.info(
                 f"[{category}] offset={offset} got={len(ads)} "
                 f"(total-results={meta.get('total-results')}, took={meta.get('took')}ms)"
