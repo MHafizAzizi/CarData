@@ -58,6 +58,14 @@ CATEGORY_IDS: Dict[str, int] = {
     "motorcycles": 1040,
 }
 
+# Per-category API filter parameter names. Cars use the bare `make_id`/
+# `model_id`; motorcycles use the prefixed `motorcycle_make_id`/`motorcycle_model_id`
+# (verified empirically — passing `make_id` to category=1040 returns 0 results).
+_FILTER_PARAM_NAMES: Dict[str, Dict[str, str]] = {
+    "cars":        {"make_id": "make_id",            "model_id": "model_id"},
+    "motorcycles": {"make_id": "motorcycle_make_id", "model_id": "motorcycle_model_id"},
+}
+
 MAX_LIMIT = 200       # Server hard cap; >200 silently truncates to ~24
 MAX_OFFSET = 10_000   # Empirical depth cap; offset >= this returns empty
 
@@ -357,10 +365,12 @@ class EagleClient:
             "from": offset,
             "limit": limit,
         }
+        # Cars use bare make_id/model_id; motorcycles use the motorcycle_ prefix.
+        filter_keys = _FILTER_PARAM_NAMES[category]
         if make_id:
-            params["make_id"] = make_id
+            params[filter_keys["make_id"]] = make_id
         if model_id:
-            params["model_id"] = model_id
+            params[filter_keys["model_id"]] = model_id
 
         resp = self._get(params)
 
