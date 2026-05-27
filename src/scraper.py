@@ -5,8 +5,16 @@ Collects car/motorcycle listing metadata via the EagleSearch JSON API
 
 Usage:
     python src/scraper.py --category cars --max-ads 1000
-    python src/scraper.py --category motorcycles --max-ads 500
+    python src/scraper.py --category cars --make toyota --max-ads 5000
+    python src/scraper.py --category cars --make toyota --model vios
     python src/scraper.py                          # interactive prompts
+
+Filters:
+    --make  <slug>   Filter by make  (e.g. 'toyota', 'perodua'). Narrows API
+                     results to that make only — useful for make-by-make runs
+                     to work around the 10,000-listing depth cap.
+    --model <slug>   Filter by model (e.g. 'vios', 'myvi'). Can be combined
+                     with --make. Requires reference data in data/reference/.
 
 API auth fallback:
     If EagleSearch returns 401/403, the scraper logs a warning and raises
@@ -14,11 +22,12 @@ API auth fallback:
 """
 
 import argparse
+import json
 import logging
 import sys
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 import pandas as pd
 
@@ -35,6 +44,46 @@ _LOGS_DIR.mkdir(parents=True, exist_ok=True)
 
 CATEGORY_CHOICES = ["cars", "motorcycles"]
 DEFAULT_OUTPUT_DIR = _ROOT / "data" / "raw"
+_REF_DIR = _ROOT / "data" / "reference"
+
+
+# ---------------------------------------------------------------------------
+# Reference data helpers (make/model lookup)
+# ---------------------------------------------------------------------------
+
+def _load_makes(category: str) -> List[Dict]:
+    """Load makes list for the given category from reference JSON."""
+    path = _REF_DIR / f"{category}_makes.json"
+    if not path.exists():
+        return []
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def _load_models(category: str) -> Dict[str, List[Dict]]:
+    """Load models dict {make_slug: [{id, name, slug}]} for the given category."""
+    path = _REF_DIR / f"{category}_models.json"
+    if not path.exists():
+        return {}
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def lookup_make(category: str, slug: str) -> Optional[Tuple[str, str]]:
+    """Return (name, id) for the given make slug, or None if not found."""
+    for make in _load_makes(category):
+        if make.get("slug") == slug:
+            return make["name"], make["id"]
+    return None
+
+
+def lookup_model(category: str, make_slug: str, model_slug: str) -> Optional[Tuple[str, str]]:
+    """Return (name, id) for the given model slug under a make, or None if not found."""
+    models = _load_models(category)
+    for model in models.get(make_slug, []):
+        if model.get("slug") == model_slug:
+            return model["name"], model["id"]
+    return None
 
 
 # ---------------------------------------------------------------------------
@@ -65,16 +114,26 @@ class HybridScraper:
         self,
         max_ads: Optional[int] = None,
         resume: bool = False,
+        make_id: Optional[str] = None,
+        model_id: Optional[str] = None,
     ) -> Path:
         """Execute Phase 1 (API collection); return final CSV path.
 
-        If `resume` is True, skip Phase 1 and load the most recent phase1
-        checkpoint CSV in the output dir for this category.
+        Args:
+            make_id:  Optional Mudah make ID to filter results.
+            model_id: Optional Mudah model ID to filter results.
+            resume:   If True, skip Phase 1 and load the most recent phase1
+                      checkpoint CSV in the output dir for this category.
         """
         timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+        filter_info = (
+            f", make_id={make_id}" if make_id else ""
+        ) + (
+            f", model_id={model_id}" if model_id else ""
+        )
         logging.info(
             f"[{self.category}] Scraper starting "
-            f"(max_ads={max_ads}, resume={resume}, ts={timestamp})"
+            f"(max_ads={max_ads}, resume={resume}{filter_info}, ts={timestamp})"
         )
 
         checkpoint_paths: List[Path] = []
@@ -101,7 +160,10 @@ class HybridScraper:
             # _phase1_collect writes the phase1 CSV incrementally per page so
             # a mid-run crash still leaves a usable checkpoint on disk.
             try:
-                ads = self._phase1_collect(max_ads, timestamp=timestamp)
+                ads = self._phase1_collect(
+                    max_ads, timestamp=timestamp,
+                    make_id=make_id, model_id=model_id,
+                )
             except EagleAuthError:
                 logging.warning(
                     "EagleSearch returned auth error. Aborting. "
@@ -138,6 +200,8 @@ class HybridScraper:
         self,
         max_ads: Optional[int],
         timestamp: Optional[str] = None,
+        make_id: Optional[str] = None,
+        model_id: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """Paginate EagleSearch and return flat list of normalized ad dicts.
 
@@ -146,7 +210,10 @@ class HybridScraper:
         on disk (rewriting is cheap with at most ~50 pages).
         """
         all_ads: List[Dict[str, Any]] = []
-        for page in self.eagle.fetch_all(self.category, max_ads=max_ads):
+        for page in self.eagle.fetch_all(
+            self.category, max_ads=max_ads,
+            make_id=make_id, model_id=model_id,
+        ):
             all_ads.extend(page)
             if max_ads is not None and len(all_ads) >= max_ads:
                 all_ads = all_ads[:max_ads]
@@ -251,6 +318,45 @@ def _prompt_int(prompt: str, *, min_val: int = 1, default: Optional[int] = None)
             print("Invalid input. Enter a whole number.")
 
 
+def _prompt_make_model(
+    category: str,
+    make_slug: Optional[str],
+    model_slug: Optional[str],
+) -> Tuple[Optional[str], Optional[str]]:
+    """Interactive make/model prompt. Returns (make_id, model_id) or (None, None)."""
+    # --- Make ---
+    if make_slug is None:
+        raw = input("\nFilter by make? (slug e.g. 'toyota', or Enter to scrape all): ").strip().lower()
+        make_slug = raw or None
+
+    make_id: Optional[str] = None
+    if make_slug:
+        result = lookup_make(category, make_slug)
+        if result:
+            make_name, make_id = result
+            print(f"  ✓ {make_name} (make_id={make_id})")
+        else:
+            print(f"  ✗ Make '{make_slug}' not found in reference data — scraping all makes.")
+            make_slug = None
+
+    # --- Model (only if a valid make was found) ---
+    model_id: Optional[str] = None
+    if make_slug:
+        if model_slug is None:
+            raw = input(f"Filter by model? (slug e.g. 'vios', or Enter for all {make_slug} models): ").strip().lower()
+            model_slug = raw or None
+
+        if model_slug:
+            result = lookup_model(category, make_slug, model_slug)
+            if result:
+                model_name, model_id = result
+                print(f"  ✓ {model_name} (model_id={model_id})")
+            else:
+                print(f"  ✗ Model '{model_slug}' not found under '{make_slug}' — scraping all models.")
+
+    return make_id, model_id
+
+
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(
         description="Mudah.my scraper — EagleSearch API"
@@ -261,6 +367,18 @@ def parse_args() -> argparse.Namespace:
         type=int,
         default=None,
         help="Max ads to collect via API. Prompts if omitted.",
+    )
+    p.add_argument(
+        "--make",
+        default=None,
+        metavar="SLUG",
+        help="Filter by make slug (e.g. 'toyota'). Prompts if omitted.",
+    )
+    p.add_argument(
+        "--model",
+        default=None,
+        metavar="SLUG",
+        help="Filter by model slug (e.g. 'vios'). Requires --make.",
     )
     p.add_argument(
         "--resume",
@@ -287,12 +405,18 @@ def _interactive_fill(args: argparse.Namespace) -> argparse.Namespace:
     print("\n=== Mudah Scraper ===")
     if args.category is None:
         args.category = _prompt_choice("Category", CATEGORY_CHOICES)
-    # In resume mode the checkpoint defines the working set, so skip the
-    # max_ads prompt — it's a no-op.
-    if args.max_ads is None and not args.resume:
-        args.max_ads = _prompt_int(
-            "Max ads to fetch [default: 1000]: ", min_val=1, default=1000
+    # In resume mode the checkpoint defines the working set, so skip prompts.
+    if not args.resume:
+        if args.max_ads is None:
+            args.max_ads = _prompt_int(
+                "Max ads to fetch [default: 1000]: ", min_val=1, default=1000
+            )
+        args.make_id, args.model_id = _prompt_make_model(
+            args.category, args.make, args.model
         )
+    else:
+        args.make_id = None
+        args.model_id = None
     if args.output_dir is None:
         args.output_dir = str(DEFAULT_OUTPUT_DIR / args.category)
     return args
@@ -338,9 +462,11 @@ def main() -> None:
             f"EagleSearch API does not use them."
         )
 
+    make_label = f"make_id={args.make_id}" if args.make_id else "all makes"
+    model_label = f"model_id={args.model_id}" if args.model_id else "all models"
     print(
         f"\nCategory: {args.category} | max_ads: {args.max_ads} | "
-        f"output: {args.output_dir}\n"
+        f"{make_label} | {model_label} | output: {args.output_dir}\n"
     )
 
     eagle = EagleClient()
@@ -354,6 +480,8 @@ def main() -> None:
     final_path = scraper.run(
         max_ads=args.max_ads,
         resume=args.resume,
+        make_id=args.make_id,
+        model_id=args.model_id,
     )
     print(f"\nDone. Output: {final_path}")
 

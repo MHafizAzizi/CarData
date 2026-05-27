@@ -76,7 +76,7 @@ class TestPhase1Collect:
         ads = scraper._phase1_collect(max_ads=None)
 
         assert len(ads) == 8
-        mock_eagle.fetch_all.assert_called_once_with("cars", max_ads=None)
+        mock_eagle.fetch_all.assert_called_once_with("cars", max_ads=None, make_id=None, model_id=None)
 
     def test_respects_max_ads_truncation(self, scraper, mock_eagle):
         # Even if API returned more, scraper truncates to max_ads
