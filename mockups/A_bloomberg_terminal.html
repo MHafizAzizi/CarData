@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>CarData · Terminal — A</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0E0E0E;
+    --bg-2:#161616;
+    --line:#2A2A2A;
+    --line-2:#1E1E1E;
+    --ink:#E8E4D9;
+    --ink-dim:#8A857A;
+    --ink-low:#5A554C;
+    --amber:#FF9F1C;
+    --amber-dim:#8B5A0E;
+    --red:#E63946;
+    --green:#5BB873;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans',ui-sans-serif,system-ui,sans-serif;font-size:13px;line-height:1.35;-webkit-font-smoothing:antialiased}
+  .mono{font-family:'IBM Plex Mono',ui-monospace,Menlo,monospace;font-feature-settings:"tnum","zero"}
+  .num{font-family:'IBM Plex Mono',ui-monospace,Menlo,monospace;font-feature-settings:"tnum","zero";font-variant-numeric:tabular-nums}
+
+  /* ===== Layout shell ===== */
+  .shell{max-width:1440px;margin:0 auto;padding:14px 18px 24px}
+
+  /* ===== Top status bar ===== */
+  .status{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;border:1px solid var(--line);border-bottom:0;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-dim)}
+  .status > div{padding:8px 12px;border-right:1px solid var(--line);display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+  .status > div:last-child{border-right:0}
+  .status .label{color:var(--ink-low)}
+  .status .val{color:var(--ink);font-family:'IBM Plex Mono',monospace}
+  .status .val.up{color:var(--amber)}
+  .status .blink{display:inline-block;width:6px;height:6px;background:var(--amber);border-radius:50%;animation:blink 1.6s ease-in-out infinite;margin-right:6px;vertical-align:middle}
+  @keyframes blink{0%,40%{opacity:1}50%,90%{opacity:0.2}100%{opacity:1}}
+
+  /* ===== Header strip ===== */
+  .head{border:1px solid var(--line);padding:14px 16px 12px;display:flex;align-items:flex-end;justify-content:space-between}
+  .head h1{font-family:'IBM Plex Mono',monospace;font-size:22px;font-weight:500;letter-spacing:-.01em}
+  .head h1 .accent{color:var(--amber)}
+  .head .sub{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-dim);margin-top:4px}
+  .head .right{text-align:right;font-size:11px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.08em}
+  .head .right .big{font-family:'IBM Plex Mono',monospace;font-size:14px;color:var(--ink);letter-spacing:0;text-transform:none;display:block}
+
+  /* ===== KPI strip ===== */
+  .kpis{display:grid;grid-template-columns:repeat(5,1fr);border:1px solid var(--line);border-top:0}
+  .kpi{padding:14px 16px;border-right:1px solid var(--line);position:relative}
+  .kpi:last-child{border-right:0}
+  .kpi .k-label{font-size:10px;color:var(--ink-low);text-transform:uppercase;letter-spacing:.14em;margin-bottom:8px}
+  .kpi .k-val{font-family:'IBM Plex Mono',monospace;font-size:26px;font-weight:500;letter-spacing:-.01em;line-height:1}
+  .kpi .k-val .ccy{color:var(--ink-dim);font-size:14px;margin-right:4px}
+  .kpi .k-sub{font-size:11px;color:var(--ink-dim);margin-top:6px;font-family:'IBM Plex Mono',monospace}
+  .kpi .k-sub .up{color:var(--amber)}
+  .kpi .k-sub .dn{color:var(--red)}
+
+  /* ===== Main grid ===== */
+  .grid{display:grid;grid-template-columns:1.5fr 1fr;gap:0;margin-top:10px}
+  .panel{border:1px solid var(--line);background:var(--bg)}
+  .panel + .panel{border-left:0}
+  .panel-h{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-bottom:1px solid var(--line);font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--ink-dim)}
+  .panel-h .tag{color:var(--amber);font-family:'IBM Plex Mono',monospace}
+
+  /* ===== Brands table ===== */
+  .brands{padding:8px 0 4px}
+  .row{display:grid;grid-template-columns:24px 110px 1fr 90px 70px;align-items:center;padding:6px 16px;border-bottom:1px solid var(--line-2);font-family:'IBM Plex Mono',monospace;font-size:12px}
+  .row:last-child{border-bottom:0}
+  .row .rank{color:var(--ink-low)}
+  .row .name{color:var(--ink)}
+  .row .barwrap{height:8px;background:transparent;position:relative;margin-right:14px}
+  .row .bar{height:100%;background:var(--amber);opacity:.85}
+  .row .vol{text-align:right;color:var(--ink)}
+  .row .med{text-align:right;color:var(--ink-dim)}
+
+  /* ===== Depreciation chart panel ===== */
+  .chart{padding:16px}
+  .chart svg{display:block;width:100%;height:230px}
+  .chart .legend{display:flex;justify-content:space-between;margin-top:8px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-dim)}
+
+  /* ===== Bottom row ===== */
+  .bottom{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:10px}
+  .bottom .panel + .panel{border-left:0}
+
+  /* Regions */
+  .regions{padding:4px 0}
+  .reg-row{display:grid;grid-template-columns:32px 1fr 60px 1fr 90px;align-items:center;padding:7px 16px;border-bottom:1px solid var(--line-2);font-family:'IBM Plex Mono',monospace;font-size:12px}
+  .reg-row:last-child{border-bottom:0}
+  .reg-row .rcode{color:var(--ink-low);font-size:11px}
+  .reg-row .rname{color:var(--ink)}
+  .reg-row .rvol{text-align:right;color:var(--ink-dim)}
+  .reg-row .rbar{height:6px;margin:0 14px;background:transparent}
+  .reg-row .rbar .b{height:100%;background:var(--amber);opacity:.55}
+  .reg-row .rmed{text-align:right;color:var(--ink)}
+
+  /* Dealer split */
+  .split{padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .cell{border:1px solid var(--line);padding:14px}
+  .cell .l{font-size:10px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink-low);margin-bottom:8px}
+  .cell .v{font-family:'IBM Plex Mono',monospace;font-size:22px;letter-spacing:-.01em}
+  .cell .s{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-dim);margin-top:6px}
+  .cell.dealer{background:var(--bg-2)}
+  .cell.dealer .v{color:var(--amber)}
+  .premium{margin-top:14px;padding:12px 16px;border:1px solid var(--amber-dim);background:rgba(255,159,28,0.04);font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--ink);display:flex;justify-content:space-between;align-items:baseline}
+  .premium .label{color:var(--ink-dim);font-size:11px;text-transform:uppercase;letter-spacing:.1em}
+  .premium .val{color:var(--amber);font-size:20px;font-weight:500}
+
+  /* footer */
+  .foot{margin-top:14px;padding:6px 16px;border:1px solid var(--line-2);font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink-low);display:flex;justify-content:space-between;letter-spacing:.05em}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- ===== STATUS BAR ===== -->
+  <div class="status">
+    <div><span><span class="blink"></span>CARDATA / MUDAH.MY · MY-CARS</span><span class="val">SESSION 0421</span></div>
+    <div><span class="label">SCRAPE</span><span class="val">2026-05-26 15:14</span></div>
+    <div><span class="label">SAMPLE</span><span class="val">1,000 / 86,716</span></div>
+    <div><span class="label">STATUS</span><span class="val up">●  LIVE</span></div>
+  </div>
+
+  <!-- ===== HEAD ===== -->
+  <div class="head">
+    <div>
+      <h1>MY <span class="accent">/</span> Used-Car Market <span class="accent">·</span> Snapshot</h1>
+      <div class="sub">Phase-1 EagleSearch · 5 pages · cars category</div>
+    </div>
+    <div class="right">
+      <span class="big">RM 60,844</span>
+      <span>median listing price</span>
+    </div>
+  </div>
+
+  <!-- ===== KPIs ===== -->
+  <div class="kpis">
+    <div class="kpi">
+      <div class="k-label">Total listings</div>
+      <div class="k-val num">1,000</div>
+      <div class="k-sub">of <span class="up">86,716</span> market depth</div>
+    </div>
+    <div class="kpi">
+      <div class="k-label">Median price</div>
+      <div class="k-val num"><span class="ccy">RM</span>60.8K</div>
+      <div class="k-sub">range <span>1K → 1.99M</span></div>
+    </div>
+    <div class="kpi">
+      <div class="k-label">Top brand</div>
+      <div class="k-val num">Toyota</div>
+      <div class="k-sub"><span class="up">24.3%</span> of supply</div>
+    </div>
+    <div class="kpi">
+      <div class="k-label">Dealer share</div>
+      <div class="k-val num">90.6%</div>
+      <div class="k-sub">n=906 of 1,000</div>
+    </div>
+    <div class="kpi">
+      <div class="k-label">Dealer premium</div>
+      <div class="k-val num"><span class="up">3.81×</span></div>
+      <div class="k-sub">vs private median</div>
+    </div>
+  </div>
+
+  <!-- ===== MAIN GRID ===== -->
+  <div class="grid">
+
+    <!-- Brand volume + median price -->
+    <div class="panel">
+      <div class="panel-h"><span>BRAND · supply & median price</span><span class="tag">TOP 8</span></div>
+      <div class="brands" id="brands"></div>
+    </div>
+
+    <!-- Depreciation curve -->
+    <div class="panel">
+      <div class="panel-h"><span>DEPRECIATION · median RM by year</span><span class="tag">2015→2025</span></div>
+      <div class="chart">
+        <svg viewBox="0 0 460 230" preserveAspectRatio="none">
+          <!-- gridlines -->
+          <g stroke="#1E1E1E" stroke-width="1">
+            <line x1="40" y1="20" x2="450" y2="20"/>
+            <line x1="40" y1="65" x2="450" y2="65"/>
+            <line x1="40" y1="110" x2="450" y2="110"/>
+            <line x1="40" y1="155" x2="450" y2="155"/>
+            <line x1="40" y1="200" x2="450" y2="200"/>
+          </g>
+          <!-- y labels -->
+          <g fill="#5A554C" font-family="IBM Plex Mono,monospace" font-size="9">
+            <text x="6" y="23">250K</text>
+            <text x="6" y="68">200K</text>
+            <text x="6" y="113">150K</text>
+            <text x="6" y="158">100K</text>
+            <text x="6" y="203">50K</text>
+          </g>
+          <!-- x labels -->
+          <g fill="#5A554C" font-family="IBM Plex Mono,monospace" font-size="9">
+            <text x="40"  y="220">'15</text>
+            <text x="80"  y="220">'16</text>
+            <text x="121" y="220">'17</text>
+            <text x="161" y="220">'18</text>
+            <text x="201" y="220">'19</text>
+            <text x="242" y="220">'20</text>
+            <text x="282" y="220">'21</text>
+            <text x="323" y="220">'22</text>
+            <text x="363" y="220">'23</text>
+            <text x="403" y="220">'24</text>
+            <text x="430" y="220">'25</text>
+          </g>
+          <!-- Median line: years 2015..2025 ; prices 27.8 45.3 41.8 56.9 54.3 113.8 137 143 184 249.4 245 (in K) -->
+          <!-- y scale: 50K at y=200, 250K at y=20 → y = 200 - (val-50)/200 * 180 -->
+          <polyline points="
+            45,225 45,225
+            45,225
+          " />
+          <polyline fill="none" stroke="#FF9F1C" stroke-width="2"
+            points="45,224.98 85,209.13 125,212.28 165,198.69 205,202.93 245,146.58 285,125.7 325,120.3 365,83.4 405,20.54 445,24.5"/>
+          <!-- markers -->
+          <g fill="#FF9F1C">
+            <circle cx="45"  cy="224.98" r="2.6"/>
+            <circle cx="85"  cy="209.13" r="2.6"/>
+            <circle cx="125" cy="212.28" r="2.6"/>
+            <circle cx="165" cy="198.69" r="2.6"/>
+            <circle cx="205" cy="202.93" r="2.6"/>
+            <circle cx="245" cy="146.58" r="2.6"/>
+            <circle cx="285" cy="125.7"  r="2.6"/>
+            <circle cx="325" cy="120.3"  r="2.6"/>
+            <circle cx="365" cy="83.4"   r="2.6"/>
+            <circle cx="405" cy="20.54"  r="2.6"/>
+            <circle cx="445" cy="24.5"   r="2.6"/>
+          </g>
+          <!-- inflection annotation -->
+          <g font-family="IBM Plex Mono,monospace" font-size="10" fill="#E8E4D9">
+            <text x="248" y="138">⟵ 2020 jump</text>
+          </g>
+        </svg>
+        <div class="legend">
+          <span>2015 · RM 27.8K</span>
+          <span style="color:var(--amber)">2024 · RM 249.4K · ▲ 8.97×</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===== BOTTOM ROW ===== -->
+  <div class="bottom">
+    <div class="panel">
+      <div class="panel-h"><span>REGIONS · supply & local median</span><span class="tag">TOP 5</span></div>
+      <div class="regions" id="regions"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-h"><span>DEALER vs PRIVATE</span><span class="tag">SPLIT</span></div>
+      <div class="split">
+        <div class="cell dealer">
+          <div class="l">Dealer · n=906</div>
+          <div class="v num">RM 67,750</div>
+          <div class="s">median listing · 90.6% of supply</div>
+        </div>
+        <div class="cell">
+          <div class="l">Private · n=94</div>
+          <div class="v num">RM 17,750</div>
+          <div class="s">median listing · 9.4% of supply</div>
+        </div>
+      </div>
+      <div style="padding:0 16px 16px">
+        <div class="premium">
+          <span class="label">Dealer premium ratio</span>
+          <span class="val">3.81×</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <span>F1 HELP   F5 REFRESH   F9 EXPORT   /  CMD</span>
+    <span>CarData v2 · scraper.py --depth none · n=1000</span>
+    <span>2026-05-26 · KL/GMT+8</span>
+  </div>
+
+</div>
+
+<script>
+  // ===== Brand data =====
+  const brands = [
+    {name:'Toyota',         n:243, med:131800},
+    {name:'Honda',          n:128, med: 53399},
+    {name:'Perodua',        n:122, med: 28800},
+    {name:'Proton',         n: 84, med: 25400},
+    {name:'Mercedes Benz',  n: 78, med:147000},
+    {name:'BMW',            n: 45, med: 89222},
+    {name:'Lexus',          n: 42, med:234500},
+    {name:'Nissan',         n: 42, med: 27399},
+  ];
+  const maxN = Math.max(...brands.map(b=>b.n));
+  const wrap = document.getElementById('brands');
+  brands.forEach((b,i)=>{
+    const div = document.createElement('div');
+    div.className = 'row';
+    const pct = (b.n/maxN*100).toFixed(0);
+    div.innerHTML = `
+      <span class="rank">${String(i+1).padStart(2,'0')}</span>
+      <span class="name">${b.name}</span>
+      <span class="barwrap"><span class="bar" style="width:${pct}%"></span></span>
+      <span class="vol">${b.n.toLocaleString()}</span>
+      <span class="med">RM ${(b.med/1000).toFixed(1)}K</span>
+    `;
+    wrap.appendChild(div);
+  });
+
+  // ===== Region data =====
+  const regions = [
+    {code:'SGR', name:'Selangor',         n:388, med: 51800},
+    {code:'KUL', name:'Kuala Lumpur',     n:305, med: 69888},
+    {code:'JHR', name:'Johor',            n:147, med: 98800},
+    {code:'PNG', name:'Penang',           n: 45, med: 53000},
+    {code:'NSN', name:'Negeri Sembilan',  n: 32, med:114500},
+  ];
+  const maxR = Math.max(...regions.map(r=>r.n));
+  const rwrap = document.getElementById('regions');
+  regions.forEach(r=>{
+    const div = document.createElement('div');
+    div.className = 'reg-row';
+    const pct = (r.n/maxR*100).toFixed(0);
+    div.innerHTML = `
+      <span class="rcode">${r.code}</span>
+      <span class="rname">${r.name}</span>
+      <span class="rvol">${r.n}</span>
+      <span class="rbar"><span class="b" style="display:block;width:${pct}%;height:6px"></span></span>
+      <span class="rmed">RM ${(r.med/1000).toFixed(1)}K</span>
+    `;
+    rwrap.appendChild(div);
+  });
+</script>
+</body>
+</html>

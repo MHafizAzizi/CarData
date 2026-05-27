@@ -64,6 +64,10 @@ SHARED_COLUMNS: List[str] = [
     "location", "region", "subregion",
     "seller_name", "company_ad", "published",
     "first_seen_at", "last_seen_at", "last_checked_at", "availability_status",
+    # API-only columns added by schema v1 → v2 (both categories)
+    "old_price", "year_verified", "store_verified",
+    "bundle", "media_count", "mileage_bucket",
+    "last_detail_fetched_at", "detail_fetch_status",
 ]
 
 CAR_ONLY_COLUMNS: List[str] = [
@@ -74,6 +78,8 @@ CAR_ONLY_COLUMNS: List[str] = [
     "wheelbase", "kerbwt", "fueltk", "brake_front", "brake_rear",
     "suspension_front", "suspension_rear", "steering",
     "tyres_front", "tyres_rear", "wheel_rim_front", "wheel_rim_rear",
+    # API-only columns added by schema v1 → v2 (cars only)
+    "car_loan_eligible", "car_loan_payment", "car_loan_tenure", "has_car_grant",
 ]
 
 MOTORCYCLE_ONLY_COLUMNS: List[str] = ["motorcycle_make", "motorcycle_model"]
@@ -139,6 +145,12 @@ def prepare_dataframe(df: pd.DataFrame, category: str, source_label: str = "") -
         else:
             df["first_seen_at"] = today
 
+    # Stamp last_seen_at to now on every ingest — each scrape is fresh evidence
+    # the ad existed at this moment. UPSERT mode will overwrite the old value;
+    # INSERT OR IGNORE mode leaves it on rows that already exist.
+    if "last_seen_at" not in df.columns or df["last_seen_at"].isna().all():
+        df["last_seen_at"] = today
+
     if "availability_status" not in df.columns:
         df["availability_status"] = "unknown"
 
@@ -187,18 +199,49 @@ def _classify_xlsx_rows(df: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame, i
 # Insert helper
 # ---------------------------------------------------------------------------
 
-def _insert_rows(conn, df: pd.DataFrame, *, dry_run: bool) -> Tuple[int, int]:
-    """Insert rows with INSERT OR IGNORE. Returns (attempted, inserted)."""
+def _insert_rows(
+    conn,
+    df: pd.DataFrame,
+    *,
+    dry_run: bool,
+    mode: str = "upsert",
+) -> Tuple[int, int]:
+    """Insert rows into listings. Returns (attempted, newly_inserted).
+
+    mode='upsert' (default): ON CONFLICT(ads_id) DO UPDATE — re-scraping the
+        same ad refreshes every column except first_seen_at, which preserves
+        the true first-seen date.
+    mode='ignore': INSERT OR IGNORE — re-scraping the same ad is a no-op.
+        Useful for backfilling historical data without overwriting curated rows.
+    """
     if df.empty:
         return 0, 0
     cols = list(df.columns)
     placeholders = ", ".join(["?"] * len(cols))
     quoted_cols = ", ".join(f'"{c}"' for c in cols)
-    sql = f"INSERT OR IGNORE INTO listings ({quoted_cols}) VALUES ({placeholders})"
+
+    if mode == "ignore":
+        sql = f"INSERT OR IGNORE INTO listings ({quoted_cols}) VALUES ({placeholders})"
+    elif mode == "upsert":
+        # Update every column on conflict EXCEPT ads_id (the key) and
+        # first_seen_at (must stay immutable across re-scrapes).
+        update_cols = [c for c in cols if c not in ("ads_id", "first_seen_at")]
+        if update_cols:
+            update_clause = ", ".join(f'"{c}" = excluded."{c}"' for c in update_cols)
+            sql = (
+                f"INSERT INTO listings ({quoted_cols}) VALUES ({placeholders}) "
+                f"ON CONFLICT(ads_id) DO UPDATE SET {update_clause}"
+            )
+        else:
+            # Edge case: only ads_id + first_seen_at present — nothing to update
+            sql = f"INSERT OR IGNORE INTO listings ({quoted_cols}) VALUES ({placeholders})"
+    else:
+        raise ValueError(f"Unknown insert mode: {mode!r}")
+
     rows = [tuple(r) for r in df.itertuples(index=False, name=None)]
 
     if dry_run:
-        logging.info(f"DRY RUN: would attempt to insert {len(rows)} rows")
+        logging.info(f"DRY RUN ({mode}): would process {len(rows)} rows")
         return len(rows), 0
 
     before = conn.execute("SELECT COUNT(*) FROM listings").fetchone()[0]
@@ -211,13 +254,17 @@ def _insert_rows(conn, df: pd.DataFrame, *, dry_run: bool) -> Tuple[int, int]:
 # Migration modes
 # ---------------------------------------------------------------------------
 
-def migrate_csv(category: str, *, dry_run: bool) -> None:
+def migrate_csv(category: str, *, dry_run: bool, mode: str = "upsert") -> None:
     """Load every CSV from data/raw/<category>/ into the DB, then archive each one."""
     csv_files = _find_csvs(category)
 
     if not csv_files:
         print(f"[{category}] No CSV files to migrate.")
         return
+
+    # Label used in log lines so user can tell at a glance whether rows
+    # were genuinely new or refreshed in place.
+    other_label = "updated" if mode == "upsert" else "skipped"
 
     conn = connect(category)
     total_attempted = total_inserted = total_archived = 0
@@ -237,11 +284,11 @@ def migrate_csv(category: str, *, dry_run: bool) -> None:
             logging.error(f"[{category}] Skipping {csv_path.name}: {exc}")
             continue
 
-        attempted, inserted = _insert_rows(conn, prepared, dry_run=dry_run)
-        skipped = attempted - inserted
+        attempted, inserted = _insert_rows(conn, prepared, dry_run=dry_run, mode=mode)
+        other = attempted - inserted
         logging.info(
             f"[{category}] {csv_path.name}: attempted={attempted}, "
-            f"inserted={inserted}, skipped={skipped}"
+            f"inserted={inserted}, {other_label}={other}"
         )
         total_attempted += attempted
         total_inserted += inserted
@@ -256,17 +303,21 @@ def migrate_csv(category: str, *, dry_run: bool) -> None:
                 logging.error(f"[{category}] Failed to archive {csv_path.name}: {exc}")
 
     logging.info(
-        f"[{category}] Migration complete — "
+        f"[{category}] Migration complete (mode={mode}) — "
         f"total attempted={total_attempted}, inserted={total_inserted}, "
-        f"skipped={total_attempted - total_inserted}, archived={total_archived}"
+        f"{other_label}={total_attempted - total_inserted}, archived={total_archived}"
     )
 
     if not dry_run:
         set_meta(conn, "last_migrated_at", run_start.strftime("%Y-%m-%d %H:%M:%S"))
 
 
-def migrate_xlsx(xlsx_path: Path, category: str, *, dry_run: bool) -> None:
-    """Load a master xlsx file into the DB (legacy path, primarily for cars)."""
+def migrate_xlsx(xlsx_path: Path, category: str, *, dry_run: bool, mode: str = "ignore") -> None:
+    """Load a master xlsx file into the DB (legacy path, primarily for cars).
+
+    Defaults to mode='ignore' because xlsx backfills typically run once on a
+    fresh DB, and the xlsx columns don't always carry fresh API fields.
+    """
     if not xlsx_path.exists():
         logging.error(f"Source xlsx not found: {xlsx_path}")
         sys.exit(1)
@@ -289,9 +340,10 @@ def migrate_xlsx(xlsx_path: Path, category: str, *, dry_run: bool) -> None:
     logging.info(f"[{category}] {len(prepared)} rows ready → {db_path_for(category)}")
 
     conn = connect(category)
-    attempted, inserted = _insert_rows(conn, prepared, dry_run=dry_run)
-    skipped = attempted - inserted
-    logging.info(f"[{category}] attempted={attempted}, inserted={inserted}, skipped={skipped}")
+    attempted, inserted = _insert_rows(conn, prepared, dry_run=dry_run, mode=mode)
+    other = attempted - inserted
+    other_label = "updated" if mode == "upsert" else "skipped"
+    logging.info(f"[{category}] attempted={attempted}, inserted={inserted}, {other_label}={other}")
 
 # ---------------------------------------------------------------------------
 # CLI
@@ -314,6 +366,15 @@ def parse_args() -> argparse.Namespace:
         help="Load from a master Excel file instead of raw CSVs (legacy path).",
     )
     p.add_argument("--dry-run", action="store_true", help="Preview what would be loaded; write nothing.")
+    p.add_argument(
+        "--mode",
+        choices=("upsert", "ignore"),
+        default=None,
+        help=(
+            "upsert (default for CSV): refresh existing ads via ON CONFLICT DO UPDATE; "
+            "ignore (default for xlsx): keep existing rows, only insert new ones."
+        ),
+    )
     return p.parse_args()
 
 
@@ -327,9 +388,11 @@ def main() -> None:
         logging.info("--- DRY RUN mode — no data will be written ---")
 
     if args.xlsx:
-        migrate_xlsx(Path(args.xlsx), category, dry_run=args.dry_run)
+        mode = args.mode or "ignore"
+        migrate_xlsx(Path(args.xlsx), category, dry_run=args.dry_run, mode=mode)
     else:
-        migrate_csv(category, dry_run=args.dry_run)
+        mode = args.mode or "upsert"
+        migrate_csv(category, dry_run=args.dry_run, mode=mode)
 
 
 if __name__ == "__main__":
