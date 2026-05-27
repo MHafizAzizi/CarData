@@ -14,12 +14,42 @@ import random
 import threading
 import time
 import logging
+from datetime import datetime, timezone
+from email.utils import parsedate_to_datetime
 from typing import Dict, Optional, Tuple
 
 import cloudscraper
 import requests
 from fake_useragent import UserAgent
 from requests.exceptions import RequestException
+
+
+# Rate-limit (429) back-off bounds, used by both this client and EagleClient.
+RATE_LIMIT_DEFAULT_WAIT = 60.0   # used when Retry-After header is missing
+RATE_LIMIT_MAX_WAIT = 300.0      # cap so a hostile/buggy server can't stall us
+
+
+def parse_retry_after(header_value: Optional[str]) -> Optional[float]:
+    """Parse an HTTP Retry-After header value to seconds.
+
+    Per RFC 7231 the value is either a non-negative integer (seconds) or an
+    HTTP-date. Returns None if the value is missing or unparseable.
+    """
+    if not header_value:
+        return None
+    s = header_value.strip()
+    try:
+        return max(0.0, float(s))
+    except ValueError:
+        pass
+    try:
+        target = parsedate_to_datetime(s)
+        if target is None:
+            return None
+        delta = (target - datetime.now(timezone.utc)).total_seconds()
+        return max(0.0, delta)
+    except (TypeError, ValueError):
+        return None
 
 
 class MudahClient:
@@ -53,12 +83,13 @@ class MudahClient:
             'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
             'Accept-Language': 'en-US,en;q=0.5',
             'Accept-Encoding': 'gzip, deflate',
+            'Referer': 'https://www.mudah.my/',
             'DNT': '1',
             'Connection': 'keep-alive',
             'Upgrade-Insecure-Requests': '1',
             'Sec-Fetch-Dest': 'document',
             'Sec-Fetch-Mode': 'navigate',
-            'Sec-Fetch-Site': 'none',
+            'Sec-Fetch-Site': 'same-origin',
             'Sec-Fetch-User': '?1',
             'Cache-Control': 'max-age=0',
         }
@@ -76,6 +107,10 @@ class MudahClient:
     def get(self, url: str, *, raise_for_status: bool = True) -> requests.Response:
         """GET a URL with throttling + fixed-schedule retry backoff.
 
+        On HTTP 429 the loop honors the Retry-After header (or backs off
+        `RATE_LIMIT_DEFAULT_WAIT` seconds when absent), capped at
+        `RATE_LIMIT_MAX_WAIT`. Other failures use the fixed retry schedule.
+
         Raises the last RequestException if all retries fail.
         """
         last_error: Optional[Exception] = None
@@ -88,6 +123,19 @@ class MudahClient:
                     time.sleep(wait)
 
                 response = self.scraper.get(url, headers=self._random_headers(), timeout=self.timeout)
+
+                if response.status_code == 429 and attempt < self.max_retries:
+                    wait = parse_retry_after(response.headers.get("Retry-After"))
+                    if wait is None:
+                        wait = RATE_LIMIT_DEFAULT_WAIT
+                    wait = min(wait, RATE_LIMIT_MAX_WAIT)
+                    logging.warning(
+                        f"429 Too Many Requests for {url}; backing off "
+                        f"{wait:.1f}s (attempt {attempt + 1}/{self.max_retries})"
+                    )
+                    time.sleep(wait)
+                    continue
+
                 if raise_for_status:
                     response.raise_for_status()
                 return response

@@ -422,3 +422,112 @@ class TestConstants:
 
     def test_base_url(self):
         assert BASE_URL == "https://search.mudah.my/v1/search"
+
+
+# ---------------------------------------------------------------------------
+# Retry-After parsing + 429 handling
+# ---------------------------------------------------------------------------
+
+from mudah_client import parse_retry_after  # noqa: E402
+
+
+class TestParseRetryAfter:
+    def test_integer_seconds(self):
+        assert parse_retry_after("30") == 30.0
+        assert parse_retry_after("  60  ") == 60.0
+
+    def test_float_seconds(self):
+        assert parse_retry_after("12.5") == 12.5
+
+    def test_negative_clamped_to_zero(self):
+        assert parse_retry_after("-5") == 0.0
+
+    def test_http_date_past_returns_zero(self):
+        assert parse_retry_after("Wed, 21 Oct 2015 07:28:00 GMT") == 0.0
+
+    def test_http_date_future_returns_positive(self):
+        # 100 years from now-ish — must be positive
+        out = parse_retry_after("Sat, 01 Jan 2125 00:00:00 GMT")
+        assert out is not None and out > 0
+
+    def test_none_or_empty(self):
+        assert parse_retry_after(None) is None
+        assert parse_retry_after("") is None
+
+    def test_garbage(self):
+        assert parse_retry_after("soon") is None
+
+
+class Test429Handling:
+    def test_429_then_success_recovers(self):
+        """A 429 should trigger a back-off and a retry; the retry's 200
+        response is returned to the caller (no exception raised)."""
+        c = EagleClient(request_interval=(0.0, 0.0), max_retries=2, retry_waits=(0,))
+
+        first = MagicMock()
+        first.status_code = 429
+        first.headers = {"Retry-After": "0"}
+        first.raise_for_status.side_effect = AssertionError("should not be called")
+
+        body = {"data": [{"type": "ads", "id": 1, "attributes": CAR_FIXTURE}], "meta": {}}
+        second = _mock_response(200, body)
+
+        with patch.object(c.scraper, "get", side_effect=[first, second]):
+            ads, _ = c.fetch_page("cars", offset=0, limit=10)
+        assert len(ads) == 1
+
+    def test_429_uses_retry_after_header_value(self):
+        """parse_retry_after's output should be slept between attempts."""
+        c = EagleClient(request_interval=(0.0, 0.0), max_retries=1, retry_waits=(0,))
+
+        first = MagicMock()
+        first.status_code = 429
+        first.headers = {"Retry-After": "7"}
+
+        body = {"data": [{"type": "ads", "id": 1, "attributes": CAR_FIXTURE}], "meta": {}}
+        second = _mock_response(200, body)
+
+        with patch.object(c.scraper, "get", side_effect=[first, second]), \
+             patch("eagle_client.time.sleep") as sleep_mock:
+            c.fetch_page("cars", offset=0, limit=10)
+
+        # Among all sleep calls, one must be exactly 7.0 (Retry-After honored)
+        slept = [call.args[0] for call in sleep_mock.call_args_list if call.args]
+        assert 7.0 in slept
+
+    def test_429_caps_at_max_wait(self):
+        """Retry-After larger than RATE_LIMIT_MAX_WAIT should be capped."""
+        from mudah_client import RATE_LIMIT_MAX_WAIT
+        c = EagleClient(request_interval=(0.0, 0.0), max_retries=1, retry_waits=(0,))
+
+        first = MagicMock()
+        first.status_code = 429
+        first.headers = {"Retry-After": str(int(RATE_LIMIT_MAX_WAIT * 10))}
+
+        body = {"data": [{"type": "ads", "id": 1, "attributes": CAR_FIXTURE}], "meta": {}}
+        second = _mock_response(200, body)
+
+        with patch.object(c.scraper, "get", side_effect=[first, second]), \
+             patch("eagle_client.time.sleep") as sleep_mock:
+            c.fetch_page("cars", offset=0, limit=10)
+
+        slept = [call.args[0] for call in sleep_mock.call_args_list if call.args]
+        assert max(slept) == RATE_LIMIT_MAX_WAIT
+
+    def test_429_default_when_header_missing(self):
+        from mudah_client import RATE_LIMIT_DEFAULT_WAIT
+        c = EagleClient(request_interval=(0.0, 0.0), max_retries=1, retry_waits=(0,))
+
+        first = MagicMock()
+        first.status_code = 429
+        first.headers = {}  # no Retry-After
+
+        body = {"data": [{"type": "ads", "id": 1, "attributes": CAR_FIXTURE}], "meta": {}}
+        second = _mock_response(200, body)
+
+        with patch.object(c.scraper, "get", side_effect=[first, second]), \
+             patch("eagle_client.time.sleep") as sleep_mock:
+            c.fetch_page("cars", offset=0, limit=10)
+
+        slept = [call.args[0] for call in sleep_mock.call_args_list if call.args]
+        assert RATE_LIMIT_DEFAULT_WAIT in slept

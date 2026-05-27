@@ -264,6 +264,152 @@ class TestRun:
 
 
 # ---------------------------------------------------------------------------
+# Partial cleanup
+# ---------------------------------------------------------------------------
+
+class TestCheckpointCleanup:
+    def test_phase2_partials_removed_after_final(
+        self, scraper, mock_eagle, mock_detail, tmp_path
+    ):
+        # 5 ads, checkpoint every 2 -> partials at 2 and 4
+        page = [_api_ad(i) for i in range(5)]
+        mock_eagle.fetch_all.return_value = iter([page])
+        scraper.run(max_ads=None, depth="all", checkpoint_every=2)
+
+        partials = list(tmp_path.glob("*phase2_partial*.csv"))
+        assert partials == []
+        phase1s = list(tmp_path.glob("*phase1*.csv"))
+        assert phase1s == []
+
+
+# ---------------------------------------------------------------------------
+# Phase 2 retry pass
+# ---------------------------------------------------------------------------
+
+class TestPhase2RetryErrors:
+    def test_errors_retried_once(self, scraper, mock_detail):
+        # First call -> error, second (retry pass) -> ok
+        responses = [
+            {"detail_fetch_status": "error", "last_detail_fetched_at": "t1"},
+            {
+                "detail_fetch_status": "ok",
+                "mileage": "55000",
+                "last_detail_fetched_at": "t2",
+            },
+        ]
+        mock_detail.fetch.side_effect = responses
+
+        ads = [_api_ad(1)]
+        out = scraper._phase2_enrich(ads, "all", checkpoint_every=100, timestamp="t")
+        assert mock_detail.fetch.call_count == 2
+        assert out[0]["detail_fetch_status"] == "ok"
+        assert out[0]["mileage"] == "55000"
+
+    def test_retry_skipped_when_no_errors(self, scraper, mock_detail):
+        ads = [_api_ad(1)]
+        scraper._phase2_enrich(ads, "all", checkpoint_every=100, timestamp="t")
+        # Only the main loop fetch — no retry pass call
+        assert mock_detail.fetch.call_count == 1
+
+    def test_retry_skips_ads_without_url(self, scraper, mock_detail):
+        # main loop hits the missing-url branch and marks 'error' WITHOUT calling fetch
+        ad = _api_ad(1)
+        ad.pop("url")
+        out = scraper._phase2_enrich([ad], "all", checkpoint_every=100, timestamp="t")
+        # Retry pass must skip url-less ads (otherwise it would call fetch(None, ...))
+        mock_detail.fetch.assert_not_called()
+        assert out[0]["detail_fetch_status"] == "error"
+
+
+# ---------------------------------------------------------------------------
+# Resume capability
+# ---------------------------------------------------------------------------
+
+class TestResume:
+    def test_find_resume_prefers_phase2_partial(self, scraper, tmp_path):
+        (tmp_path / "mudah_eagle_cars_phase1_20260501.csv").write_text("a")
+        (tmp_path / "mudah_eagle_cars_phase2_partial_100_20260502.csv").write_text("b")
+        path = scraper._find_resume_checkpoint()
+        assert path is not None
+        assert "phase2_partial" in path.name
+
+    def test_find_resume_falls_back_to_phase1(self, scraper, tmp_path):
+        (tmp_path / "mudah_eagle_cars_phase1_20260501.csv").write_text("a")
+        path = scraper._find_resume_checkpoint()
+        assert path is not None
+        assert "phase1" in path.name
+
+    def test_find_resume_returns_none_when_empty(self, scraper):
+        assert scraper._find_resume_checkpoint() is None
+
+    def test_find_resume_picks_most_recent(self, scraper, tmp_path):
+        import time as _time
+        old = tmp_path / "mudah_eagle_cars_phase2_partial_100_20260501.csv"
+        new = tmp_path / "mudah_eagle_cars_phase2_partial_200_20260502.csv"
+        old.write_text("a")
+        _time.sleep(0.01)
+        new.write_text("b")
+        assert scraper._find_resume_checkpoint() == new
+
+    def test_load_checkpoint_converts_nan_to_none(self, scraper, tmp_path):
+        # Round-trip a row with a missing field to confirm NaN -> None
+        ads = [_api_ad(1, with_mileage=True), _api_ad(2)]  # ad 2 has no mileage
+        path = scraper._write_csv(ads, "ts", suffix="phase2_partial_2")
+        loaded = scraper._load_checkpoint(path)
+        # The ad without mileage should have None, not NaN
+        ad2 = next(a for a in loaded if a["ads_id"] == 2)
+        assert ad2.get("mileage") is None
+
+    def test_run_resume_loads_checkpoint_and_skips_phase1(
+        self, scraper, mock_eagle, mock_detail, tmp_path
+    ):
+        # Pre-seed a phase2_partial CSV with one ad-with-mileage and one without
+        ads = [_api_ad(1, with_mileage=True), _api_ad(2)]
+        scraper._write_csv(ads, "20260501", suffix="phase2_partial_1")
+
+        path = scraper.run(depth="missing", checkpoint_every=100, resume=True)
+
+        # Phase 1 NOT called
+        mock_eagle.fetch_all.assert_not_called()
+        # Only one ad needed enrichment (ad 2, no mileage)
+        assert mock_detail.fetch.call_count == 1
+        # Final CSV exists; resume source cleaned up
+        assert path.exists()
+        assert "final" in path.name
+        partials = list(tmp_path.glob("*phase2_partial*.csv"))
+        assert partials == []
+
+    def test_run_resume_raises_when_no_checkpoint(self, scraper):
+        with pytest.raises(FileNotFoundError, match="No checkpoint CSV"):
+            scraper.run(depth="missing", resume=True)
+
+
+# ---------------------------------------------------------------------------
+# Incremental Phase 1 checkpoint
+# ---------------------------------------------------------------------------
+
+class TestPhase1IncrementalCheckpoint:
+    def test_phase1_csv_written_per_page(self, scraper, mock_eagle, tmp_path):
+        # Yield 2 pages; with timestamp, phase1 CSV should be (re)written each time
+        page1 = [_api_ad(i) for i in range(5)]
+        page2 = [_api_ad(i) for i in range(5, 8)]
+        mock_eagle.fetch_all.return_value = iter([page1, page2])
+
+        scraper._phase1_collect(max_ads=None, timestamp="ts")
+        # The final state should be one phase1 CSV with all 8 rows
+        phase1s = list(tmp_path.glob("*phase1*.csv"))
+        assert len(phase1s) == 1
+        df = pd.read_csv(phase1s[0])
+        assert len(df) == 8
+
+    def test_phase1_no_checkpoint_without_timestamp(self, scraper, mock_eagle, tmp_path):
+        page = [_api_ad(i) for i in range(5)]
+        mock_eagle.fetch_all.return_value = iter([page])
+        scraper._phase1_collect(max_ads=None)  # no timestamp
+        assert list(tmp_path.glob("*phase1*.csv")) == []
+
+
+# ---------------------------------------------------------------------------
 # DEPTH_CHOICES constant
 # ---------------------------------------------------------------------------
 

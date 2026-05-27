@@ -6,6 +6,55 @@ Car listing data scraped from [Mudah.my](https://www.mudah.my), Malaysia's large
 
 ---
 
+## Quick Start — what to run and when
+
+### Normal run (repeat every 1–2 days)
+
+```bash
+# 1. Scrape new listings → data/raw/<category>/
+python src/scraper.py --category cars --max-ads 1000
+
+# 2. Load CSVs into SQLite → data/master/cardata_cars.db
+python src/migrate_xlsx_to_db.py --category cars
+
+# 3. Normalize the DB (strip noise, dedup)
+python src/clean.py --category cars
+
+# 4. (Optional) Re-check whether old listings are still live
+python src/recheck.py --category cars
+
+# 5. (Optional) Regenerate the dashboard
+python src/dashboard_aggregate.py
+```
+
+Motorcycles: swap `--category cars` → `--category motorcycles` in steps 1–4.
+
+### One-time / occasional
+
+| Script | When to run |
+|---|---|
+| `src/scrape_makes_models.py` | Once to seed `data/reference/`; re-run when Mudah adds new brands (~annually) |
+| `migrations/run_migrations.py` | Once after pulling a schema change from git |
+
+### Script reference at a glance
+
+| Script | Role | Run it? |
+|---|---|---|
+| `src/scraper.py` | **Primary scraper** — EagleSearch API + HTML enrichment | Yes — step 1 |
+| `src/migrate_xlsx_to_db.py` | Load scraped CSVs into SQLite | Yes — step 2 |
+| `src/clean.py` | Normalize / dedup the DB | Yes — step 3 |
+| `src/recheck.py` | Re-check listing availability | Yes — maintenance |
+| `src/dashboard_aggregate.py` | Generate `mockups/dashboard.html` from DB | Yes — on demand |
+| `src/scrape_makes_models.py` | Refresh make/model reference lists | Occasionally |
+| `src/script.py` | HTML-only scraper (fallback if EagleSearch is down) | Only as fallback |
+| `src/eagle_client.py` | EagleSearch API wrapper | Library — do not run directly |
+| `src/mudah_client.py` | Shared HTTP client | Library — do not run directly |
+| `src/detail_client.py` | HTML detail-page parser | Library — do not run directly |
+| `src/db.py` | DB connection helper | Library — do not run directly |
+| `src/test_eaglesearch.py` | Manual API connectivity check | Dev/debug only |
+
+---
+
 ## Data Pipeline
 
 The project supports two collection paths. The **hybrid scraper** (`scraper.py`) is the new primary collector; the **HTML-only scraper** (`script.py`) is kept as a fallback.
@@ -96,16 +145,18 @@ pip install -r requirements.txt
 ```
 CarData/
 ├── src/                                   # All scripts
-│   ├── scraper.py                         # NEW: hybrid scraper (API + HTML)
-│   ├── eagle_client.py                    # NEW: EagleSearch API wrapper
-│   ├── detail_client.py                   # NEW: HTML detail-page parser
-│   ├── script.py                          # HTML-only scraper (fallback)
+│   ├── scraper.py                         # Primary scraper (EagleSearch API + HTML)
+│   ├── migrate_xlsx_to_db.py              # CSV → SQLite migration
+│   ├── clean.py                           # Data normalization + dedup
 │   ├── recheck.py                         # Availability re-checker
-│   ├── migrate_xlsx_to_db.py              # CSV/Excel → SQLite migration
-│   ├── db.py                              # Database connection helper
-│   ├── clean.py                           # Data cleanup utility
-│   ├── scrape_makes_models.py             # Reference make/model list scraper
-│   └── mudah_client.py                    # Shared HTTP client (HTML, 3-4s throttle)
+│   ├── dashboard_aggregate.py             # Generate mockups/dashboard.html from DB
+│   ├── scrape_makes_models.py             # Reference make/model list scraper (occasional)
+│   ├── script.py                          # HTML-only scraper (fallback)
+│   ├── eagle_client.py                    # EagleSearch API wrapper (library)
+│   ├── detail_client.py                   # HTML detail-page parser (library)
+│   ├── mudah_client.py                    # Shared HTTP client (library)
+│   ├── db.py                              # Database connection helper (library)
+│   └── test_eaglesearch.py                # Manual API connectivity check (dev)
 │
 ├── migrations/                            # NEW: schema migration runners
 │   └── run_migrations.py                  # v1 → v2: adds API-only columns
@@ -122,8 +173,7 @@ CarData/
 │   │   └── motorcycles_models.json
 │   └── master/                            # Production SQLite databases
 │       ├── cardata_cars.db
-│       ├── cardata_motorcycles.db
-│       └── MasterMudahCarData.xlsx        # Legacy Excel master (optional)
+│       └── cardata_motorcycles.db
 │
 ├── logs/                                  # Log files
 │   ├── scraper_hybrid.log                 # scraper.py logs (NEW)
@@ -167,9 +217,20 @@ Flags:
 | `--max-ads` | *prompted* | Max ads to collect via API (Phase 1 cap) |
 | `--depth` | `missing` | `none` = API only; `missing` = HTML only when `mileage` absent; `all` = HTML for every ad |
 | `--checkpoint-every` | `100` | Write Phase-2 partial CSV every N detail fetches |
+| `--resume` | *off* | Resume from the latest checkpoint CSV in `output_dir` (skip Phase 1) |
 | `--output-dir` | `data/raw/<category>/` | Where to save CSVs |
 
 CSV filename: `mudah_eagle_{category}_final_{timestamp}.csv`.
+
+**Resuming a crashed run.** If Phase 2 dies partway through, re-run with `--resume`:
+
+```bash
+python src/scraper.py --category cars --depth missing --resume
+```
+
+The scraper auto-detects the most recent `phase2_partial_*.csv` (or `phase1_*.csv` if Phase 2 never started) in the output dir, loads it as the working set, and continues from there. `depth=missing` skips ads that already have exact `mileage` populated, so previously-enriched ads are not re-fetched. Phase 1 is reused, not re-run, and `--max-ads` is ignored in resume mode (the checkpoint defines the working set).
+
+**Phase 2 also retries errored ads automatically.** At the end of the main loop, any ad with `detail_fetch_status='error'` gets one more attempt — useful for recovering transient network blips without a full re-run.
 
 ### HTML-only scraper — `script.py` (fallback)
 
@@ -307,6 +368,8 @@ To stay friendly with mudah.my and avoid 403 blocks, both scrapers pace themselv
 - **Detail-page retries:** same schedule
 
 The two clients (`eagle_client.py` and `mudah_client.py`) own independent locks so the API throttle never blocks the HTML throttle (or vice versa) when running in the same process.
+
+**429 Too Many Requests** is handled separately from the fixed retry schedule. If the server sends `Retry-After`, the client sleeps for that many seconds (or until that HTTP-date), capped at 5 minutes. Without the header, the client falls back to a 60s back-off. This applies to both `eagle_client.py` and `mudah_client.py`.
 
 Logs go to `logs/scraper_hybrid.log` (new) and `logs/scraper.log` (legacy), both UTF-8 to preserve non-ASCII titles.
 
@@ -516,6 +579,16 @@ Every probe appends one row to the `availability_checks` table in the same DB:
 ## Changelog
 
 This section tracks every revision of this README. Add a new entry at the top whenever the document is updated.
+
+### 2026-05-26
+- **Scraping smoothness pass.** Six resilience improvements to `scraper.py`, `eagle_client.py`, `mudah_client.py`:
+  - **`--resume` flag** auto-detects the latest `phase2_partial_*.csv` (or `phase1_*.csv`) in the output dir and continues from there; `depth=missing` skips already-enriched ads naturally.
+  - **429 / Retry-After awareness** in both HTTP clients — honors the header (capped at 5 min) or falls back to 60s, independent of the normal 2s/3s/5s retry schedule.
+  - **End-of-Phase-2 retry pass** re-attempts ads marked `detail_fetch_status='error'` once before final write — recovers most transient blips.
+  - **Incremental Phase 1 checkpoint** — `phase1_*.csv` is rewritten per page during Phase 1 so a mid-Phase-1 crash still leaves usable data on disk.
+  - **Cleaned up partial checkpoints** — `phase2_partial_*.csv` files are now removed after the final CSV is written (previously they leaked).
+  - **Added `Referer` header** to `MudahClient` and synced `Sec-Fetch-Site=same-origin` for parity with `EagleClient`.
+- **Test coverage:** +24 tests across `test_scraper.py` (15) and `test_eagle_client.py` (9). Total: 184 passing.
 
 ### 2026-05-02
 - **Hybrid scraper landed.** New `src/scraper.py` orchestrates a two-phase pipeline: Phase 1 pulls 200 ads/request from the discovered EagleSearch JSON API (`https://search.mudah.my/v1/search`, ~500ms for 200 ads) and Phase 2 fetches `.htm` pages only for ads needing deep fields (body, exact mileage, chassis specs). New `--depth {none|missing|all}` flag controls Phase 2 scope. API-only mode is ~1500× faster per listing than `script.py`. Also added `src/eagle_client.py` (API wrapper with own 0.5–1s throttle) and `src/detail_client.py` (HTML parser carved from `script.py`). `script.py` retained as fallback when EagleSearch is unavailable.
