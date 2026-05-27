@@ -34,6 +34,8 @@ Motorcycles: swap `--category cars` → `--category motorcycles` in steps 1–4.
 | Script | When to run |
 |---|---|
 | `src/scrape_makes_models.py` | Once to seed `data/reference/`; re-run when Mudah adds new brands (~annually) |
+| `src/scrape_makes_models.py --variants --all-makes` | Once to bootstrap `cars_variants.json`; re-run after a major re-scrape |
+| `src/clean.py --category cars --enrich-variants` | After running `--variants` above, to fill NULL variant rows in the DB |
 | `migrations/run_migrations.py` | Once after pulling a schema change from git |
 
 ### Script reference at a glance
@@ -169,6 +171,7 @@ CarData/
 │   ├── reference/                         # Canonical make/model lists from Mudah
 │   │   ├── cars_makes.json
 │   │   ├── cars_models.json
+│   │   ├── cars_variants.json             # Variant/trim vocabulary (985 models)
 │   │   ├── motorcycles_makes.json
 │   │   └── motorcycles_models.json
 │   └── master/                            # Production SQLite databases
@@ -428,6 +431,7 @@ python src/scrape_makes_models.py
 | `cars_models.json` | `{make_slug: [{id, name, slug}, ...]}` | Toyota: 99 models, total 1,533 |
 | `motorcycles_makes.json` | List of `{id, name, slug}` (no `founding_country`) | 93 entries (Adiva, Aprilia, ...) |
 | `motorcycles_models.json` | `{make_slug: [{id, name, slug}, ...]}` | Yamaha: 109 models, total 1,362 |
+| `cars_variants.json` | `{model_slug: {make, model, by_cc: {cc: [tokens]}, _all: [tokens]}}` | 985 models, 9,723 variant tokens |
 
 ### How it works
 
@@ -440,6 +444,28 @@ Two HTTP requests total (one per category). Both lists are embedded in the searc
 The script anchors on the filter object (`"make":{`, `"motorcycle_make":{`, `"model":{`, `"motorcycle_model":{`), then bracket-matches the next `"values":[ ... ]` array.
 
 Mudah serves a stripped HTML variant (no filterOptions blob) most of the time. The script retries with a fresh `cloudscraper` session up to 8 times, detecting the full response by presence of a known make name (`"Alfa Romeo"` for cars, `"Adiva"` for motos).
+
+### Variant vocabulary — `--variants` mode
+
+`scrape_makes_models.py --variants` builds a trim/variant vocabulary per car model by sampling listing subjects from the EagleSearch API (filtered by `model_id`). The API path avoids Cloudflare protection that blocks model-specific HTML pages.
+
+```bash
+# Bootstrap vocabulary for all 128 makes (~30 min, resumable)
+python src/scrape_makes_models.py --variants --all-makes
+
+# Limit to specific makes for a faster refresh
+python src/scrape_makes_models.py --variants --makes toyota honda perodua proton
+```
+
+Extraction logic: strips year, make, model name, engine size, transmission, and seller noise from each listing subject — the residual is the variant token (e.g. `"2020 Toyota ALPHARD 2.5 SC (A)"` → `"SC"`). Tokens are grouped by `engine_capacity` and deduplicated by frequency, keeping the top 15 per cc bucket.
+
+Once `cars_variants.json` exists, apply it to NULL variant rows in the DB:
+
+```bash
+python src/clean.py --category cars --enrich-variants
+```
+
+This fills ~83% of NULL variant rows using longest-match against the vocabulary. The remaining ~17% are either pure seller-noise listings (no variant token extractable) or rare variants not seen in the 50-listing sample.
 
 ### Suggested uses
 
@@ -462,6 +488,9 @@ python src/clean.py --category motorcycles --dry-run
 
 # clean cars DB
 python src/clean.py --category cars
+
+# clean + fill NULL variant rows from cars_variants.json vocabulary
+python src/clean.py --category cars --enrich-variants
 ```
 
 ### What it cleans
@@ -579,6 +608,13 @@ Every probe appends one row to the `availability_checks` table in the same DB:
 ## Changelog
 
 This section tracks every revision of this README. Add a new entry at the top whenever the document is updated.
+
+### 2026-05-27
+- **Variant vocabulary system.** `scrape_makes_models.py` gained `--variants` / `--all-makes` flags. Samples listing subjects via EagleSearch API (filtered by `model_id`) instead of model-specific HTML pages — the latter are blocked by Cloudflare. Ran `--all-makes` across all 128 makes: `data/reference/cars_variants.json` now contains 985 models and 9,723 variant tokens. `clean.py` gained `--enrich-variants`: applies the vocabulary to NULL variant rows using longest-match, filling ~83% of candidates.
+- **`car_type` fix.** `eagle_client.py` was silently dropping the `car_type_name` field from every API response. Added `car_type_name` → `car_type` to `_RENAME_CARS`; all future scrapes populate `car_type`.
+- **Phase 2 profiled and deprioritised.** Only 0.9% of fresh rows gain any new field from Phase 2 HTML enrichment. Phase 2 `mileage` is the same bucket range as `mileage_bucket` reformatted as text — no precision gain. Chassis specs are model-level constants. Recommendation: use `--depth none` for all regular scraping.
+- **DB cleaned.** `clean.py --category cars --enrich-variants` removed 13,527 repost duplicates; DB trimmed from 23,776 → 10,249 rows. 805 NULL variant rows filled.
+- Added `cars_variants.json` to project structure and reference data output table. Documented `--variants` mode and `--enrich-variants` flag.
 
 ### 2026-05-26
 - **Scraping smoothness pass.** Six resilience improvements to `scraper.py`, `eagle_client.py`, `mudah_client.py`:

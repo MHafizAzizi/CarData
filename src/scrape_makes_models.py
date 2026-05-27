@@ -12,7 +12,7 @@ Usage:
     # Build variant vocabulary for specific makes (cars only)
     python src/scrape_makes_models.py --variants --makes toyota honda perodua proton
 
-    # Build for all makes (slow — 1,500+ HTTP requests; use --makes to scope)
+    # Build for all makes (resumable; ~1,500 API requests; ~30 min at 0.75s/model)
     python src/scrape_makes_models.py --variants --all-makes
 
 Outputs (default mode):
@@ -223,58 +223,51 @@ def extract_variant_tokens(subject: str, make_name: str, model_name: str) -> str
 
 
 def _fetch_model_page_listings(
-    make_slug: str, model_slug: str, *, max_attempts: int = 5
+    make_slug: str, model_slug: str, *, model_id: str = "", max_attempts: int = 3
 ) -> List[Dict]:
-    """Fetch the first search-results page for a specific model and return
-    a list of {subject, engine_capacity, make_name, model_name} dicts.
+    """Fetch sample listings via EagleSearch API filtered by model_id.
 
-    Hits: https://www.mudah.my/malaysia/cars-for-sale/{make_slug}/{model_slug}?o=1
-    Listing data lives in __NEXT_DATA__ → props.pageProps.items[].attributes.
-    Returns [] if the model has no active listings or the page can't be parsed.
+    Uses: https://search.mudah.my/v1/search?category=1020&model_id={id}&type=sell&limit=50
+    Avoids Cloudflare HTML protection that 403s model-specific HTML pages.
+    Returns [] if model_id is empty, the model has no active listings, or the
+    API call fails after max_attempts.
     """
-    url = f"https://www.mudah.my/malaysia/cars-for-sale/{make_slug}/{model_slug}?o=1"
+    if not model_id:
+        return []
+
+    url = "https://search.mudah.my/v1/search"
+    params = {"category": 1020, "type": "sell", "model_id": model_id, "limit": 50, "from": 0}
+
+    scraper = cloudscraper.create_scraper(
+        browser={"browser": "chrome", "platform": "windows", "mobile": False}
+    )
 
     for attempt in range(1, max_attempts + 1):
-        scraper = cloudscraper.create_scraper(
-            browser={"browser": "chrome", "platform": "windows", "mobile": False}
-        )
         try:
-            resp = scraper.get(url, timeout=15)
+            resp = scraper.get(url, params=params, timeout=15)
             resp.raise_for_status()
         except Exception as exc:
             if attempt == max_attempts:
-                logging.warning(f"[{make_slug}/{model_slug}] fetch failed: {exc}")
+                logging.warning(f"[{make_slug}/{model_slug}] API fetch failed: {exc}")
                 return []
-            time.sleep(2 + attempt)
-            continue
-
-        m = re.search(
-            r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', resp.text, re.S
-        )
-        if not m:
-            if attempt == max_attempts:
-                logging.warning(f"[{make_slug}/{model_slug}] no __NEXT_DATA__ found")
-                return []
-            time.sleep(2 + attempt)
+            time.sleep(1 + attempt)
             continue
 
         try:
-            nd = json.loads(m.group(1))
-        except json.JSONDecodeError:
-            logging.warning(f"[{make_slug}/{model_slug}] __NEXT_DATA__ not valid JSON")
+            payload = resp.json()
+        except ValueError:
+            logging.warning(f"[{make_slug}/{model_slug}] non-JSON API response")
             return []
 
-        items = (
-            nd.get("props", {}).get("pageProps", {}).get("items")
-            or nd.get("props", {}).get("pageProps", {}).get("listings")
-            or []
-        )
+        ads = payload.get("data", [])
+        if not isinstance(ads, list):
+            return []
 
         results = []
-        for item in items:
-            if not isinstance(item, dict):
+        for ad in ads:
+            if not isinstance(ad, dict):
                 continue
-            attrs = item.get("attributes", {})
+            attrs = ad.get("attributes", {})
             subject = attrs.get("subject", "")
             if not subject:
                 continue
@@ -290,19 +283,51 @@ def _fetch_model_page_listings(
     return []
 
 
-def fetch_variants(makes_filter: Optional[List[str]] = None) -> Dict:
+_VARIANTS_OUT = _OUT_DIR / "cars_variants.json"
+_PROGRESS_OUT = _OUT_DIR / "cars_variants_progress.json"
+
+
+def _load_progress() -> Dict:
+    """Load existing variants + completed-makes list, or return empty state."""
+    variants: Dict = {}
+    completed: List[str] = []
+    if _VARIANTS_OUT.exists():
+        try:
+            variants = json.loads(_VARIANTS_OUT.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            pass
+    if _PROGRESS_OUT.exists():
+        try:
+            completed = json.loads(_PROGRESS_OUT.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            pass
+    return {"variants": variants, "completed": completed}
+
+
+def _save_progress(variants: Dict, completed: List[str]) -> None:
+    _VARIANTS_OUT.write_text(
+        json.dumps(variants, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+    _PROGRESS_OUT.write_text(
+        json.dumps(completed, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
+
+
+def fetch_variants(
+    makes_filter: Optional[List[str]] = None,
+    resume: bool = True,
+) -> Dict:
     """Build a variant vocabulary for cars by sampling listing subjects.
 
-    For each (make, model) in cars_models.json, fetches one search results
-    page and strips noise from subjects to extract variant tokens, grouped
-    by engine_capacity.
+    Writes incrementally after each make so progress survives Ctrl-C or kills.
+    Re-run with resume=True (default) to skip already-completed makes.
 
-    Args:
-        makes_filter: if given, only process these make slugs.
-                      Without this, pass --all-makes to run everything.
+    Output files:
+        data/reference/cars_variants.json   — the vocabulary
+        data/reference/cars_variants_progress.json — completed make slugs
 
-    Returns:
-        {model_slug: {make, model, by_cc: {cc: [tokens]}, _all: [tokens]}}
+    Makes are processed smallest-first (by model count) so quick wins
+    appear early and the heavy makes (bmw, mercedes-benz) go last.
     """
     models_path = _OUT_DIR / "cars_models.json"
     makes_path = _OUT_DIR / "cars_makes.json"
@@ -323,21 +348,52 @@ def fetch_variants(makes_filter: Optional[List[str]] = None) -> Dict:
             logging.warning(f"Unknown make slugs (skipped): {missing}")
         models_by_make = {k: v for k, v in models_by_make.items() if k in makes_filter}
 
-    total_makes = len(models_by_make)
-    variants: Dict = {}
+    # Sort ascending by model count — quick makes finish first
+    ordered = sorted(models_by_make.items(), key=lambda kv: len(kv[1]))
 
-    for i, (make_slug, model_list) in enumerate(models_by_make.items(), 1):
+    state = _load_progress() if resume else {"variants": {}, "completed": []}
+    variants: Dict = state["variants"]
+    completed: List[str] = state["completed"]
+
+    if resume and completed:
+        logging.info(f"Resuming — {len(completed)} makes already done: {completed}")
+
+    todo = [(slug, mlist) for slug, mlist in ordered if slug not in completed]
+    total_todo = len(todo)
+    total_models_todo = sum(len(m) for _, m in todo)
+    logging.info(
+        f"{total_todo} makes to process ({total_models_todo} models). "
+        f"{len(completed)} already done."
+    )
+
+    make_times: List[float] = []
+
+    for i, (make_slug, model_list) in enumerate(todo, 1):
         make_name = make_slug_to_name.get(make_slug, make_slug)
+        t0 = time.time()
+
+        # Estimate remaining time from rolling average of completed makes
+        if make_times:
+            avg_s_per_model = sum(make_times) / sum(
+                len(models_by_make.get(s, [])) for s in completed[-len(make_times):]
+            ) if completed else 1
+            models_left = sum(len(ml) for _, ml in todo[i - 1:])
+            eta_min = models_left * avg_s_per_model / 60
+            eta_str = f" — ETA ~{eta_min:.0f} min"
+        else:
+            eta_str = ""
+
         logging.info(
-            f"[{i}/{total_makes}] {make_slug} ({len(model_list)} models)"
+            f"[{i}/{total_todo}] {make_slug} ({len(model_list)} models){eta_str}"
         )
 
+        make_new = 0
         for model in model_list:
             model_slug = model["slug"]
             model_name = model["name"]
 
-            listings = _fetch_model_page_listings(make_slug, model_slug)
-            time.sleep(1.5)
+            listings = _fetch_model_page_listings(make_slug, model_slug, model_id=model.get("id", ""))
+            time.sleep(0.75)
 
             if not listings:
                 continue
@@ -369,6 +425,16 @@ def fetch_variants(makes_filter: Optional[List[str]] = None) -> Dict:
                 "by_cc": cc_variants,
                 "_all": list(dict.fromkeys(all_tokens)),
             }
+            make_new += 1
+
+        elapsed = time.time() - t0
+        make_times.append(elapsed)
+        completed.append(make_slug)
+        _save_progress(variants, completed)
+        logging.info(
+            f"  {make_slug} done — {make_new} models with variants, "
+            f"{elapsed:.0f}s elapsed. Progress saved."
+        )
 
     return variants
 
@@ -411,20 +477,17 @@ def main() -> None:
         if not args.makes and not args.all_makes:
             parser.error(
                 "--variants requires --makes <slug ...> or --all-makes.\n"
-                "Suggested start: --makes toyota honda perodua proton nissan hyundai"
+                "Suggested start: --makes toyota honda perodua proton nissan hyundai\n"
+                "Run with --all-makes to cover all 128 makes (~1,500 models; resumable)."
             )
         makes_filter = args.makes if args.makes else None
         logging.info("Building variant vocabulary for cars...")
-        variants = fetch_variants(makes_filter=makes_filter)
-        out_path = _OUT_DIR / "cars_variants.json"
-        out_path.write_text(
-            json.dumps(variants, ensure_ascii=False, indent=2), encoding="utf-8"
-        )
+        variants = fetch_variants(makes_filter=makes_filter, resume=True)
         n_models = len(variants)
         n_tokens = sum(len(v.get("_all", [])) for v in variants.values())
         logging.info(
-            f"Wrote {out_path.relative_to(_ROOT)} "
-            f"({n_models} models, {n_tokens} variant tokens)"
+            f"Complete. {_VARIANTS_OUT.relative_to(_ROOT)}: "
+            f"{n_models} models, {n_tokens} variant tokens total."
         )
         return
 

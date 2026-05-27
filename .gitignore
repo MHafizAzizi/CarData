@@ -67,3 +67,6 @@ Thumbs.db
 
 # Local project context (living document — not for the repo)
 CONTEXT.md
+
+# Variant scrape run log (transient — not reference data)
+data/reference/variants_run.log
