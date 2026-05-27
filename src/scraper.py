@@ -19,6 +19,39 @@ Filters:
 API auth fallback:
     If EagleSearch returns 401/403, the scraper logs a warning and raises
     EagleAuthError. Use src/script.py for HTML-only scraping as a fallback.
+
+Available makes — Cars (128):
+    alfa-romeo, alpine, ariel, asia-motors, aston-martin, audi, austin,
+    baic, baw, bentley, bison, bmw, boon-koon, borgward, brabus, bufori,
+    byd, buick, cadillac, cam, caterham, chana, changan, chery, chevrolet,
+    chrysler, citroen, daihatsu, daimler, datsun, denza, dodge, dongfeng,
+    ds-automobiles, excalibur, farid, ferrari, fiat, ford, foton, gac,
+    gac-aion, gac-motor, gmc, golden-dragon, great-wall, haval, higer,
+    holden, honda, huanghai, hummer, hyundai, icaur, infiniti, inokom,
+    isuzu, iveco, jac, jaecoo, jaguar, jeep, jetour, jmc, joylong,
+    kaicene, kia, king-long, ktm, lamborghini, lancia, land-rover,
+    leapmotor, lexus, lincoln, lmg, lotus, mahindra, maserati, maxus,
+    mazda, mclaren, mercedes-benz, mg, mini, mitsubishi, mitsuoka,
+    morgan, morris, naza, neta, nissan, oldsmobile, opel, perodua,
+    peugeot, polestar, porsche, proton, renault, rolls-royce, rover,
+    saab, seres, shenyang-brilliance, shineray, skoda, smart, ssangyong,
+    subaru, sunbeam, sutton, suzuki, tata, td2000, tesla, tq-wuling,
+    toyota, triumph, tvr, volkswagen, volvo, weststar, wolseley,
+    xpeng, yangtse, zeekr, zxauto
+
+Available makes — Motorcycles (93):
+    adiva, afaz, ajs, aprilia, ariic, aveta, benda, benelli, bimota,
+    bkz, blueshark, bmw, brixton, buell, can-am, cfmoto, cmc, comel,
+    daelim, daiichi, demak, ducati, ebixon, ezi, fantic, gilera, gpx,
+    hanway, harley-davidson, honda, husaberg, husqvarna, hyosung, indian,
+    italjet, jawa, kamax, kawasaki, kayo, keeway, kove, ktm, ktns, kymco,
+    lambretta, laverda, lima, lytron, mbp, mbp-morbidelli, mle, moda,
+    modenas, momos, moto-guzzi, moto-morini, mv-agusta, mz, naza, nimota,
+    nitro, norton, ottimo, petronas, piaggio, qj-motor, royal-alloy,
+    royal-enfield, scomadi, sherco, skyteam, sm-sport, steyr-daimler,
+    superlux, suzuki, sym, thunder, tm-moto, treeletrik, triumph, tvs,
+    vespa, victory, voge, wmoto, x-moto, x-wedge, yadea, yamaha,
+    zeeho, zero-engineering, zesparii, zontes
 """
 
 import argparse
