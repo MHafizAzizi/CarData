@@ -434,19 +434,57 @@ def parse_args() -> argparse.Namespace:
     return p.parse_args()
 
 
-def _interactive_fill(args: argparse.Namespace) -> argparse.Namespace:
+def _preview_count(
+    eagle: EagleClient,
+    category: str,
+    make_id: Optional[str],
+    model_id: Optional[str],
+) -> Optional[int]:
+    """Probe EagleSearch with limit=1 to get total-results for the current filter.
+
+    Returns the total count, or None if the probe call fails (network error,
+    API down, etc.) so the caller can fall back to a generic default.
+    """
+    try:
+        _, meta = eagle.fetch_page(
+            category, offset=0, limit=1, make_id=make_id, model_id=model_id
+        )
+        total = meta.get("total-results")
+        return int(total) if total is not None else None
+    except Exception as e:
+        logging.warning(f"Could not preview total count: {e}")
+        return None
+
+
+def _interactive_fill(args: argparse.Namespace, eagle: EagleClient) -> argparse.Namespace:
     print("\n=== Mudah Scraper ===")
     if args.category is None:
         args.category = _prompt_choice("Category", CATEGORY_CHOICES)
     # In resume mode the checkpoint defines the working set, so skip prompts.
     if not args.resume:
-        if args.max_ads is None:
-            args.max_ads = _prompt_int(
-                "Max ads to fetch [default: 1000]: ", min_val=1, default=1000
-            )
+        # Make/model first, so we can preview the count before asking max_ads.
         args.make_id, args.model_id = _prompt_make_model(
             args.category, args.make, args.model
         )
+
+        # Probe API for total available listings under this filter.
+        if args.max_ads is None:
+            total = _preview_count(eagle, args.category, args.make_id, args.model_id)
+            if total is not None:
+                # Inform the user about the depth cap if relevant.
+                fetchable = min(total, 10_000)
+                cap_note = " (capped at 10,000 — use per-model to get more)" if total > 10_000 else ""
+                print(f"\n  Available listings: {total:,}{cap_note}")
+                default = fetchable if fetchable > 0 else 1000
+                args.max_ads = _prompt_int(
+                    f"Max ads to fetch [default: {default} = all available]: ",
+                    min_val=1,
+                    default=default,
+                )
+            else:
+                args.max_ads = _prompt_int(
+                    "Max ads to fetch [default: 1000]: ", min_val=1, default=1000
+                )
     else:
         args.make_id = None
         args.model_id = None
@@ -476,7 +514,8 @@ def main() -> None:
     )
 
     args = parse_args()
-    args = _interactive_fill(args)
+    eagle = EagleClient()
+    args = _interactive_fill(args, eagle)
 
     # Compat flag warnings
     deprecated_set = [
@@ -501,8 +540,6 @@ def main() -> None:
         f"\nCategory: {args.category} | max_ads: {args.max_ads} | "
         f"{make_label} | {model_label} | output: {args.output_dir}\n"
     )
-
-    eagle = EagleClient()
 
     scraper = HybridScraper(
         category=args.category,
