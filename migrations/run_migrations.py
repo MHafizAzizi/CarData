@@ -24,6 +24,11 @@ Retyped columns (both categories):
 Cars only:
     engine_capacity, cc
 
+v4 -> v5: Adds ad_expiry (listing renewal deadline from EagleSearch API)
+and sold_inference (likely_sold / likely_expired / unknown) to both
+categories. ad_expiry lets recheck.py distinguish sold listings (disappeared
+before expiry) from expired ones (lapsed after expiry).
+
 Usage:
     python migrations/run_migrations.py                       # interactive prompt
     python migrations/run_migrations.py --category cars
@@ -60,7 +65,7 @@ from db import CATEGORIES, connect, schema_version, set_meta  # noqa: E402
 # Migration spec — v1 -> v2
 # ---------------------------------------------------------------------------
 
-TARGET_VERSION = 4
+TARGET_VERSION = 5
 
 # (column_name, sqlite_type) — applied to BOTH cars and motorcycles
 SHARED_NEW_COLS: List[Tuple[str, str]] = [
@@ -88,6 +93,12 @@ DROPPED_COLS_V3: List[str] = ["body"]
 # v3 -> v4: columns to retype from TEXT to INTEGER (numeric data stored as text).
 RETYPE_COLS_BOTH: List[str] = ["price", "mileage", "manufactured_date", "company_ad"]
 RETYPE_COLS_CARS: List[str] = ["engine_capacity", "cc"]
+
+# v4 -> v5: new columns for both categories
+V5_SHARED_COLS: List[Tuple[str, str]] = [
+    ("ad_expiry",      "TEXT"),
+    ("sold_inference", "TEXT"),
+]
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -324,6 +335,41 @@ def _migrate_v3_to_v4(
     )
 
 
+def _migrate_v4_to_v5(
+    conn: sqlite3.Connection, category: str, *, dry_run: bool
+) -> None:
+    """Add ad_expiry and sold_inference columns (both categories)."""
+    logging.info(
+        f"[{category}] step v4 -> v5 ({len(V5_SHARED_COLS)} columns to evaluate)"
+    )
+
+    added = 0
+    with conn:
+        for col_name, col_type in V5_SHARED_COLS:
+            if _safe_add_column(conn, "listings", col_name, col_type, dry_run=dry_run):
+                added += 1
+
+        if dry_run:
+            logging.info(
+                f"[{category}] DRY-RUN v4->v5: would add {added} column(s)"
+            )
+            return
+
+        conn.execute(
+            "INSERT INTO meta (key, value) VALUES ('schema_version', '5') "
+            "ON CONFLICT(key) DO UPDATE SET value = excluded.value"
+        )
+
+    logging.info(
+        f"[{category}] v4 -> v5 complete — added {added} column(s)"
+    )
+    set_meta(
+        conn,
+        "last_migration_v5_at",
+        __import__("datetime").datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+    )
+
+
 def migrate(category: str, *, dry_run: bool = False) -> None:
     """Run all pending migrations on the given category's DB."""
     if category not in CATEGORIES:
@@ -353,6 +399,8 @@ def migrate(category: str, *, dry_run: bool = False) -> None:
         _migrate_v2_to_v3(conn, category, dry_run=dry_run)
     if current < 4:
         _migrate_v3_to_v4(conn, category, dry_run=dry_run)
+    if current < 5:
+        _migrate_v4_to_v5(conn, category, dry_run=dry_run)
 
     logging.info(
         f"[{category}] migration complete; "

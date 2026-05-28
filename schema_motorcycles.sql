@@ -31,7 +31,15 @@ CREATE TABLE IF NOT EXISTS listings (
     last_seen_at        TEXT,
     last_checked_at     TEXT,
     availability_status TEXT NOT NULL DEFAULT 'unknown'
-        CHECK (availability_status IN ('available','unavailable','unknown'))
+        CHECK (availability_status IN ('available','unavailable','unknown')),
+    -- listing expiry date from EagleSearch API (ISO-8601 datetime string)
+    ad_expiry           TEXT,
+    -- sold inference: set when availability_status transitions to 'unavailable'
+    -- 'likely_sold'    = disappeared before ad_expiry (seller probably sold it)
+    -- 'likely_expired' = disappeared at/after ad_expiry (listing lapsed unsold)
+    -- 'unknown'        = no ad_expiry data available
+    sold_inference      TEXT
+        CHECK (sold_inference IN ('likely_sold','likely_expired','unknown'))
 );
 
 CREATE TABLE IF NOT EXISTS availability_checks (

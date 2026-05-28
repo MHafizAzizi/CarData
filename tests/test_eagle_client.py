@@ -114,6 +114,7 @@ CAR_FIXTURE = {
     "bundle": "47",
     "date": "2026-05-02 10:18:34",
     "adview_url": "https://www.mudah.my/2010-perodua-myvi-114522690.htm",
+    "ad_expiry": "2026-07-01 10:18:34",
     "rank": {"score": "0"},              # dropped (not in mapping)
 }
 
@@ -161,6 +162,10 @@ class TestNormalizeAdCars:
         out = _normalize_ad(CAR_FIXTURE, "cars")
         assert out["old_price"] == 12000
 
+    def test_ad_expiry_captured(self):
+        out = _normalize_ad(CAR_FIXTURE, "cars")
+        assert out["ad_expiry"] == "2026-07-01 10:18:34"
+
 
 # ---------------------------------------------------------------------------
 # _normalize_ad — motorcycles
@@ -186,6 +191,7 @@ MOTO_FIXTURE = {
     "bundle": "75",
     "date": "2026-05-02 10:13:36",
     "adview_url": "https://www.mudah.my/sm-sport-110e-114210850.htm",
+    "ad_expiry": "2026-07-01 10:13:36",
 }
 
 
@@ -218,6 +224,10 @@ class TestNormalizeAdMotorcycles:
         out = _normalize_ad(MOTO_FIXTURE, "motorcycles")
         # Motos rarely have mileage; absent in fixture
         assert "mileage_bucket" not in out
+
+    def test_ad_expiry_captured(self):
+        out = _normalize_ad(MOTO_FIXTURE, "motorcycles")
+        assert out["ad_expiry"] == "2026-07-01 10:13:36"
 
 
 # ---------------------------------------------------------------------------

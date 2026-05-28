@@ -52,6 +52,7 @@ Available makes — Motorcycles (93):
     superlux, suzuki, sym, thunder, tm-moto, treeletrik, triumph, tvs,
     vespa, victory, voge, wmoto, x-moto, x-wedge, yadea, yamaha,
     zeeho, zero-engineering, zesparii, zontes
+
 """
 
 import argparse
@@ -486,6 +487,7 @@ def list_active_makes(category: str, eagle: EagleClient) -> None:
         f"\nTotal active listings across all makes: {grand_total:,}  "
         f"({len(makes) - len(results)} makes have 0 listings)"
     )
+
 
 
 def _preview_count(

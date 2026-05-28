@@ -2,57 +2,60 @@
 
 Car listing data scraped from [Mudah.my](https://www.mudah.my), Malaysia's largest classifieds site. The master dataset is updated regularly as listings change frequently.
 
-> **Note:** Mudah.my caps browsable listings at ~250 pages. Re-running every 1–2 days is recommended to keep data fresh.
+> **Note:** Mudah.my listings expire after ~66 days. A **weekly scrape + daily recheck** is the recommended cadence — see Quick Start below.
 
 ---
 
 ## Quick Start — what to run and when
 
-### Normal run (repeat every 1–2 days)
+### Weekly scrape (refresh listings + ad_expiry)
 
 ```bash
 # 1. Scrape new listings → data/raw/<category>/
-python src/scraper.py --category cars --max-ads 1000
+python src/scraper.py --category motorcycles
 
-# 2. Load CSVs into SQLite → data/master/cardata_cars.db
-python src/migrate_xlsx_to_db.py --category cars
+# 2. Load CSVs into SQLite
+python src/migrate_xlsx_to_db.py --category motorcycles
 
 # 3. Normalize the DB (strip noise, dedup)
-python src/clean.py --category cars
-
-# 4. (Optional) Re-check whether old listings are still live
-python src/recheck.py --category cars
-
-# 5. (Optional) Regenerate the dashboard
-python src/dashboard_aggregate.py
+python src/clean.py --category motorcycles
 ```
 
-Motorcycles: swap `--category cars` → `--category motorcycles` in steps 1–4.
+Swap `--category motorcycles` → `--category cars` for the cars DB.
+
+### Daily recheck (detect sold listings)
+
+```bash
+# Probe existing listings; sets availability_status + sold_inference
+python src/recheck.py --category motorcycles
+```
 
 ### One-time / occasional
 
 | Script | When to run |
 |---|---|
+| `migrations/run_migrations.py --category both` | Once after cloning or wiping a DB (brings schema to current version) |
 | `src/scrape_makes_models.py` | Once to seed `data/reference/`; re-run when Mudah adds new brands (~annually) |
 | `src/scrape_makes_models.py --variants --all-makes` | Once to bootstrap `cars_variants.json`; re-run after a major re-scrape |
 | `src/clean.py --category cars --enrich-variants` | After running `--variants` above, to fill NULL variant rows in the DB |
-| `migrations/run_migrations.py` | Once after pulling a schema change from git |
+| `src/backfill_ad_expiry.py --category motorcycles` | One-off to backfill `ad_expiry` on rows scraped before v5 schema |
 
 ### Script reference at a glance
 
 | Script | Role | Run it? |
 |---|---|---|
-| `src/scraper.py` | **Primary scraper** — EagleSearch API + HTML enrichment | Yes — step 1 |
-| `src/migrate_xlsx_to_db.py` | Load scraped CSVs into SQLite | Yes — step 2 |
-| `src/clean.py` | Normalize / dedup the DB | Yes — step 3 |
-| `src/recheck.py` | Re-check listing availability | Yes — maintenance |
-| `src/dashboard_aggregate.py` | Generate `mockups/dashboard.html` from DB | Yes — on demand |
+| `src/scraper.py` | **Primary scraper** — EagleSearch API (Phase 1 only) | Yes — weekly |
+| `src/migrate_xlsx_to_db.py` | Load scraped CSVs into SQLite | Yes — after each scrape |
+| `src/clean.py` | Normalize / dedup the DB | Yes — after each migrate |
+| `src/recheck.py` | Re-check availability + infer sold/expired | Yes — daily |
+| `src/backfill_ad_expiry.py` | One-off backfill of `ad_expiry` for pre-v5 rows | Once after upgrade |
+| `src/dashboard_aggregate.py` | Generate `mockups/dashboard.html` from DB | On demand |
 | `src/scrape_makes_models.py` | Refresh make/model reference lists | Occasionally |
 | `src/script.py` | HTML-only scraper (fallback if EagleSearch is down) | Only as fallback |
 | `src/eagle_client.py` | EagleSearch API wrapper | Library — do not run directly |
 | `src/mudah_client.py` | Shared HTTP client | Library — do not run directly |
-| `src/detail_client.py` | HTML detail-page parser | Library — do not run directly |
-| `src/db.py` | DB connection helper | Library — do not run directly |
+| `src/detail_client.py` | HTML detail-page parser (legacy, Phase 2 removed) | Library — do not run directly |
+| `src/db.py` | Database connection helper | Library — do not run directly |
 | `src/test_eaglesearch.py` | Manual API connectivity check | Dev/debug only |
 
 ---
@@ -65,18 +68,16 @@ The project supports two collection paths. The **hybrid scraper** (`scraper.py`)
 
 | Page / endpoint | URL pattern | Used by |
 |---|---|---|
-| EagleSearch JSON API | `https://search.mudah.my/v1/search?category={1020\|1040}` | `scraper.py` (Phase 1) |
-| Individual listing detail | `https://www.mudah.my/{ads_id}.htm` | `scraper.py` (Phase 2), `script.py`, `recheck.py` |
+| EagleSearch JSON API | `https://search.mudah.my/v1/search?category={1020\|1040}` | `scraper.py`, `recheck.py` (availability check) |
+| Individual listing detail | `https://www.mudah.my/{ads_id}.htm` | `script.py`, `recheck.py` |
 | Listing search results (HTML) | `https://www.mudah.my/malaysia/{cars\|motorcycles}-for-sale?o={page}` | `script.py` |
 | Category landing (filters) | `https://www.mudah.my/malaysia/cars-for-sale?o=1` | `scrape_makes_models.py` |
 
-EagleSearch is Mudah's internal JSON API (discovered via JS bundle inspection). Returns 200 ads/request with rich metadata that the HTML pages don't expose (`old_price`, `year_verified`, `bundle`, `car_loan_*`, etc.).
+EagleSearch is Mudah's internal JSON API (discovered via JS bundle inspection). Returns 200 ads/request with rich metadata that the HTML pages don't expose (`old_price`, `year_verified`, `bundle`, `car_loan_*`, `ad_expiry`, etc.).
 
 ### What is extracted
 
-**Hybrid scraper (`scraper.py`)** — two-phase pipeline:
-- **Phase 1 (API)** — paginates EagleSearch (offset/limit 200/req). Returns normalized records with: `ads_id`, `subject`, `price`, `make`, `model`, `mileage_bucket`, `region`, `subarea`, `condition`, plus API-only fields (`old_price`, `year_verified`, `store_verified`, `bundle`, `media_count`, `car_loan_eligible`, `car_loan_payment`, `car_loan_tenure`, `has_car_grant`).
-- **Phase 2 (HTML)** — fetches each `.htm` detail page only when needed. Adds: exact `mileage`, chassis specs (`kw`, `torque`, `length`, `wheelbase`, `kerbwt`, `fueltk`, `brake_*`, `suspension_*`, `tyres_*`, `wheel_rim_*`, `steering`), `family`, `variant`, `series`, `style`, `seat`, `country_origin`, `engine`.
+**Primary scraper (`scraper.py`)** — paginates EagleSearch (200 ads/request). Returns normalized records with: `ads_id`, `subject`, `price`, `make`, `model`, `mileage_bucket`, `region`, `subarea`, `condition`, `ad_expiry`, plus API-only fields (`old_price`, `year_verified`, `store_verified`, `bundle`, `media_count`, `car_loan_eligible`, `car_loan_payment`, `car_loan_tenure`, `has_car_grant`). API-only mode — no HTML detail-page fetching.
 
 **HTML-only scraper (`script.py`)** — reads `__NEXT_DATA__` from HTML search pages (40 listings/page) and detail pages. Slower (~3-4s throttle per request) but kept as a complete fallback if EagleSearch is ever auth'd or blocked.
 
@@ -86,28 +87,25 @@ EagleSearch is Mudah's internal JSON API (discovered via JS bundle inspection). 
 
 ```
 EagleSearch API (search.mudah.my)
-        │  Phase 1: 200 ads/req, <500ms
+        │  200 ads/req, <500ms
         │
-        ▼                          .htm detail pages
-                              ┌────────────│
-                              │  Phase 2 (exact mileage, chassis specs;
-                              │   only when --depth != none)
-                              ▼
-                          scraper.py
-                              │
-                              ▼
-                  data/raw/<category>/*.csv
-                              │
-                              ▼
-                  migrate_xlsx_to_db.py
-                              │
-                              ▼
-                 data/master/cardata_*.db
-                              │
-                      ┌───────┴────────┐
-                      ▼                ▼
-                   clean.py        recheck.py
-                (normalize data)  (track availability)
+        ▼
+    scraper.py
+        │
+        ▼
+data/raw/<category>/*.csv
+        │
+        ▼
+migrate_xlsx_to_db.py
+        │
+        ▼
+data/master/cardata_*.db
+        │
+    ┌───┴───────────────┐
+    ▼                   ▼
+ clean.py           recheck.py
+(normalize data)  (track availability
+                   + infer sold/expired)
 ```
 
 Reference data (makes/models) is a separate one-shot flow:
@@ -126,11 +124,10 @@ data/reference/{cars,motorcycles}_{makes,models}.json
 
 | Scraper | Listings | Wall time | Per listing | HTTP requests |
 |---|---|---|---|---|
-| `scraper.py --depth none` (API only) | 50 | ~0.1s | ~2ms | 1 |
-| `scraper.py --depth missing` (default) | 50 | ~150s | ~3s | 1 + N HTML |
+| `scraper.py` (API only) | 50 | ~0.1s | ~2ms | 1 |
 | `script.py` (HTML only) | 50 | ~150s | ~3s | 1 search + N detail |
 
-API-only mode is ~1500× faster per listing. Hybrid mode matches HTML speed but adds 7+ API-only columns and avoids the 40-listing-per-page Cloudflare challenge that occasionally throttles `script.py`.
+`scraper.py` is ~1500× faster per listing and captures more fields (7+ API-only columns) than `script.py`. Use `script.py` only if EagleSearch is unavailable.
 
 ---
 
@@ -147,21 +144,22 @@ pip install -r requirements.txt
 ```
 CarData/
 ├── src/                                   # All scripts
-│   ├── scraper.py                         # Primary scraper (EagleSearch API + HTML)
+│   ├── scraper.py                         # Primary scraper (EagleSearch API)
 │   ├── migrate_xlsx_to_db.py              # CSV → SQLite migration
 │   ├── clean.py                           # Data normalization + dedup
-│   ├── recheck.py                         # Availability re-checker
+│   ├── recheck.py                         # Availability re-checker + sold inference
+│   ├── backfill_ad_expiry.py              # One-off: backfill ad_expiry for pre-v5 rows
 │   ├── dashboard_aggregate.py             # Generate mockups/dashboard.html from DB
 │   ├── scrape_makes_models.py             # Reference make/model list scraper (occasional)
 │   ├── script.py                          # HTML-only scraper (fallback)
 │   ├── eagle_client.py                    # EagleSearch API wrapper (library)
-│   ├── detail_client.py                   # HTML detail-page parser (library)
+│   ├── detail_client.py                   # HTML detail-page parser (legacy library)
 │   ├── mudah_client.py                    # Shared HTTP client (library)
 │   ├── db.py                              # Database connection helper (library)
 │   └── test_eaglesearch.py                # Manual API connectivity check (dev)
 │
-├── migrations/                            # NEW: schema migration runners
-│   └── run_migrations.py                  # v1 → v2: adds API-only columns
+├── migrations/                            # Schema migration runners
+│   └── run_migrations.py                  # v1 → v5: idempotent schema upgrade
 │
 ├── docs/                                  # Documentation
 │   └── brands.md                          # List of available car/motorcycle brands
@@ -192,8 +190,8 @@ CarData/
 │   ├── compare_outputs.py                 # NEW: integration diff (new vs old)
 │   ├── test_clean.py
 │   └── test_parser.py
-├── schema_cars.sql                        # SQLite schema for cars (v2)
-├── schema_motorcycles.sql                 # SQLite schema for motorcycles (v2)
+├── schema_cars.sql                        # SQLite schema for cars (v5)
+├── schema_motorcycles.sql                 # SQLite schema for motorcycles (v5)
 ├── requirements.txt
 ├── README.md
 └── .gitignore
@@ -203,13 +201,13 @@ CarData/
 
 ## Usage
 
-### Hybrid scraper — `scraper.py` (recommended)
+### Primary scraper — `scraper.py` (recommended)
 
 ```bash
-python src/scraper.py                                            # interactive
-python src/scraper.py --category cars --max-ads 1000             # default depth=missing
-python src/scraper.py --category motorcycles --max-ads 500 --depth none   # API only, fastest
-python src/scraper.py --category cars --max-ads 200 --depth all  # always re-fetch HTML
+python src/scraper.py                              # interactive
+python src/scraper.py --category cars              # all cars listings
+python src/scraper.py --category motorcycles       # all motorcycle listings
+python src/scraper.py --category cars --max-ads 1000   # cap at 1000 ads
 ```
 
 Flags:
@@ -217,23 +215,10 @@ Flags:
 | Flag | Default | Description |
 |---|---|---|
 | `--category` | *prompted* | `cars` or `motorcycles` |
-| `--max-ads` | *prompted* | Max ads to collect via API (Phase 1 cap) |
-| `--depth` | `missing` | `none` = API only; `missing` = HTML only when `mileage` absent; `all` = HTML for every ad |
-| `--checkpoint-every` | `100` | Write Phase-2 partial CSV every N detail fetches |
-| `--resume` | *off* | Resume from the latest checkpoint CSV in `output_dir` (skip Phase 1) |
+| `--max-ads` | *prompted* | Max ads to collect (API pagination cap) |
 | `--output-dir` | `data/raw/<category>/` | Where to save CSVs |
 
 CSV filename: `mudah_eagle_{category}_final_{timestamp}.csv`.
-
-**Resuming a crashed run.** If Phase 2 dies partway through, re-run with `--resume`:
-
-```bash
-python src/scraper.py --category cars --depth missing --resume
-```
-
-The scraper auto-detects the most recent `phase2_partial_*.csv` (or `phase1_*.csv` if Phase 2 never started) in the output dir, loads it as the working set, and continues from there. `depth=missing` skips ads that already have exact `mileage` populated, so previously-enriched ads are not re-fetched. Phase 1 is reused, not re-run, and `--max-ads` is ignored in resume mode (the checkpoint defines the working set).
-
-**Phase 2 also retries errored ads automatically.** At the end of the main loop, any ad with `detail_fetch_status='error'` gets one more attempt — useful for recovering transient network blips without a full re-run.
 
 ### HTML-only scraper — `script.py` (fallback)
 
@@ -347,13 +332,26 @@ These columns are populated by the EagleSearch API. They are absent from `script
 | `store_verified` | `verified` / `unverified` for dealer accounts |
 | `bundle` | Paid-tier listing identifier (NULL for free posts) |
 | `media_count` | Image count on listing |
-| `mileage_bucket` | API mileage range (e.g. `50000-59999`); use alongside exact `mileage` from HTML |
+| `mileage_bucket` | API mileage range (e.g. `50000-59999`) |
 | `car_loan_eligible` | `1` if eligible for instant car loan calc (cars only) |
 | `car_loan_payment` | Monthly payment estimate in MYR (cars only) |
 | `car_loan_tenure` | Loan tenure in years (cars only) |
 | `has_car_grant` | `1` if grant-eligible (cars only) |
-| `last_detail_fetched_at` | ISO timestamp of last HTML detail fetch (`NULL` when `depth=none`) |
-| `detail_fetch_status` | `ok` / `skipped` / `error` for HTML enrichment |
+| `last_detail_fetched_at` | Legacy (Phase 2 removed) — NULL for all rows going forward |
+| `detail_fetch_status` | Legacy (Phase 2 removed) — NULL for all rows going forward |
+
+### Availability / sold tracking fields (schema v5+)
+
+These columns are written by `recheck.py` and `backfill_ad_expiry.py`.
+
+| Column | Description |
+|---|---|
+| `ad_expiry` | ISO datetime when the ad's paid slot expires, as returned by the API. Populated by `scraper.py` (v5+) and `backfill_ad_expiry.py` for older rows. NULL means the listing disappeared before it could be captured. |
+| `sold_inference` | Set by `recheck.py` when a listing goes offline: `likely_sold` (disappeared before `ad_expiry`), `likely_expired` (disappeared at/after `ad_expiry`), `unknown` (no `ad_expiry` to compare against) |
+| `availability_status` | `available` \| `unavailable` \| `unknown` — current HTTP-probe result |
+| `first_seen_at` | Timestamp when the listing was first scraped |
+| `last_seen_at` | Timestamp of last confirmed `available` probe |
+| `last_checked_at` | Timestamp of last probe attempt (regardless of result) |
 
 ---
 
@@ -365,7 +363,7 @@ To stay friendly with mudah.my and avoid 403 blocks, both scrapers pace themselv
 - **0.5–1s** between calls (lighter — JSON endpoint, not Cloudflare-protected)
 - Same fixed-schedule retries: **2s → 3s → 5s**
 
-**HTML scraping (`scraper.py` Phase 2 + `script.py`):**
+**HTML scraping (`script.py` + `recheck.py`):**
 - **3–4 seconds** between requests, globally serialized via a shared lock — increasing `--workers` does NOT increase request rate
 - **Listing-page retries:** 2s → 3s → 5s
 - **Detail-page retries:** same schedule
@@ -580,6 +578,8 @@ python src/recheck.py --dry-run
 | `last_seen_at` | Last time the listing was confirmed `available` |
 | `last_checked_at` | Last time we probed (regardless of outcome) |
 | `availability_status` | `available` \| `unavailable` \| `unknown` |
+| `ad_expiry` | ISO datetime the paid listing slot expires (from EagleSearch API). Used to distinguish sold vs expired. |
+| `sold_inference` | Set when a listing goes offline: `likely_sold` = vanished before `ad_expiry`; `likely_expired` = vanished at/after `ad_expiry`; `unknown` = `ad_expiry` was NULL |
 
 ### `availability_checks` audit log
 
@@ -608,6 +608,14 @@ Every probe appends one row to the `availability_checks` table in the same DB:
 ## Changelog
 
 This section tracks every revision of this README. Add a new entry at the top whenever the document is updated.
+
+### 2026-05-28
+- **Schema v5: `ad_expiry` + `sold_inference`.** Added two columns to both DBs via `migrations/run_migrations.py` (now at `TARGET_VERSION=5`). `ad_expiry TEXT` stores the ISO datetime when a listing's paid slot expires (returned by EagleSearch as `ad_expiry`). `sold_inference TEXT` is written by `recheck.py` when a listing goes offline: `likely_sold` if it vanished before `ad_expiry`, `likely_expired` if it vanished at/after, or `unknown` if `ad_expiry` was NULL. Added `ad_expiry` field capture to `eagle_client.py` so all future scrapes populate it automatically.
+- **`backfill_ad_expiry.py` (new script).** One-off tool to retroactively populate `ad_expiry` for the 21,712 existing motorcycle rows scraped before v5. Queries EagleSearch make-by-make (since the all-category endpoint is capped at 10,000 of ~25,000+ listings), collects `{ads_id: ad_expiry}` pairs, and batch-patches the DB. Run against the live motorcycles DB: 21,051 / 21,712 rows (97%) updated in ~3 min 16 s; the remaining 661 NULL rows had already sold or expired overnight.
+- **Phase 2 removed from primary workflow.** HTML detail-page enrichment (Phase 2) was profiled: only 0.9% of rows gain any new field, and `mileage` from Phase 2 is the same bucket range as `mileage_bucket` reformatted — no precision gain. `scraper.py` now runs API-only (`--depth none` equivalent) by default. `detail_client.py` is retained as a legacy library. Updated Quick Start, flow diagram, scraper flags table, and performance comparison accordingly.
+- **Cadence updated.** Recommended cadence is now weekly scrape + daily recheck (Mudah listings expire after ~66 days, average lifespan ~66 days measured across the motorcycles DB).
+- **Test coverage.** Updated `test_eagle_client.py` to assert `ad_expiry` is captured. Updated `test_migrations.py` to cover v4→v5 migration (`TestV5AddExpiry` class with 3 tests) and to verify schema reaches v5 in all paths.
+- **README.** Consolidated Quick Start into weekly/daily/one-time sections. Removed stale Phase 2 flags. Added `ad_expiry` / `sold_inference` to Output Columns and Availability Re-checking tables.
 
 ### 2026-05-27
 - **Variant vocabulary system.** `scrape_makes_models.py` gained `--variants` / `--all-makes` flags. Samples listing subjects via EagleSearch API (filtered by `model_id`) instead of model-specific HTML pages — the latter are blocked by Cloudflare. Ran `--all-makes` across all 128 makes: `data/reference/cars_variants.json` now contains 985 models and 9,723 variant tokens. `clean.py` gained `--enrich-variants`: applies the vocabulary to NULL variant rows using longest-match, filling ~83% of candidates.

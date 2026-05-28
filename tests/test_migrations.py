@@ -135,7 +135,9 @@ class TestMigrate:
             assert col in cols, f"missing {col}"
         for col, _type in rm.CAR_EXTRA_COLS:
             assert col in cols, f"missing {col}"
-        assert _schema_version(conn) == 4
+        for col, _type in rm.V5_SHARED_COLS:
+            assert col in cols, f"missing v5 col {col}"
+        assert _schema_version(conn) == 5
 
     def test_migrate_motorcycles_adds_only_shared(self, patched_connect):
         rm.migrate("motorcycles", dry_run=False)
@@ -147,7 +149,9 @@ class TestMigrate:
         # Car-only cols MUST NOT be present
         for col, _type in rm.CAR_EXTRA_COLS:
             assert col not in cols, f"{col} should not be in motorcycles DB"
-        assert _schema_version(conn) == 4
+        for col, _type in rm.V5_SHARED_COLS:
+            assert col in cols, f"missing v5 col {col}"
+        assert _schema_version(conn) == 5
 
     def test_migrate_idempotent(self, patched_connect):
         rm.migrate("cars", dry_run=False)
@@ -155,10 +159,10 @@ class TestMigrate:
         rm.migrate("cars", dry_run=False)
         conn = sqlite3.connect(patched_connect / "cardata_cars.db")
         conn.row_factory = sqlite3.Row
-        assert _schema_version(conn) == 4
+        assert _schema_version(conn) == 5
         # All columns still present, no duplicates (sqlite would raise if duplicated)
         cols = _columns_of(conn, "listings")
-        for col, _type in rm.SHARED_NEW_COLS + rm.CAR_EXTRA_COLS:
+        for col, _type in rm.SHARED_NEW_COLS + rm.CAR_EXTRA_COLS + rm.V5_SHARED_COLS:
             assert col in cols
 
     def test_migrate_dry_run_does_not_change_db(self, patched_connect):
@@ -218,7 +222,28 @@ class TestV3DropBody:
         conn.row_factory = sqlite3.Row
         cols = _columns_of(conn, "listings")
         assert "body" not in cols
-        assert _schema_version(conn) == 4
+        # v2->v3 drops body; v4->v5 adds ad_expiry/sold_inference → ends at v5
+        assert _schema_version(conn) == 5
+
+    def test_drops_body_and_adds_v5_cols(self, tmp_path, monkeypatch):
+        """v2->v3 drops body; v4->v5 adds ad_expiry + sold_inference in same run."""
+        self._make_v2_db_with_body(tmp_path, "cars")
+
+        def fake_connect(category, *, path=None, init=True):
+            db_file = tmp_path / f"cardata_{category}.db"
+            conn = sqlite3.connect(db_file, isolation_level=None)
+            conn.row_factory = sqlite3.Row
+            return conn
+
+        monkeypatch.setattr(rm, "connect", fake_connect)
+        rm.migrate("cars", dry_run=False)
+
+        conn = sqlite3.connect(tmp_path / "cardata_cars.db")
+        conn.row_factory = sqlite3.Row
+        cols = _columns_of(conn, "listings")
+        assert "body" not in cols
+        assert "ad_expiry" in cols
+        assert "sold_inference" in cols
 
     def test_dry_run_keeps_body(self, tmp_path, monkeypatch):
         self._make_v2_db_with_body(tmp_path, "cars")
@@ -250,13 +275,13 @@ class TestV4Retype:
         return ""
 
     def test_retypes_numeric_columns_to_integer(self, patched_connect):
-        # Run full v1 -> v4 chain on a fresh DB
+        # Run full v1 -> v5 chain on a fresh DB; v4 retype is one of the steps
         rm.migrate("motorcycles", dry_run=False)
 
         conn = sqlite3.connect(patched_connect / "cardata_motorcycles.db")
         conn.row_factory = sqlite3.Row
 
-        assert _schema_version(conn) == 4
+        assert _schema_version(conn) == 5  # full chain ends at v5
         for col in rm.RETYPE_COLS_BOTH:
             assert self._column_type(conn, "listings", col) == "INTEGER", (
                 f"motorcycles.{col} should be INTEGER post-v4"
@@ -366,3 +391,101 @@ class TestV4Retype:
         ).fetchone()
         assert row[0] is None
         assert row[1] is None
+
+
+# ---------------------------------------------------------------------------
+# v4 -> v5: ad_expiry + sold_inference
+# ---------------------------------------------------------------------------
+
+class TestV5AddExpiry:
+    def _make_v4_db(self, tmp_path: Path, category: str) -> Path:
+        """Construct a v4-state DB (post body-drop, pre ad_expiry/sold_inference).
+
+        The schema files now include v5 columns, so we explicitly drop them
+        after applying the schema to simulate a genuine pre-v5 DB state.
+        """
+        db_file = tmp_path / f"cardata_{category}.db"
+        conn = sqlite3.connect(db_file, isolation_level=None)
+        conn.row_factory = sqlite3.Row
+        conn.executescript(_read_schema(category))
+        # Add v2 cols
+        for col, ctype in rm.SHARED_NEW_COLS:
+            if col not in {c for c, _ in rm.V5_SHARED_COLS}:
+                conn.execute(f"ALTER TABLE listings ADD COLUMN {col} {ctype}")
+        if category == "cars":
+            for col, ctype in rm.CAR_EXTRA_COLS:
+                conn.execute(f"ALTER TABLE listings ADD COLUMN {col} {ctype}")
+        # Drop body (v3): add it first so we can drop it
+        conn.execute("ALTER TABLE listings ADD COLUMN body TEXT")
+        conn.execute("ALTER TABLE listings DROP COLUMN body")
+        # Remove v5 cols that came from the updated schema file so this fixture
+        # accurately represents a pre-v5 DB state.
+        for col, _ in rm.V5_SHARED_COLS:
+            try:
+                conn.execute(f"ALTER TABLE listings DROP COLUMN {col}")
+            except Exception:
+                pass  # column not present — no-op
+        conn.execute(
+            "INSERT INTO meta (key, value) VALUES ('schema_version', '4') "
+            "ON CONFLICT(key) DO UPDATE SET value = excluded.value"
+        )
+        conn.close()
+        return db_file
+
+    def test_adds_ad_expiry_and_sold_inference(self, tmp_path, monkeypatch):
+        self._make_v4_db(tmp_path, "motorcycles")
+
+        def fake_connect(category, *, path=None, init=True):
+            db_file = tmp_path / f"cardata_{category}.db"
+            conn = sqlite3.connect(db_file, isolation_level=None)
+            conn.row_factory = sqlite3.Row
+            return conn
+
+        monkeypatch.setattr(rm, "connect", fake_connect)
+        rm.migrate("motorcycles", dry_run=False)
+
+        conn = sqlite3.connect(tmp_path / "cardata_motorcycles.db")
+        conn.row_factory = sqlite3.Row
+        cols = _columns_of(conn, "listings")
+        assert "ad_expiry" in cols
+        assert "sold_inference" in cols
+        assert _schema_version(conn) == 5
+
+    def test_v5_idempotent_on_v5_db(self, tmp_path, monkeypatch):
+        """Running migrate() on an already-v5 DB is a clean no-op."""
+        self._make_v4_db(tmp_path, "cars")
+
+        calls = []
+
+        def fake_connect(category, *, path=None, init=True):
+            db_file = tmp_path / f"cardata_{category}.db"
+            conn = sqlite3.connect(db_file, isolation_level=None)
+            conn.row_factory = sqlite3.Row
+            return conn
+
+        monkeypatch.setattr(rm, "connect", fake_connect)
+        rm.migrate("cars", dry_run=False)  # first run: reaches v5
+        rm.migrate("cars", dry_run=False)  # second run: no-op
+
+        conn = sqlite3.connect(tmp_path / "cardata_cars.db")
+        conn.row_factory = sqlite3.Row
+        assert _schema_version(conn) == 5
+
+    def test_dry_run_does_not_add_v5_cols(self, tmp_path, monkeypatch):
+        self._make_v4_db(tmp_path, "motorcycles")
+
+        def fake_connect(category, *, path=None, init=True):
+            db_file = tmp_path / f"cardata_{category}.db"
+            conn = sqlite3.connect(db_file, isolation_level=None)
+            conn.row_factory = sqlite3.Row
+            return conn
+
+        monkeypatch.setattr(rm, "connect", fake_connect)
+        rm.migrate("motorcycles", dry_run=True)
+
+        conn = sqlite3.connect(tmp_path / "cardata_motorcycles.db")
+        conn.row_factory = sqlite3.Row
+        cols = _columns_of(conn, "listings")
+        assert "ad_expiry" not in cols
+        assert "sold_inference" not in cols
+        assert _schema_version(conn) == 4

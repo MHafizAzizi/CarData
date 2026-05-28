@@ -68,6 +68,33 @@ logging.basicConfig(
 # Classification
 # -----------------------------------------------------------------------------
 
+def _has_column(conn: sqlite3.Connection, table: str, column: str) -> bool:
+    """Return True if `column` exists on `table` in the connected DB."""
+    return any(
+        r[1] == column
+        for r in conn.execute(f"PRAGMA table_info({table})")
+    )
+
+
+def _infer_sold(ad_expiry_str: Optional[str], now: datetime) -> str:
+    """Classify a just-disappeared listing as likely_sold, likely_expired, or unknown.
+
+    Logic:
+        disappeared before ad_expiry  -> 'likely_sold'   (seller removed it themselves)
+        disappeared at/after ad_expiry -> 'likely_expired' (listing lapsed)
+        no ad_expiry available         -> 'unknown'
+    """
+    if not ad_expiry_str:
+        return "unknown"
+    try:
+        # API returns 'YYYY-MM-DD HH:MM:SS'; fromisoformat needs 'T' separator on
+        # older Python versions, so normalise the space.
+        expiry = datetime.fromisoformat(ad_expiry_str.replace(" ", "T"))
+        return "likely_sold" if now < expiry else "likely_expired"
+    except (ValueError, TypeError):
+        return "unknown"
+
+
 def classify_response(status_code: Optional[int], body: Optional[str], ads_no: str) -> str:
     """Return one of: available, soft_404, removed, blocked, transient."""
     if status_code is None:
@@ -179,9 +206,14 @@ def select_due_rows(
     Could be pushed into SQL, but the tiered policy is cleaner to read here
     and the row count is small enough (tens of thousands max) that filtering
     in Python is essentially free.
+
+    ad_expiry is included only when the column exists (schema v5+); older DBs
+    get NULL for every row so _infer_sold() returns 'unknown'.
     """
+    extra = ", ad_expiry" if _has_column(conn, "listings", "ad_expiry") else ""
     rows = conn.execute(
-        "SELECT ads_id, url, first_seen_at, last_seen_at, last_checked_at, availability_status "
+        f"SELECT ads_id, url, first_seen_at, last_seen_at, last_checked_at, "
+        f"availability_status{extra} "
         "FROM listings WHERE url IS NOT NULL AND url != ''"
     ).fetchall()
     now = datetime.now()
@@ -213,6 +245,9 @@ def recheck_category(
         logging.info(f"[{category}] dry run — no requests will be made.")
         return
 
+    has_sold_inference_col = _has_column(conn, "listings", "sold_inference")
+    has_ad_expiry_col = _has_column(conn, "listings", "ad_expiry")
+
     for n, row in enumerate(due, 1):
         ads_id = row['ads_id']
         url = row['url']
@@ -230,7 +265,23 @@ def recheck_category(
                     "UPDATE listings SET last_seen_at=?, last_checked_at=?, availability_status=? WHERE ads_id=?",
                     (ts, ts, new_status, ads_id),
                 )
+            elif detected in ('removed', 'soft_404'):
+                # Listing is gone — infer whether it sold or expired
+                if has_sold_inference_col:
+                    ad_expiry = row['ad_expiry'] if has_ad_expiry_col else None
+                    sold_inf = _infer_sold(ad_expiry, datetime.now())
+                    conn.execute(
+                        "UPDATE listings SET last_checked_at=?, availability_status=?, sold_inference=? "
+                        "WHERE ads_id=?",
+                        (ts, new_status, sold_inf, ads_id),
+                    )
+                else:
+                    conn.execute(
+                        "UPDATE listings SET last_checked_at=?, availability_status=? WHERE ads_id=?",
+                        (ts, new_status, ads_id),
+                    )
             else:
+                # blocked / transient — preserve previous status, don't touch sold_inference
                 conn.execute(
                     "UPDATE listings SET last_checked_at=?, availability_status=? WHERE ads_id=?",
                     (ts, new_status, ads_id),
@@ -241,8 +292,12 @@ def recheck_category(
                 (ads_id, ts, status_code, detected),
             )
 
+        sold_inf_label = ""
+        if detected in ('removed', 'soft_404') and has_sold_inference_col:
+            sold_inf_label = f" sold_inference={sold_inf}"
         logging.info(
-            f"[{category}] [{n}/{len(due)}] {ads_id} -> http={status_code} detected={detected} status={new_status}"
+            f"[{category}] [{n}/{len(due)}] {ads_id} -> http={status_code} "
+            f"detected={detected} status={new_status}{sold_inf_label}"
         )
 
     logging.info(f"[{category}] re-check complete.")

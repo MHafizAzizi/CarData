@@ -103,6 +103,7 @@ _RENAME_SHARED: Dict[str, str] = {
     "year_verified": "year_verified",
     "media_count": "media_count",
     "bundle": "bundle",
+    "ad_expiry": "ad_expiry",
 }
 
 _RENAME_CARS: Dict[str, str] = {
