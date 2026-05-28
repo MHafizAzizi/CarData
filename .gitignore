@@ -21,6 +21,10 @@ data/old/motorcycles/*
 data/master/
 *.xlsx
 
+# ML artifacts and exploratory notebooks (local only)
+data/models/
+notebooks/
+
 # Dashboard generated output (rebuilt by dashboard_aggregate.py)
 mockups/dashboard.html
 mockups/aggregates.json
