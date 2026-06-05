@@ -233,7 +233,7 @@ def recheck_category(
 ) -> None:
     db_file = db_path_for(category)
     if not os.path.exists(db_file):
-        logging.warning(f"[{category}] DB not found at {db_file} — skipping. Run migrate_xlsx_to_db.py or scrape with --update-db first.")
+        logging.warning(f"[{category}] DB not found at {db_file} — skipping. Run 1_scrape.py then 2_migrate.py first.")
         return
 
     conn = connect(category)

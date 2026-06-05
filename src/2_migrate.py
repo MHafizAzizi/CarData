@@ -11,10 +11,10 @@ Legacy workflow — xlsx (cars only):
     Useful for backfilling historical data that was never scraped as CSV.
 
 Usage:
-    python src/migrate_xlsx_to_db.py                  # interactive prompt
-    python src/migrate_xlsx_to_db.py --category cars  # skip prompt
-    python src/migrate_xlsx_to_db.py --dry-run        # preview, write/move nothing
-    python src/migrate_xlsx_to_db.py --xlsx data/master/MasterMudahCarData.xlsx
+    python src/2_migrate.py                  # interactive prompt
+    python src/2_migrate.py --category cars  # skip prompt
+    python src/2_migrate.py --dry-run        # preview, write/move nothing
+    python src/2_migrate.py --xlsx data/master/MasterMudahCarData.xlsx
 """
 
 import argparse

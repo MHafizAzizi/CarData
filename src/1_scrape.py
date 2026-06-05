@@ -4,10 +4,10 @@ Collects car/motorcycle listing metadata via the EagleSearch JSON API
 (search.mudah.my/v1/search, 200 ads/req). Writes a timestamped CSV per run.
 
 Usage:
-    python src/scraper.py --category cars --max-ads 1000
-    python src/scraper.py --category cars --make toyota --max-ads 5000
-    python src/scraper.py --category cars --make toyota --model vios
-    python src/scraper.py                          # interactive prompts
+    python src/1_scrape.py --category cars --max-ads 1000
+    python src/1_scrape.py --category cars --make toyota --max-ads 5000
+    python src/1_scrape.py --category cars --make toyota --model vios
+    python src/1_scrape.py                          # interactive prompts
 
 Filters:
     --make  <slug>   Filter by make  (e.g. 'toyota', 'perodua'). Narrows API
@@ -659,10 +659,13 @@ def _interactive_fill(args: argparse.Namespace, eagle: EagleClient) -> argparse.
                 args.max_ads = _ask_max_ads_with_preview(eagle, args.category, make_id, model_id)
 
         elif len(makes_list) == 0:
-            # All makes — no filter.
-            args.makes_list = []
+            # All makes — expand to per-make sequential runs (same as selecting each make).
+            all_makes = _load_makes(args.category)
+            args.makes_list = [(m["slug"], m["id"], m["name"], None) for m in all_makes]
             if args.max_ads is None:
-                args.max_ads = _ask_max_ads_with_preview(eagle, args.category, None, None)
+                args.max_ads = _prompt_max_ads(
+                    "Max ads per make [Enter / 'max' = all available, ~10k API cap]: "
+                )
 
         else:
             # Multiple makes: no model filter, ask max_ads once (applied per make).
@@ -736,8 +739,8 @@ def main() -> None:
     cap_display = f"{args.max_ads}" if args.max_ads is not None else "all available (~10k API cap)"
 
     if not args.makes_list:
-        # All makes — single run with no filter.
-        print(f"\nCategory: {args.category} | max_ads: {cap_display} | all makes | output: {args.output_dir}\n")
+        # Resume mode only — makes_list is empty, run without make filter.
+        print(f"\nCategory: {args.category} | max_ads: {cap_display} | resuming | output: {args.output_dir}\n")
         final_path = scraper.run(max_ads=args.max_ads, resume=args.resume)
         print(f"\nDone. Output: {final_path}")
     else:

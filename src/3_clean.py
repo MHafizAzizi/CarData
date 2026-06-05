@@ -1,16 +1,16 @@
 """Data cleaning pipeline for CarData SQLite databases (and legacy xlsx).
 
 Usage — DB mode (recommended):
-    python clean.py --category motorcycles
-    python clean.py --category cars
-    python clean.py --category motorcycles --dry-run   # preview only
+    python src/3_clean.py --category motorcycles
+    python src/3_clean.py --category cars
+    python src/3_clean.py --category motorcycles --dry-run   # preview only
 
 Usage — variant enrichment (cars only, requires cars_variants.json):
-    python clean.py --category cars --enrich-variants
-    python clean.py --category cars --enrich-variants --dry-run
+    python src/3_clean.py --category cars --enrich-variants
+    python src/3_clean.py --category cars --enrich-variants --dry-run
 
 Usage — legacy xlsx mode:
-    python clean.py --input raw.xlsx --output clean.xlsx
+    python src/3_clean.py --input raw.xlsx --output clean.xlsx
 """
 
 import argparse
@@ -549,7 +549,7 @@ def main() -> None:
 
     if not Path(input_path).exists():
         print(f"ERROR: xlsx not found: {input_path}")
-        print("       For DB cleaning use:  python src/clean.py --category cars")
+        print("       For DB cleaning use:  python src/3_clean.py --category cars")
         sys.exit(1)
 
     print(f"Reading {input_path} ...")
