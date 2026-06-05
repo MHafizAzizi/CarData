@@ -61,7 +61,7 @@ YEAR_TO = 2026
 def _find_latest_csv() -> Optional[Path]:
     """Return the most recently modified CSV from the known raw dirs.
 
-    Also checks data/old/cars/ since migrate_xlsx_to_db.py archives
+    Also checks data/old/cars/ since 2_migrate.py archives
     processed CSVs there — that's still a valid source for re-aggregation.
     """
     candidates: List[Path] = []
@@ -128,7 +128,7 @@ def _select_source(
             "No data source available. Tried DB at "
             f"{_rel(DEFAULT_DB)} (not enough fresh-schema rows) "
             "and CSV in data/raw/cars/, data/raw/test_5pages/, data/old/cars/. "
-            "Run scraper.py + migrate first."
+            "Run 1_scrape.py + 2_migrate.py first."
         )
     df = pd.read_csv(csv_path, encoding="utf-8")
     return df, f"csv:{_rel(csv_path)}"

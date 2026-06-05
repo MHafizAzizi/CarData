@@ -1,9 +1,9 @@
-"""Tests for src/clean.py — column cleaners and pipeline."""
+"""Tests for src/3_clean.py — column cleaners and pipeline."""
 
 import pandas as pd
 import pytest
 
-from src.clean import (
+from clean import (  # registered in conftest.py (numeric-prefixed file)
     clean,
     clean_company_ad,
     clean_engine_capacity,
