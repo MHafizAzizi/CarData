@@ -16,8 +16,6 @@ CREATE TABLE IF NOT EXISTS listings (
     price               INTEGER,   -- MYR, no commas (was TEXT pre-v4)
     condition           TEXT,
     manufactured_date   INTEGER,   -- 4-digit year (was TEXT pre-v4)
-    mileage             INTEGER,   -- km (was TEXT pre-v4)
-    location            TEXT,
     region              TEXT,
     subregion           TEXT,
     seller_name         TEXT,
@@ -29,33 +27,8 @@ CREATE TABLE IF NOT EXISTS listings (
     car_type            TEXT,
     transmission        TEXT,
     engine_capacity     INTEGER,   -- cc (was TEXT pre-v4)
-    family              TEXT,
     variant             TEXT,
-    series              TEXT,
-    style               TEXT,
-    seat                TEXT,
-    country_origin      TEXT,
-    cc                  INTEGER,   -- was TEXT pre-v4
-    comp_ratio          TEXT,
-    kw                  TEXT,
-    torque              TEXT,
-    engine              TEXT,
     fuel_type           TEXT,
-    length              TEXT,
-    width               TEXT,
-    height              TEXT,
-    wheelbase           TEXT,
-    kerbwt              TEXT,
-    fueltk              TEXT,
-    brake_front         TEXT,
-    brake_rear          TEXT,
-    suspension_front    TEXT,
-    suspension_rear     TEXT,
-    steering            TEXT,
-    tyres_front         TEXT,
-    tyres_rear          TEXT,
-    wheel_rim_front     TEXT,
-    wheel_rim_rear      TEXT,
     -- availability tracking (shared with motorcycles)
     first_seen_at       TEXT NOT NULL,
     last_seen_at        TEXT,

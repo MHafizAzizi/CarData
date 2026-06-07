@@ -16,8 +16,6 @@ CREATE TABLE IF NOT EXISTS listings (
     price               INTEGER,   -- MYR, no commas (was TEXT pre-v4)
     condition           TEXT,
     manufactured_date   INTEGER,   -- 4-digit year (was TEXT pre-v4)
-    mileage             INTEGER,   -- km (was TEXT pre-v4)
-    location            TEXT,
     region              TEXT,
     subregion           TEXT,
     seller_name         TEXT,
