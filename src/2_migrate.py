@@ -60,26 +60,22 @@ logging.basicConfig(
 
 SHARED_COLUMNS: List[str] = [
     "ads_id", "url", "subject", "price",
-    "condition", "manufactured_date", "mileage",
-    "location", "region", "subregion",
+    "condition", "manufactured_date", "region", "subregion",
     "seller_name", "company_ad", "published",
     "first_seen_at", "last_seen_at", "last_checked_at", "availability_status",
     # API-only columns added by schema v1 → v2 (both categories)
-    "old_price", "year_verified", "store_verified",
-    "bundle", "media_count", "mileage_bucket",
-    "last_detail_fetched_at", "detail_fetch_status",
+    "old_price", "store_verified", "bundle", "media_count",
+    # ad_expiry / sold_inference added by schema v5 (both categories)
+    "ad_expiry", "sold_inference",
 ]
 
 CAR_ONLY_COLUMNS: List[str] = [
     "make", "model", "car_type", "transmission", "engine_capacity",
-    "family", "variant", "series", "style",
-    "seat", "country_origin", "cc", "comp_ratio", "kw",
-    "torque", "engine", "fuel_type", "length", "width", "height",
-    "wheelbase", "kerbwt", "fueltk", "brake_front", "brake_rear",
-    "suspension_front", "suspension_rear", "steering",
-    "tyres_front", "tyres_rear", "wheel_rim_front", "wheel_rim_rear",
+    "variant", "fuel_type",
     # API-only columns added by schema v1 → v2 (cars only)
     "car_loan_eligible", "car_loan_payment", "car_loan_tenure", "has_car_grant",
+    # cars-only after v6 (dropped from motorcycles — always NULL there)
+    "year_verified", "mileage_bucket",
 ]
 
 MOTORCYCLE_ONLY_COLUMNS: List[str] = ["motorcycle_make", "motorcycle_model"]

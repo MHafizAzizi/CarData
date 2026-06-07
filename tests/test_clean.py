@@ -257,10 +257,6 @@ class TestCleanPipelineMotorcycles:
         assert "🌕" not in str(df["subject"].iloc[1])
         assert "Full Loan" not in str(df["subject"].iloc[2])
 
-    def test_location_title_cased(self):
-        df = clean(self._base_df(), category="motorcycles")
-        assert df["location"].iloc[0] == "Johor - Johor Bahru"
-
     def test_row_count_unchanged_no_dupes(self):
         df = clean(self._base_df(), category="motorcycles")
         assert len(df) == 3

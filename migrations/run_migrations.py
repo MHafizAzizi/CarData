@@ -29,6 +29,14 @@ and sold_inference (likely_sold / likely_expired / unknown) to both
 categories. ad_expiry lets recheck.py distinguish sold listings (disappeared
 before expiry) from expired ones (lapsed after expiry).
 
+v5 -> v6: Drops permanently-empty / dead-weight columns (verified 0% fill).
+Cars: 25 Phase-2 HTML spec columns (removed with Phase 2, never repopulated
+by the API-only scraper) plus mileage, location, last_detail_fetched_at,
+detail_fetch_status. Motorcycles: mileage, location, mileage_bucket,
+year_verified (the API returns none of these for category=1040) plus the two
+detail_* Phase-2 remnants. ad_expiry is intentionally KEPT (real data for
+motorcycles; 0% on cars is a capture bug, not dead weight).
+
 Usage:
     python migrations/run_migrations.py                       # interactive prompt
     python migrations/run_migrations.py --category cars
@@ -65,7 +73,7 @@ from db import CATEGORIES, connect, schema_version, set_meta  # noqa: E402
 # Migration spec — v1 -> v2
 # ---------------------------------------------------------------------------
 
-TARGET_VERSION = 5
+TARGET_VERSION = 6
 
 # (column_name, sqlite_type) — applied to BOTH cars and motorcycles
 SHARED_NEW_COLS: List[Tuple[str, str]] = [
@@ -99,6 +107,34 @@ V5_SHARED_COLS: List[Tuple[str, str]] = [
     ("ad_expiry",      "TEXT"),
     ("sold_inference", "TEXT"),
 ]
+
+# v5 -> v6: drop permanently-empty / dead-weight columns (verified 0% fill).
+# ad_expiry is deliberately NOT here — it's real data for motorcycles and the
+# cars 0% is a known capture bug, not dead weight.
+DROPPED_COLS_V6_CARS: List[str] = [
+    # Phase-2 remnants (Phase 2 removed; API-only scraper never fills these)
+    "mileage", "location", "last_detail_fetched_at", "detail_fetch_status",
+    # Phase-2 HTML spec columns — all 0% fill, no API source
+    "family", "series", "style", "seat", "country_origin", "cc",
+    "comp_ratio", "kw", "torque", "engine", "length", "width", "height",
+    "wheelbase", "kerbwt", "fueltk", "brake_front", "brake_rear",
+    "suspension_front", "suspension_rear", "steering",
+    "tyres_front", "tyres_rear", "wheel_rim_front", "wheel_rim_rear",
+]
+
+DROPPED_COLS_V6_MOTORCYCLES: List[str] = [
+    # API returns none of these for category=1040 — permanently NULL
+    "mileage", "location", "mileage_bucket", "year_verified",
+    # Phase-2 remnants
+    "last_detail_fetched_at", "detail_fetch_status",
+]
+
+
+def _dropped_cols_v6(category: str) -> List[str]:
+    return (
+        DROPPED_COLS_V6_CARS if category == "cars"
+        else DROPPED_COLS_V6_MOTORCYCLES
+    )
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -370,6 +406,42 @@ def _migrate_v4_to_v5(
     )
 
 
+def _migrate_v5_to_v6(
+    conn: sqlite3.Connection, category: str, *, dry_run: bool
+) -> None:
+    """Drop permanently-empty / dead-weight columns (per-category)."""
+    cols = _dropped_cols_v6(category)
+    logging.info(
+        f"[{category}] step v5 -> v6 ({len(cols)} column(s) to drop)"
+    )
+
+    dropped = 0
+    with conn:
+        for col_name in cols:
+            if _safe_drop_column(conn, "listings", col_name, dry_run=dry_run):
+                dropped += 1
+
+        if dry_run:
+            logging.info(
+                f"[{category}] DRY-RUN v5->v6: would drop {dropped} column(s)"
+            )
+            return
+
+        conn.execute(
+            "INSERT INTO meta (key, value) VALUES ('schema_version', '6') "
+            "ON CONFLICT(key) DO UPDATE SET value = excluded.value"
+        )
+
+    logging.info(
+        f"[{category}] v5 -> v6 complete — dropped {dropped} column(s)"
+    )
+    set_meta(
+        conn,
+        "last_migration_v6_at",
+        __import__("datetime").datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+    )
+
+
 def migrate(category: str, *, dry_run: bool = False) -> None:
     """Run all pending migrations on the given category's DB."""
     if category not in CATEGORIES:
@@ -401,6 +473,8 @@ def migrate(category: str, *, dry_run: bool = False) -> None:
         _migrate_v3_to_v4(conn, category, dry_run=dry_run)
     if current < 5:
         _migrate_v4_to_v5(conn, category, dry_run=dry_run)
+    if current < 6:
+        _migrate_v5_to_v6(conn, category, dry_run=dry_run)
 
     logging.info(
         f"[{category}] migration complete; "
