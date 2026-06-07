@@ -37,12 +37,7 @@ logging.basicConfig(
 )
 
 from db import connect, db_path_for
-from eagle_client import EagleClient, BASE_URL, CATEGORY_IDS
-
-MAKE_ID_PARAM = {
-    "motorcycles": "motorcycle_make_id",
-    "cars": "make_id",
-}
+from eagle_client import EagleClient
 
 REFERENCE_MAKES = {
     "motorcycles": _ROOT / "data" / "reference" / "motorcycles_makes.json",
@@ -61,54 +56,76 @@ def fetch_expiry_for_make(
     category: str,
     make_id: int,
     make_name: str,
-) -> Dict[int, str]:
-    """Return {ads_id: ad_expiry} for all currently-active listings of this make."""
+    *,
+    page_sleep: float = 1.5,
+    max_page_retries: int = 4,
+) -> Tuple[Dict[int, str], bool]:
+    """Return ({ads_id: ad_expiry}, ok) for currently-active listings of this make.
+
+    Uses ``client.fetch_page`` (request throttle + network/429 retry baked in)
+    and adds an outer exponential-backoff retry on ``EagleAPIError`` so a
+    transient empty / non-JSON body (a Cloudflare interstitial served under
+    load — the failure mode that silently zeroed out the back half of makes on
+    the first run) no longer aborts the make on the first hiccup.
+
+    ``ok`` is False when a page exhausted all retries — the make is incomplete
+    and should be re-run rather than trusted as "no active listings".
+    """
+    from eagle_client import MAX_LIMIT, MAX_OFFSET, EagleAPIError
+
+    make_id_str = str(make_id)
     results: Dict[int, str] = {}
-    make_param = MAKE_ID_PARAM[category]
     offset = 0
-    from eagle_client import MAX_LIMIT, MAX_OFFSET
+    ok = True
 
     while offset < MAX_OFFSET:
-        try:
-            resp = client.scraper.get(
-                BASE_URL,
-                params={
-                    "category": CATEGORY_IDS[category],
-                    "type": "sell",
-                    "from": offset,
-                    "limit": MAX_LIMIT,
-                    make_param: make_id,
-                },
-                headers=client._headers(),
-                timeout=15,
-            )
-            payload = resp.json()
-        except Exception as e:
-            logging.warning(f"  [{make_name}] offset={offset} error: {e} — skipping page")
-            time.sleep(1.0)
+        ads: Optional[list] = None
+        for attempt in range(max_page_retries + 1):
+            try:
+                ads, _meta = client.fetch_page(
+                    category, offset=offset, limit=MAX_LIMIT, make_id=make_id_str,
+                )
+                break
+            except EagleAPIError as e:
+                # EagleAuthError (403 / Cloudflare block) subclasses EagleAPIError,
+                # so a temporary block is retried with backoff too.
+                if attempt < max_page_retries:
+                    wait = page_sleep * (2 ** attempt)
+                    logging.warning(
+                        f"  [{make_name}] offset={offset} {e} — "
+                        f"retry {attempt + 1}/{max_page_retries} in {wait:.1f}s"
+                    )
+                    time.sleep(wait)
+                else:
+                    logging.error(
+                        f"  [{make_name}] offset={offset} failed after "
+                        f"{max_page_retries} retries: {e} — make incomplete"
+                    )
+
+        if ads is None:
+            ok = False  # exhausted retries — do not treat remaining as empty
+            break
+        if not ads:
             break
 
-        data = payload.get("data", []) or []
-        if not data:
-            break
+        for ad in ads:
+            ads_id = ad.get("ads_id")
+            ad_expiry = ad.get("ad_expiry")
+            if ads_id and ad_expiry:
+                results[int(ads_id)] = str(ad_expiry)
 
-        for entry in data:
-            attrs = entry.get("attributes", {}) if isinstance(entry, dict) else {}
-            if not attrs:
-                continue
-            list_id = attrs.get("list_id")
-            ad_expiry = attrs.get("ad_expiry")
-            if list_id and ad_expiry:
-                results[int(list_id)] = str(ad_expiry)
+        offset += len(ads)
+        time.sleep(page_sleep)
 
-        offset += len(data)
-        # Throttle between pages
-        time.sleep(0.75)
-
-    return results
+    return results, ok
 
 
-def backfill(category: str, *, dry_run: bool = False) -> None:
+def backfill(
+    category: str,
+    *,
+    dry_run: bool = False,
+    only_makes: Optional[set] = None,
+) -> None:
     conn = connect(category)
 
     # Load ads_ids that need backfilling
@@ -123,22 +140,41 @@ def backfill(category: str, *, dry_run: bool = False) -> None:
         return
 
     makes = load_makes(category)
-    client = EagleClient()
+    if only_makes:
+        wanted = {m.casefold() for m in only_makes}
+        makes = [m for m in makes if m["name"].casefold() in wanted]
+        missing = wanted - {m["name"].casefold() for m in makes}
+        if missing:
+            logging.warning(f"[{category}] --makes not found, ignored: {sorted(missing)}")
+        logging.info(f"[{category}] Restricted to {len(makes)} make(s): "
+                     f"{[m['name'] for m in makes]}")
+        if not makes:
+            logging.error(f"[{category}] No matching makes — nothing to do.")
+            return
+
+    # Slower throttle + extra network retries than the default scraper config:
+    # the first run tripped a Cloudflare interstitial on the back half of makes
+    # under sustained load. Politer pacing avoids the block in the first place.
+    client = EagleClient(max_retries=5, request_interval=(1.5, 2.5))
 
     total_updated = 0
     total_found = 0
+    failed_makes: list = []
 
     for i, make in enumerate(makes, 1):
         make_id = int(make["id"])
         make_name = make["name"]
 
-        expiry_map = fetch_expiry_for_make(client, category, make_id, make_name)
+        expiry_map, ok = fetch_expiry_for_make(client, category, make_id, make_name)
+        if not ok:
+            failed_makes.append(make_name)
         # Filter to only rows we actually need
         relevant = {k: v for k, v in expiry_map.items() if k in need_set}
         total_found += len(relevant)
 
+        flag = "" if ok else "  INCOMPLETE"
         if not relevant:
-            logging.info(f"  [{i}/{len(makes)}] {make_name:<20} API={len(expiry_map):>4}  match=0")
+            logging.info(f"  [{i}/{len(makes)}] {make_name:<20} API={len(expiry_map):>4}  match=0{flag}")
             continue
 
         if not dry_run:
@@ -151,7 +187,7 @@ def backfill(category: str, *, dry_run: bool = False) -> None:
 
         logging.info(
             f"  [{i}/{len(makes)}] {make_name:<20} API={len(expiry_map):>4}  "
-            f"match={len(relevant):>4}  {'(dry-run)' if dry_run else 'updated'}"
+            f"match={len(relevant):>4}  {'(dry-run)' if dry_run else 'updated'}{flag}"
         )
 
     pct = total_found / len(need_set) * 100 if need_set else 0
@@ -160,6 +196,11 @@ def backfill(category: str, *, dry_run: bool = False) -> None:
         f"Found {total_found:,}/{len(need_set):,} ({pct:.1f}%) listings still active. "
         f"{'Would update' if dry_run else 'Updated'} {total_found if dry_run else total_updated:,} rows."
     )
+    if failed_makes:
+        logging.warning(
+            f"[{category}] {len(failed_makes)} make(s) INCOMPLETE (page failed after "
+            f"retries) — re-run with: --makes \"{','.join(failed_makes)}\""
+        )
     if not dry_run:
         remaining = conn.execute(
             "SELECT COUNT(*) FROM listings WHERE ad_expiry IS NULL"
@@ -183,6 +224,12 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Show what would be updated without writing to DB",
     )
+    p.add_argument(
+        "--makes",
+        default=None,
+        help="Comma-separated make names to restrict to (case-insensitive). "
+             "Use to re-run only the makes reported INCOMPLETE on a prior run.",
+    )
     return p.parse_args()
 
 
@@ -190,7 +237,11 @@ def main() -> None:
     args = parse_args()
     if args.dry_run:
         logging.info("--- DRY-RUN mode — no DB changes will be made ---")
-    backfill(args.category, dry_run=args.dry_run)
+    only_makes = (
+        {m.strip() for m in args.makes.split(",") if m.strip()}
+        if args.makes else None
+    )
+    backfill(args.category, dry_run=args.dry_run, only_makes=only_makes)
 
 
 if __name__ == "__main__":

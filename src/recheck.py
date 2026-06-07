@@ -32,12 +32,19 @@ import os
 import re
 import sqlite3
 import sys
+import time
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Iterable, List, Optional, Tuple
+from typing import Iterable, List, Optional, Set, Tuple
 
 from db import connect, db_path_for, CATEGORIES
 from mudah_client import MudahClient
+
+# DB column holding the make name, per category (set by clean.py title-casing).
+MAKE_COL = {
+    "cars": "make",
+    "motorcycles": "motorcycle_make",
+}
 
 # Anchor all paths to the project root regardless of cwd
 _ROOT = Path(__file__).resolve().parent.parent
@@ -211,6 +218,12 @@ def select_due_rows(
     get NULL for every row so _infer_sold() returns 'unknown'.
     """
     extra = ", ad_expiry" if _has_column(conn, "listings", "ad_expiry") else ""
+    # Include the make column (cars: make, motorcycles: motorcycle_make) so the
+    # API recheck can gate the unavailable decision on per-make completion.
+    for mc in ("make", "motorcycle_make"):
+        if _has_column(conn, "listings", mc):
+            extra += f", {mc}"
+            break
     rows = conn.execute(
         f"SELECT ads_id, url, first_seen_at, last_seen_at, last_checked_at, "
         f"availability_status{extra} "
@@ -221,6 +234,190 @@ def select_due_rows(
     if limit is not None:
         due = due[:limit]
     return due
+
+
+def _sweep_active_ids(
+    client,
+    category: str,
+    *,
+    page_sleep: float = 1.5,
+    max_page_retries: int = 4,
+) -> Tuple[Set[int], Set[str]]:
+    """Sweep all makes via EagleSearch API → (active_ids, completed_makes_cf).
+
+    ``active_ids`` is the set of every ``ads_id`` currently returned by the API
+    across all makes. ``completed_makes_cf`` is the casefolded set of make names
+    whose pagination finished cleanly (no retry exhaustion) — only listings of
+    a *completed* make may be safely marked unavailable, so a Cloudflare block
+    on one make never produces false "sold" flags for that make.
+
+    Mirrors the resilient page loop in ``backfill_ad_expiry.fetch_expiry_for_make``:
+    each page goes through ``client.fetch_page`` (throttle + network/429 retry
+    baked in) wrapped in outer exponential backoff on ``EagleAPIError``.
+    """
+    from eagle_client import MAX_LIMIT, MAX_OFFSET, EagleAPIError
+    from backfill_ad_expiry import load_makes
+
+    makes = load_makes(category)
+    active: Set[int] = set()
+    completed: Set[str] = set()
+    failed: List[str] = []
+
+    for i, make in enumerate(makes, 1):
+        make_id = str(int(make["id"]))
+        make_name = make["name"]
+        offset = 0
+        ok = True
+        before = len(active)
+
+        while offset < MAX_OFFSET:
+            ads = None
+            for attempt in range(max_page_retries + 1):
+                try:
+                    ads, _meta = client.fetch_page(
+                        category, offset=offset, limit=MAX_LIMIT, make_id=make_id,
+                    )
+                    break
+                except EagleAPIError as e:
+                    if attempt < max_page_retries:
+                        wait = page_sleep * (2 ** attempt)
+                        logging.warning(
+                            f"  [{make_name}] offset={offset} {e} — "
+                            f"retry {attempt + 1}/{max_page_retries} in {wait:.1f}s"
+                        )
+                        time.sleep(wait)
+                    else:
+                        logging.error(
+                            f"  [{make_name}] offset={offset} failed after "
+                            f"{max_page_retries} retries: {e} — make incomplete"
+                        )
+            if ads is None:
+                ok = False
+                break
+            if not ads:
+                break
+            for ad in ads:
+                aid = ad.get("ads_id")
+                if aid:
+                    active.add(int(aid))
+            offset += len(ads)
+            time.sleep(page_sleep)
+
+        if ok:
+            completed.add(make_name.casefold())
+        else:
+            failed.append(make_name)
+
+        logging.info(
+            f"[{category}] [{i}/{len(makes)}] {make_name:<20} "
+            f"active+={len(active) - before:>4}{'' if ok else '  INCOMPLETE'}"
+        )
+
+    if failed:
+        logging.warning(
+            f"[{category}] {len(failed)} make(s) INCOMPLETE — their listings will "
+            f"NOT be marked unavailable this run: {failed}"
+        )
+    return active, completed
+
+
+def recheck_category_api(
+    category: str,
+    *,
+    client,
+    limit: Optional[int],
+    force_all: bool,
+    dry_run: bool,
+) -> None:
+    """API-based availability recheck — ~300x faster than per-listing HTML.
+
+    A listing present in the API active-set is available; one absent (and whose
+    make completed cleanly) is gone → ``_infer_sold`` classifies it from
+    ``ad_expiry``. Listings whose make did not complete, or whose make is not in
+    the reference sweep at all, are left untouched (status + last_checked_at
+    preserved) so the next run retries them.
+    """
+    db_file = db_path_for(category)
+    if not os.path.exists(db_file):
+        logging.warning(f"[{category}] DB not found at {db_file} — skipping. Run 1_scrape.py then 2_migrate.py first.")
+        return
+
+    conn = connect(category)
+    total = conn.execute("SELECT COUNT(*) FROM listings").fetchone()[0]
+    due = select_due_rows(conn, force_all=force_all, limit=limit)
+    logging.info(f"[{category}] DB rows: {total}. Due for re-check: {len(due)}.")
+
+    if dry_run:
+        logging.info(f"[{category}] dry run — no requests will be made.")
+        return
+
+    make_col = MAKE_COL[category]
+    has_make_col = _has_column(conn, "listings", make_col)
+    has_sold_inference_col = _has_column(conn, "listings", "sold_inference")
+    has_ad_expiry_col = _has_column(conn, "listings", "ad_expiry")
+
+    logging.info(f"[{category}] Sweeping active listings via EagleSearch API...")
+    active, completed = _sweep_active_ids(client, category)
+    logging.info(
+        f"[{category}] Sweep done: {len(active):,} active ads_ids, "
+        f"{len(completed)} make(s) completed."
+    )
+
+    n_avail = n_gone = n_skipped = 0
+    now = datetime.now()
+
+    for row in due:
+        ads_id = row['ads_id']
+        previous_status = row['availability_status']
+        make_cf = (row[make_col].casefold() if has_make_col and row[make_col] else None)
+        ts = now.strftime('%Y-%m-%d %H:%M:%S')
+
+        if ads_id in active:
+            detected, new_status = 'available', 'available'
+            n_avail += 1
+            with conn:
+                conn.execute(
+                    "UPDATE listings SET last_seen_at=?, last_checked_at=?, availability_status=? WHERE ads_id=?",
+                    (ts, ts, new_status, ads_id),
+                )
+                conn.execute(
+                    "INSERT INTO availability_checks (ads_id, checked_at, http_status, detected_status) "
+                    "VALUES (?, ?, ?, ?)",
+                    (ads_id, ts, None, detected),
+                )
+            continue
+
+        # Absent from active-set. Only trust this if the make completed cleanly.
+        if make_cf is None or make_cf not in completed:
+            n_skipped += 1
+            continue  # preserve status + last_checked_at → retried next run
+
+        detected, new_status = 'soft_404', 'unavailable'
+        n_gone += 1
+        sold_inf = None
+        with conn:
+            if has_sold_inference_col:
+                ad_expiry = row['ad_expiry'] if has_ad_expiry_col else None
+                sold_inf = _infer_sold(ad_expiry, now)
+                conn.execute(
+                    "UPDATE listings SET last_checked_at=?, availability_status=?, sold_inference=? WHERE ads_id=?",
+                    (ts, new_status, sold_inf, ads_id),
+                )
+            else:
+                conn.execute(
+                    "UPDATE listings SET last_checked_at=?, availability_status=? WHERE ads_id=?",
+                    (ts, new_status, ads_id),
+                )
+            conn.execute(
+                "INSERT INTO availability_checks (ads_id, checked_at, http_status, detected_status) "
+                "VALUES (?, ?, ?, ?)",
+                (ads_id, ts, None, detected),
+            )
+
+    logging.info(
+        f"[{category}] API re-check complete. available={n_avail:,} "
+        f"gone={n_gone:,} skipped(incomplete/unknown make)={n_skipped:,}"
+    )
 
 
 def recheck_category(
@@ -318,6 +515,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--limit", type=int, default=None, help="Max number of rows to check (per category)")
     parser.add_argument("--all", action="store_true", help="Ignore cadence and re-check every row that has a URL")
     parser.add_argument("--dry-run", action="store_true", help="Compute the due set and log it; make no HTTP requests")
+    parser.add_argument(
+        "--method",
+        choices=("api", "html"),
+        default="api",
+        help="api (default): one EagleSearch sweep per make, ~300x faster, "
+             "present/absent only. html: per-listing detail GET, slower but "
+             "distinguishes removed/soft_404/blocked.",
+    )
     return parser.parse_args()
 
 
@@ -325,10 +530,18 @@ def main() -> None:
     args = parse_args()
 
     targets: Iterable[str] = CATEGORIES if args.category == "both" else (args.category,)
-    client = MudahClient()  # ONE client across categories so the throttle is shared
 
-    for cat in targets:
-        recheck_category(cat, client=client, limit=args.limit, force_all=args.all, dry_run=args.dry_run)
+    if args.method == "api":
+        from eagle_client import EagleClient
+        # Politer pacing than the scraper default — same config the backfill
+        # used to dodge Cloudflare on a sustained full make sweep.
+        client = EagleClient(max_retries=5, request_interval=(1.5, 2.5))
+        for cat in targets:
+            recheck_category_api(cat, client=client, limit=args.limit, force_all=args.all, dry_run=args.dry_run)
+    else:
+        client = MudahClient()  # ONE client across categories so the throttle is shared
+        for cat in targets:
+            recheck_category(cat, client=client, limit=args.limit, force_all=args.all, dry_run=args.dry_run)
 
 
 if __name__ == "__main__":
