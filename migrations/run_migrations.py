@@ -449,8 +449,9 @@ def migrate(category: str, *, dry_run: bool = False) -> None:
             f"Unknown category: {category!r}. Expected one of {CATEGORIES}."
         )
 
-    # init=True is fine: schema_*.sql is idempotent (CREATE TABLE IF NOT EXISTS)
-    conn = connect(category)
+    # init=True: migrations are the canonical DB-creation entry point and
+    # schema_*.sql is idempotent (CREATE TABLE IF NOT EXISTS)
+    conn = connect(category, init=True)
     current = schema_version(conn)
     logging.info(f"[{category}] current schema_version = {current}")
 
