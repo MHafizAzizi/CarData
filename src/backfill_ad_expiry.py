@@ -14,13 +14,10 @@ Usage:
 """
 
 import argparse
-import json
 import logging
-import sqlite3
 import sys
-import time
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, Optional, Tuple
 
 _ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_ROOT / "src"))
@@ -36,19 +33,9 @@ logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(message)s",
 )
 
-from db import connect, db_path_for
+from db import connect
 from eagle_client import EagleClient
-
-REFERENCE_MAKES = {
-    "motorcycles": _ROOT / "data" / "reference" / "motorcycles_makes.json",
-    "cars": _ROOT / "data" / "reference" / "cars_makes.json",
-}
-
-
-def load_makes(category: str) -> list:
-    path = REFERENCE_MAKES[category]
-    with open(path, encoding="utf-8") as f:
-        return json.load(f)
+from reference import load_makes
 
 
 def fetch_expiry_for_make(
@@ -56,67 +43,20 @@ def fetch_expiry_for_make(
     category: str,
     make_id: int,
     make_name: str,
-    *,
-    page_sleep: float = 1.5,
-    max_page_retries: int = 4,
 ) -> Tuple[Dict[int, str], bool]:
     """Return ({ads_id: ad_expiry}, ok) for currently-active listings of this make.
 
-    Uses ``client.fetch_page`` (request throttle + network/429 retry baked in)
-    and adds an outer exponential-backoff retry on ``EagleAPIError`` so a
-    transient empty / non-JSON body (a Cloudflare interstitial served under
-    load — the failure mode that silently zeroed out the back half of makes on
-    the first run) no longer aborts the make on the first hiccup.
-
-    ``ok`` is False when a page exhausted all retries — the make is incomplete
-    and should be re-run rather than trusted as "no active listings".
+    ``ok`` is False when the sweep was INCOMPLETE (a page exhausted retries) —
+    the make should be re-run rather than trusted as "no active listings".
+    See ``EagleClient.fetch_make_resilient`` for the retry semantics.
     """
-    from eagle_client import MAX_LIMIT, MAX_OFFSET, EagleAPIError
-
-    make_id_str = str(make_id)
+    ads, ok = client.fetch_make_resilient(category, str(make_id), label=make_name)
     results: Dict[int, str] = {}
-    offset = 0
-    ok = True
-
-    while offset < MAX_OFFSET:
-        ads: Optional[list] = None
-        for attempt in range(max_page_retries + 1):
-            try:
-                ads, _meta = client.fetch_page(
-                    category, offset=offset, limit=MAX_LIMIT, make_id=make_id_str,
-                )
-                break
-            except EagleAPIError as e:
-                # EagleAuthError (403 / Cloudflare block) subclasses EagleAPIError,
-                # so a temporary block is retried with backoff too.
-                if attempt < max_page_retries:
-                    wait = page_sleep * (2 ** attempt)
-                    logging.warning(
-                        f"  [{make_name}] offset={offset} {e} — "
-                        f"retry {attempt + 1}/{max_page_retries} in {wait:.1f}s"
-                    )
-                    time.sleep(wait)
-                else:
-                    logging.error(
-                        f"  [{make_name}] offset={offset} failed after "
-                        f"{max_page_retries} retries: {e} — make incomplete"
-                    )
-
-        if ads is None:
-            ok = False  # exhausted retries — do not treat remaining as empty
-            break
-        if not ads:
-            break
-
-        for ad in ads:
-            ads_id = ad.get("ads_id")
-            ad_expiry = ad.get("ad_expiry")
-            if ads_id and ad_expiry:
-                results[int(ads_id)] = str(ad_expiry)
-
-        offset += len(ads)
-        time.sleep(page_sleep)
-
+    for ad in ads:
+        ads_id = ad.get("ads_id")
+        ad_expiry = ad.get("ad_expiry")
+        if ads_id and ad_expiry:
+            results[int(ads_id)] = str(ad_expiry)
     return results, ok
 
 
@@ -139,7 +79,7 @@ def backfill(
         logging.info(f"[{category}] Nothing to do.")
         return
 
-    makes = load_makes(category)
+    makes = load_makes(category, required=True)
     if only_makes:
         wanted = {m.casefold() for m in only_makes}
         makes = [m for m in makes if m["name"].casefold() in wanted]

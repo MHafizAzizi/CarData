@@ -32,7 +32,6 @@ import os
 import re
 import sqlite3
 import sys
-import time
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Iterable, List, Optional, Set, Tuple
@@ -251,14 +250,12 @@ def _sweep_active_ids(
     a *completed* make may be safely marked unavailable, so a Cloudflare block
     on one make never produces false "sold" flags for that make.
 
-    Mirrors the resilient page loop in ``backfill_ad_expiry.fetch_expiry_for_make``:
-    each page goes through ``client.fetch_page`` (throttle + network/429 retry
-    baked in) wrapped in outer exponential backoff on ``EagleAPIError``.
+    Page-level resilience (throttle, 429 retry, exponential backoff on
+    Cloudflare interstitials) lives in ``EagleClient.fetch_make_resilient``.
     """
-    from eagle_client import MAX_LIMIT, MAX_OFFSET, EagleAPIError
-    from backfill_ad_expiry import load_makes
+    from reference import load_makes
 
-    makes = load_makes(category)
+    makes = load_makes(category, required=True)
     active: Set[int] = set()
     completed: Set[str] = set()
     failed: List[str] = []
@@ -266,42 +263,16 @@ def _sweep_active_ids(
     for i, make in enumerate(makes, 1):
         make_id = str(int(make["id"]))
         make_name = make["name"]
-        offset = 0
-        ok = True
         before = len(active)
 
-        while offset < MAX_OFFSET:
-            ads = None
-            for attempt in range(max_page_retries + 1):
-                try:
-                    ads, _meta = client.fetch_page(
-                        category, offset=offset, limit=MAX_LIMIT, make_id=make_id,
-                    )
-                    break
-                except EagleAPIError as e:
-                    if attempt < max_page_retries:
-                        wait = page_sleep * (2 ** attempt)
-                        logging.warning(
-                            f"  [{make_name}] offset={offset} {e} — "
-                            f"retry {attempt + 1}/{max_page_retries} in {wait:.1f}s"
-                        )
-                        time.sleep(wait)
-                    else:
-                        logging.error(
-                            f"  [{make_name}] offset={offset} failed after "
-                            f"{max_page_retries} retries: {e} — make incomplete"
-                        )
-            if ads is None:
-                ok = False
-                break
-            if not ads:
-                break
-            for ad in ads:
-                aid = ad.get("ads_id")
-                if aid:
-                    active.add(int(aid))
-            offset += len(ads)
-            time.sleep(page_sleep)
+        ads, ok = client.fetch_make_resilient(
+            category, make_id, label=make_name,
+            page_sleep=page_sleep, max_page_retries=max_page_retries,
+        )
+        for ad in ads:
+            aid = ad.get("ads_id")
+            if aid:
+                active.add(int(aid))
 
         if ok:
             completed.add(make_name.casefold())
