@@ -77,48 +77,16 @@ from eagle_client import EagleAPIError, EagleAuthError, EagleClient  # noqa: E40
 _LOGS_DIR = _ROOT / "logs"
 _LOGS_DIR.mkdir(parents=True, exist_ok=True)
 
+import reference  # noqa: E402
+from reference import (  # noqa: E402
+    load_makes as _load_makes,
+    load_models as _load_models,
+    lookup_make,
+    lookup_model,
+)
+
 CATEGORY_CHOICES = ["cars", "motorcycles"]
 DEFAULT_OUTPUT_DIR = _ROOT / "data" / "raw"
-_REF_DIR = _ROOT / "data" / "reference"
-
-
-# ---------------------------------------------------------------------------
-# Reference data helpers (make/model lookup)
-# ---------------------------------------------------------------------------
-
-def _load_makes(category: str) -> List[Dict]:
-    """Load makes list for the given category from reference JSON."""
-    path = _REF_DIR / f"{category}_makes.json"
-    if not path.exists():
-        return []
-    with open(path, encoding="utf-8") as f:
-        return json.load(f)
-
-
-def _load_models(category: str) -> Dict[str, List[Dict]]:
-    """Load models dict {make_slug: [{id, name, slug}]} for the given category."""
-    path = _REF_DIR / f"{category}_models.json"
-    if not path.exists():
-        return {}
-    with open(path, encoding="utf-8") as f:
-        return json.load(f)
-
-
-def lookup_make(category: str, slug: str) -> Optional[Tuple[str, str]]:
-    """Return (name, id) for the given make slug, or None if not found."""
-    for make in _load_makes(category):
-        if make.get("slug") == slug:
-            return make["name"], make["id"]
-    return None
-
-
-def lookup_model(category: str, make_slug: str, model_slug: str) -> Optional[Tuple[str, str]]:
-    """Return (name, id) for the given model slug under a make, or None if not found."""
-    models = _load_models(category)
-    for model in models.get(make_slug, []):
-        if model.get("slug") == model_slug:
-            return model["name"], model["id"]
-    return None
 
 
 # ---------------------------------------------------------------------------
@@ -557,7 +525,7 @@ def list_active_makes(category: str, eagle: EagleClient) -> None:
     makes = _load_makes(category)
     if not makes:
         print(f"No reference data for category {category!r}. "
-              f"Expected {_REF_DIR / f'{category}_makes.json'}.")
+              f"Expected {reference.makes_path(category)}.")
         return
 
     print(f"\nProbing {len(makes)} {category} makes via EagleSearch "

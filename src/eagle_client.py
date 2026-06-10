@@ -12,8 +12,9 @@ Empirical caps (probed):
     - from >= 10_000 returns empty data (depth cap matches HTML 250-page limit)
 
 Public API:
-    EagleClient.fetch_page(category, offset, limit) -> (list[dict], meta_dict)
-    EagleClient.fetch_all(category, max_ads=None)   -> iterator of page lists
+    EagleClient.fetch_page(category, offset, limit)  -> (list[dict], meta_dict)
+    EagleClient.fetch_all(category, max_ads=None)    -> iterator of page lists
+    EagleClient.fetch_make_resilient(category, make_id) -> (list[dict], ok)
 
 Each ad dict is already normalized: API field names mapped to DB column names
 via _normalize_ad(). Fields not in the schema are dropped.
@@ -462,3 +463,67 @@ class EagleClient:
             yield ads
             yielded_count += len(ads)
             offset += len(ads)
+
+    def fetch_make_resilient(
+        self,
+        category: str,
+        make_id: str,
+        *,
+        label: str = "",
+        page_sleep: float = 1.5,
+        max_page_retries: int = 4,
+    ) -> Tuple[List[Dict[str, Any]], bool]:
+        """Fetch every active ad for one make, surviving transient blocks.
+
+        Returns ``(ads, ok)`` — ``ads`` is the flat list of normalized ad dicts
+        across all pages; ``ok`` is False when a page exhausted all retries, in
+        which case the make is INCOMPLETE and must not be trusted as complete
+        (e.g. its missing listings must not be marked sold/unavailable).
+
+        Each page goes through ``fetch_page`` (request throttle + network/429
+        retry baked in) wrapped in an outer exponential-backoff retry on
+        ``EagleAPIError``, so a transient empty / non-JSON body (a Cloudflare
+        interstitial served under sustained load — the failure mode that once
+        silently zeroed out the back half of a make sweep) no longer aborts the
+        make on the first hiccup. ``EagleAuthError`` (403 block) subclasses
+        ``EagleAPIError``, so temporary blocks retry with backoff too.
+
+        ``label`` is only used to prefix log lines (e.g. the make name).
+        """
+        ads_out: List[Dict[str, Any]] = []
+        offset = 0
+        ok = True
+
+        while offset < MAX_OFFSET:
+            ads: Optional[List[Dict[str, Any]]] = None
+            for attempt in range(max_page_retries + 1):
+                try:
+                    ads, _meta = self.fetch_page(
+                        category, offset=offset, limit=MAX_LIMIT, make_id=make_id,
+                    )
+                    break
+                except EagleAPIError as e:
+                    if attempt < max_page_retries:
+                        wait = page_sleep * (2 ** attempt)
+                        logging.warning(
+                            f"  [{label}] offset={offset} {e} — "
+                            f"retry {attempt + 1}/{max_page_retries} in {wait:.1f}s"
+                        )
+                        time.sleep(wait)
+                    else:
+                        logging.error(
+                            f"  [{label}] offset={offset} failed after "
+                            f"{max_page_retries} retries: {e} — make incomplete"
+                        )
+
+            if ads is None:
+                ok = False  # exhausted retries — do not treat remaining as empty
+                break
+            if not ads:
+                break
+
+            ads_out.extend(ads)
+            offset += len(ads)
+            time.sleep(page_sleep)
+
+        return ads_out, ok
