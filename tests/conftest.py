@@ -28,4 +28,5 @@ def _load(filename: str, alias: str) -> None:
 
 
 _load("1_scrape.py", "scraper")
+_load("2_migrate.py", "migrate")
 _load("3_clean.py", "clean")
