@@ -50,7 +50,7 @@ def connect(
     category: str = "cars",
     *,
     path: Optional[Union[str, os.PathLike]] = None,
-    init: bool = True,
+    init: bool = False,
 ) -> sqlite3.Connection:
     """Open a tuned connection to one of the CarData SQLite databases.
 
@@ -61,10 +61,20 @@ def connect(
       `with conn:` blocks for explicit transactions.
 
     Pass `path=...` to override the default location (useful for tests).
-    Pass `init=False` to skip applying the schema (e.g. read-only scripts that
-    must not modify the file).
+
+    By default the database file must already exist — a missing file raises
+    FileNotFoundError instead of silently creating an empty DB (a typo'd path
+    or wrong working directory should fail loudly, not produce a phantom DB).
+    Pass `init=True` to create the file and apply schema_<category>.sql —
+    only DB-creating entry points (2_migrate, run_migrations) should do this.
     """
     db_file = Path(path) if path is not None else Path(db_path_for(category))
+    if not init and not db_file.exists():
+        raise FileNotFoundError(
+            f"Database not found: {db_file}. Create it first via "
+            f"`python migrations/run_migrations.py --category {category}` "
+            f"or pass init=True."
+        )
     db_file.parent.mkdir(parents=True, exist_ok=True)
 
     conn = sqlite3.connect(db_file, timeout=30, isolation_level=None)

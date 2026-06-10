@@ -27,13 +27,17 @@ Cars only for v1.
 import argparse
 import json
 import re
-import sqlite3
 import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 import pandas as pd
+
+_HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(_HERE))
+
+from db import connect  # noqa: E402
 
 _ROOT = Path(__file__).resolve().parent.parent
 OUT_DIR = _ROOT / "mockups"
@@ -79,7 +83,7 @@ def _load_from_db(db_path: Path) -> Optional[pd.DataFrame]:
     """Load fresh-schema rows from SQLite. Returns None if not enough rows."""
     if not db_path.exists():
         return None
-    con = sqlite3.connect(str(db_path))
+    con = connect("cars", path=db_path)
     try:
         # Filter to rows where the EagleSearch pipeline has populated the
         # core categorical fields. Legacy xlsx rows have these as NULL and

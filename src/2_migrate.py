@@ -262,7 +262,8 @@ def migrate_csv(category: str, *, dry_run: bool, mode: str = "upsert") -> None:
     # were genuinely new or refreshed in place.
     other_label = "updated" if mode == "upsert" else "skipped"
 
-    conn = connect(category)
+    # init=True: migrating CSVs into a fresh DB is a legitimate creation path
+    conn = connect(category, init=True)
     total_attempted = total_inserted = total_archived = 0
     run_start = datetime.now()
 
@@ -335,7 +336,7 @@ def migrate_xlsx(xlsx_path: Path, category: str, *, dry_run: bool, mode: str = "
     prepared = prepare_dataframe(slice_df, category, source_label=xlsx_path.name)
     logging.info(f"[{category}] {len(prepared)} rows ready → {db_path_for(category)}")
 
-    conn = connect(category)
+    conn = connect(category, init=True)
     attempted, inserted = _insert_rows(conn, prepared, dry_run=dry_run, mode=mode)
     other = attempted - inserted
     other_label = "updated" if mode == "upsert" else "skipped"
