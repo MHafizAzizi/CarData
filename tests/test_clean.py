@@ -391,12 +391,13 @@ class TestLoadModelTypes:
         )
         assert load_model_types() == {}
 
-    def test_loads_casefolded_keys(self, monkeypatch, tmp_path):
+    def test_loads_casefolded_keys_and_derives_group(self, monkeypatch, tmp_path):
         import reference
         p = tmp_path / "types.csv"
         p.write_text(
-            "motorcycle_make,motorcycle_model,motorcycle_type,type_group\n"
-            "Yamaha,135Lc,Underbone / Moped,Underbone / Moped\n",
+            "motorcycle_make,motorcycle_model,motorcycle_type\n"
+            "Yamaha,135Lc,Underbone / Moped\n"
+            "Bmw,S 1000 Rr,Sport / Superbike\n",
             encoding="utf-8",
         )
         monkeypatch.setattr(reference, "model_types_path", lambda: p)
@@ -404,3 +405,17 @@ class TestLoadModelTypes:
         assert mapping[("yamaha", "135lc")] == (
             "Underbone / Moped", "Underbone / Moped"
         )
+        # group derived from TYPE_TO_GROUP, not stored in the file
+        assert mapping[("bmw", "s 1000 rr")] == ("Sport / Superbike", "Sport")
+
+    def test_unknown_type_raises(self, monkeypatch, tmp_path):
+        import reference
+        p = tmp_path / "types.csv"
+        p.write_text(
+            "motorcycle_make,motorcycle_model,motorcycle_type\n"
+            "Yamaha,135Lc,Hoverbike\n",
+            encoding="utf-8",
+        )
+        monkeypatch.setattr(reference, "model_types_path", lambda: p)
+        with __import__("pytest").raises(ValueError, match="Hoverbike"):
+            load_model_types()
