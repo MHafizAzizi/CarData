@@ -9,6 +9,11 @@ Usage — variant enrichment (cars only, requires cars_variants.json):
     python src/3_clean.py --category cars --enrich-variants
     python src/3_clean.py --category cars --enrich-variants --dry-run
 
+Usage — type enrichment (motorcycles only, requires
+data/reference/motorcycles_model_types.csv):
+    python src/3_clean.py --category motorcycles --enrich-types
+    python src/3_clean.py --category motorcycles --enrich-types --dry-run
+
 Usage — legacy xlsx mode:
     python src/3_clean.py --input raw.xlsx --output clean.xlsx
 """
@@ -373,6 +378,75 @@ def apply_variant_hints(
 
 
 # ---------------------------------------------------------------------------
+# Motorcycle type enrichment (motorcycles only)
+# ---------------------------------------------------------------------------
+
+
+def apply_type_hints(conn, *, dry_run: bool = False) -> Dict:
+    """Populate motorcycle_type / type_group for rows where they are NULL,
+    using the curated mapping in data/reference/motorcycles_model_types.csv.
+
+    Unmapped (make, model) pairs are reported with listing counts so new
+    models from future scrapes surface as mapping-CSV to-dos.
+
+    Returns stats dict: {candidates, filled, unmapped_pairs}.
+    """
+    sys.path.insert(0, str(_ROOT / "src"))
+    from reference import load_model_types, model_types_path  # noqa: PLC0415
+
+    mapping = load_model_types()
+    if not mapping:
+        raise FileNotFoundError(
+            f"{model_types_path()} not found or empty — the motorcycle type "
+            "mapping is required for --enrich-types."
+        )
+
+    rows = conn.execute(
+        "SELECT ads_id, motorcycle_make, motorcycle_model "
+        "FROM listings "
+        "WHERE motorcycle_type IS NULL"
+    ).fetchall()
+
+    candidates = len(rows)
+    filled = 0
+    updates: List[Tuple] = []
+    unmapped: Dict[Tuple[str, str], int] = {}
+
+    for ads_id, make, model in rows:
+        key = ((make or "").casefold().strip(), (model or "").casefold().strip())
+        hit = mapping.get(key)
+        if hit:
+            updates.append((hit[0], hit[1], ads_id))
+            filled += 1
+        else:
+            unmapped[(make, model)] = unmapped.get((make, model), 0) + 1
+
+    print(
+        f"  Type hints: {candidates} candidates, {filled} filled, "
+        f"{len(unmapped)} unmapped pair(s)"
+    )
+    if unmapped:
+        print("  Unmapped (make, model) pairs — add to "
+              "data/reference/motorcycles_model_types.csv:")
+        for (make, model), n in sorted(unmapped.items(), key=lambda x: -x[1]):
+            print(f"    {make} | {model} ({n} listing(s))")
+
+    if not dry_run and updates:
+        with conn:
+            conn.executemany(
+                "UPDATE listings SET motorcycle_type = ?, type_group = ? "
+                "WHERE ads_id = ?",
+                updates,
+            )
+
+    return {
+        "candidates": candidates,
+        "filled": filled,
+        "unmapped_pairs": len(unmapped),
+    }
+
+
+# ---------------------------------------------------------------------------
 # DB clean-in-place
 # ---------------------------------------------------------------------------
 
@@ -479,6 +553,12 @@ def _parse_args() -> argparse.Namespace:
         help="Preview what would change; do not write anything",
     )
     parser.add_argument(
+        "--enrich-types",
+        action="store_true",
+        help="Populate motorcycle_type/type_group for NULL rows using "
+             "data/reference/motorcycles_model_types.csv (motorcycles only).",
+    )
+    parser.add_argument(
         "--enrich-variants",
         action="store_true",
         help="Populate the variant column for NULL rows using cars_variants.json "
@@ -524,6 +604,16 @@ def main() -> None:
                 from db import connect  # noqa: PLC0415
                 conn = connect("cars")
                 apply_variant_hints(conn, dry_run=args.dry_run)
+                conn.close()
+
+        if args.enrich_types:
+            if args.category != "motorcycles":
+                print("[enrich-types] Only supported for --category motorcycles; skipping.")
+            else:
+                sys.path.insert(0, str(_ROOT / "src"))
+                from db import connect  # noqa: PLC0415
+                conn = connect("motorcycles")
+                apply_type_hints(conn, dry_run=args.dry_run)
                 conn.close()
         return
 

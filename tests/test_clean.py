@@ -280,3 +280,127 @@ class TestCleanPipelineMotorcycles:
         # Highest ads_id kept
         assert 99 in result["ads_id"].values
         assert 1 not in result["ads_id"].values
+
+
+# ---------------------------------------------------------------------------
+# apply_type_hints / load_model_types (motorcycle type enrichment)
+# ---------------------------------------------------------------------------
+
+import sqlite3
+
+from clean import apply_type_hints
+from reference import load_model_types
+
+
+def _moto_db_with_types():
+    """In-memory motorcycles DB at schema v7 (type cols present)."""
+    conn = sqlite3.connect(":memory:")
+    conn.execute(
+        """CREATE TABLE listings (
+            ads_id INTEGER PRIMARY KEY,
+            motorcycle_make TEXT,
+            motorcycle_model TEXT,
+            motorcycle_type TEXT,
+            type_group TEXT
+        )"""
+    )
+    conn.executemany(
+        "INSERT INTO listings (ads_id, motorcycle_make, motorcycle_model) "
+        "VALUES (?, ?, ?)",
+        [
+            (1, "Yamaha", "135Lc"),
+            (2, "yamaha", "135lc"),         # case-insensitive match
+            (3, "Bmw", "S 1000 Rr"),
+            (4, "Newbrand", "Mystery 900"),  # not in mapping
+        ],
+    )
+    return conn
+
+
+class TestApplyTypeHints:
+    def test_fills_matches_and_reports_unmapped(self, monkeypatch, capsys):
+        import clean as clean_mod
+        mapping = {
+            ("yamaha", "135lc"): ("Underbone / Moped", "Underbone / Moped"),
+            ("bmw", "s 1000 rr"): ("Sport / Superbike", "Sport"),
+        }
+        import reference
+        monkeypatch.setattr(reference, "load_model_types", lambda: mapping)
+
+        conn = _moto_db_with_types()
+        stats = apply_type_hints(conn)
+
+        assert stats == {"candidates": 4, "filled": 3, "unmapped_pairs": 1}
+        rows = dict(
+            (r[0], (r[1], r[2]))
+            for r in conn.execute(
+                "SELECT ads_id, motorcycle_type, type_group FROM listings"
+            )
+        )
+        assert rows[1] == ("Underbone / Moped", "Underbone / Moped")
+        assert rows[2] == ("Underbone / Moped", "Underbone / Moped")
+        assert rows[3] == ("Sport / Superbike", "Sport")
+        assert rows[4] == (None, None)
+        out = capsys.readouterr().out
+        assert "Newbrand | Mystery 900" in out
+
+    def test_dry_run_writes_nothing(self, monkeypatch):
+        import reference
+        monkeypatch.setattr(
+            reference, "load_model_types",
+            lambda: {("yamaha", "135lc"): ("Underbone / Moped", "Underbone / Moped")},
+        )
+        conn = _moto_db_with_types()
+        apply_type_hints(conn, dry_run=True)
+        filled = conn.execute(
+            "SELECT COUNT(*) FROM listings WHERE motorcycle_type IS NOT NULL"
+        ).fetchone()[0]
+        assert filled == 0
+
+    def test_missing_mapping_raises(self, monkeypatch):
+        import reference
+        monkeypatch.setattr(reference, "load_model_types", lambda: {})
+        conn = _moto_db_with_types()
+        with __import__("pytest").raises(FileNotFoundError):
+            apply_type_hints(conn)
+
+    def test_skips_already_typed_rows(self, monkeypatch):
+        import reference
+        monkeypatch.setattr(
+            reference, "load_model_types",
+            lambda: {("yamaha", "135lc"): ("Underbone / Moped", "Underbone / Moped")},
+        )
+        conn = _moto_db_with_types()
+        conn.execute(
+            "UPDATE listings SET motorcycle_type = 'X', type_group = 'Y' "
+            "WHERE ads_id = 1"
+        )
+        stats = apply_type_hints(conn)
+        assert stats["candidates"] == 3  # row 1 excluded (already typed)
+        row = conn.execute(
+            "SELECT motorcycle_type FROM listings WHERE ads_id = 1"
+        ).fetchone()
+        assert row[0] == "X"  # untouched
+
+
+class TestLoadModelTypes:
+    def test_missing_file_returns_empty(self, monkeypatch, tmp_path):
+        import reference
+        monkeypatch.setattr(
+            reference, "model_types_path", lambda: tmp_path / "nope.csv"
+        )
+        assert load_model_types() == {}
+
+    def test_loads_casefolded_keys(self, monkeypatch, tmp_path):
+        import reference
+        p = tmp_path / "types.csv"
+        p.write_text(
+            "motorcycle_make,motorcycle_model,motorcycle_type,type_group\n"
+            "Yamaha,135Lc,Underbone / Moped,Underbone / Moped\n",
+            encoding="utf-8",
+        )
+        monkeypatch.setattr(reference, "model_types_path", lambda: p)
+        mapping = load_model_types()
+        assert mapping[("yamaha", "135lc")] == (
+            "Underbone / Moped", "Underbone / Moped"
+        )

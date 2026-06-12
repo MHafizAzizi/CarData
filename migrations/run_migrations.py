@@ -37,6 +37,12 @@ year_verified (the API returns none of these for category=1040) plus the two
 detail_* Phase-2 remnants. ad_expiry is intentionally KEPT (real data for
 motorcycles; 0% on cars is a capture bug, not dead weight).
 
+v6 -> v7: Adds motorcycle_type and type_group to the MOTORCYCLES listings
+table (cars are a version-bump no-op — they already get car_type from the
+API). Values are filled by 3_clean.py --enrich-types from the curated
+mapping at data/reference/motorcycles_model_types.csv; the API has no
+bike-type field for category=1040.
+
 Usage:
     python migrations/run_migrations.py                       # interactive prompt
     python migrations/run_migrations.py --category cars
@@ -73,7 +79,7 @@ from db import CATEGORIES, connect, schema_version, set_meta  # noqa: E402
 # Migration spec — v1 -> v2
 # ---------------------------------------------------------------------------
 
-TARGET_VERSION = 6
+TARGET_VERSION = 7
 
 # (column_name, sqlite_type) — applied to BOTH cars and motorcycles
 SHARED_NEW_COLS: List[Tuple[str, str]] = [
@@ -135,6 +141,14 @@ def _dropped_cols_v6(category: str) -> List[str]:
         DROPPED_COLS_V6_CARS if category == "cars"
         else DROPPED_COLS_V6_MOTORCYCLES
     )
+
+
+# v6 -> v7: motorcycle type columns (motorcycles only; cars version-bump no-op).
+# Filled by 3_clean.py --enrich-types from data/reference/motorcycles_model_types.csv.
+V7_MOTORCYCLE_COLS: List[Tuple[str, str]] = [
+    ("motorcycle_type", "TEXT"),
+    ("type_group",      "TEXT"),
+]
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -442,6 +456,42 @@ def _migrate_v5_to_v6(
     )
 
 
+def _migrate_v6_to_v7(
+    conn: sqlite3.Connection, category: str, *, dry_run: bool
+) -> None:
+    """Add motorcycle_type / type_group (motorcycles only; cars bump version)."""
+    cols = V7_MOTORCYCLE_COLS if category == "motorcycles" else []
+    logging.info(
+        f"[{category}] step v6 -> v7 ({len(cols)} column(s) to evaluate)"
+    )
+
+    added = 0
+    with conn:
+        for col_name, col_type in cols:
+            if _safe_add_column(conn, "listings", col_name, col_type, dry_run=dry_run):
+                added += 1
+
+        if dry_run:
+            logging.info(
+                f"[{category}] DRY-RUN v6->v7: would add {added} column(s)"
+            )
+            return
+
+        conn.execute(
+            "INSERT INTO meta (key, value) VALUES ('schema_version', '7') "
+            "ON CONFLICT(key) DO UPDATE SET value = excluded.value"
+        )
+
+    logging.info(
+        f"[{category}] v6 -> v7 complete — added {added} column(s)"
+    )
+    set_meta(
+        conn,
+        "last_migration_v7_at",
+        __import__("datetime").datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+    )
+
+
 def migrate(category: str, *, dry_run: bool = False) -> None:
     """Run all pending migrations on the given category's DB."""
     if category not in CATEGORIES:
@@ -476,6 +526,8 @@ def migrate(category: str, *, dry_run: bool = False) -> None:
         _migrate_v4_to_v5(conn, category, dry_run=dry_run)
     if current < 6:
         _migrate_v5_to_v6(conn, category, dry_run=dry_run)
+    if current < 7:
+        _migrate_v6_to_v7(conn, category, dry_run=dry_run)
 
     logging.info(
         f"[{category}] migration complete; "
