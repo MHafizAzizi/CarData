@@ -3,6 +3,9 @@ logs/
 checkpoint_*.csv
 *.csv
 
+# Curated reference data — exception to the global *.csv ignore
+!data/reference/motorcycles_model_types.csv
+
 # Raw scrape output — ignore CSV files but track the category subfolders
 data/raw/*
 !data/raw/cars/

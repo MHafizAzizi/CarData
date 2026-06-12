@@ -8,8 +8,13 @@ Files (produced by scrape_makes_models.py):
     data/reference/cars_models.json         {make_slug: [{id, name, slug}, ...]}
     data/reference/motorcycles_makes.json
     data/reference/motorcycles_models.json
+
+Curated (hand-maintained, not scraped):
+    data/reference/motorcycles_model_types.csv
+        (motorcycle_make, motorcycle_model) -> motorcycle_type, type_group
 """
 
+import csv
 import json
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
@@ -69,3 +74,30 @@ def lookup_model(category: str, make_slug: str, model_slug: str) -> Optional[Tup
         if model.get("slug") == model_slug:
             return model["name"], model["id"]
     return None
+
+
+def model_types_path() -> Path:
+    return REFERENCE_DIR / "motorcycles_model_types.csv"
+
+
+def load_model_types() -> Dict[Tuple[str, str], Tuple[str, str]]:
+    """Load the motorcycle type mapping keyed by casefolded (make, model).
+
+    Returns {} when the file is missing. Values are
+    (motorcycle_type, type_group), e.g. ('Sport / Superbike', 'Sport').
+    """
+    path = model_types_path()
+    if not path.exists():
+        return {}
+    mapping: Dict[Tuple[str, str], Tuple[str, str]] = {}
+    with open(path, encoding="utf-8-sig", newline="") as f:
+        for row in csv.DictReader(f):
+            key = (
+                (row.get("motorcycle_make") or "").casefold().strip(),
+                (row.get("motorcycle_model") or "").casefold().strip(),
+            )
+            mapping[key] = (
+                (row.get("motorcycle_type") or "").strip(),
+                (row.get("type_group") or "").strip(),
+            )
+    return mapping

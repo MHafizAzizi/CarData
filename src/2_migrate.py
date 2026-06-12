@@ -80,6 +80,16 @@ CAR_ONLY_COLUMNS: List[str] = [
 
 MOTORCYCLE_ONLY_COLUMNS: List[str] = ["motorcycle_make", "motorcycle_model"]
 
+# Columns that exist in the schema but are NEVER produced by the scraper —
+# they are filled by 3_clean.py enrichment steps and must stay out of
+# CATEGORY_COLUMNS so a re-scrape upsert can never clobber them.
+ENRICHMENT_ONLY_COLUMNS: Dict[str, Set[str]] = {
+    "cars": set(),
+    # motorcycle_type/type_group (schema v7) come from
+    # data/reference/motorcycles_model_types.csv via --enrich-types
+    "motorcycles": {"motorcycle_type", "type_group"},
+}
+
 CATEGORY_COLUMNS: Dict[str, Set[str]] = {
     "cars": set(SHARED_COLUMNS) | set(CAR_ONLY_COLUMNS),
     "motorcycles": set(SHARED_COLUMNS) | set(MOTORCYCLE_ONLY_COLUMNS),

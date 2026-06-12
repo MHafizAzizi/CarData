@@ -24,6 +24,10 @@ CREATE TABLE IF NOT EXISTS listings (
     -- motorcycle-specific
     motorcycle_make     TEXT,
     motorcycle_model    TEXT,
+    -- bike type, enriched by 3_clean.py --enrich-types from the curated
+    -- mapping at data/reference/motorcycles_model_types.csv (no API source)
+    motorcycle_type     TEXT,      -- granular: Sport / Superbike, Scooter, ...
+    type_group          TEXT,      -- coarse ML grouping: Sport, Scooter, ...
     -- availability tracking (shared with cars)
     first_seen_at       TEXT NOT NULL,
     last_seen_at        TEXT,

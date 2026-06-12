@@ -16,7 +16,12 @@ _ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_ROOT / "src"))
 
 # Registered by conftest.py (2_migrate.py is not an importable module name)
-from migrate import CATEGORY_COLUMNS, _insert_rows, prepare_dataframe  # noqa: E402
+from migrate import (  # noqa: E402
+    CATEGORY_COLUMNS,
+    ENRICHMENT_ONLY_COLUMNS,
+    _insert_rows,
+    prepare_dataframe,
+)
 
 
 @pytest.fixture
@@ -79,7 +84,14 @@ class TestColumnSetsMatchSchema:
         self, tmp_path, monkeypatch, category
     ):
         schema_cols = _fully_migrated_schema_cols(tmp_path, monkeypatch, category)
-        missing = schema_cols - CATEGORY_COLUMNS[category]
+        # Enrichment-only columns (filled by 3_clean.py, never scraped) are
+        # deliberately excluded from CATEGORY_COLUMNS so upserts can't clobber
+        # them — they are not drift.
+        missing = (
+            schema_cols
+            - CATEGORY_COLUMNS[category]
+            - ENRICHMENT_ONLY_COLUMNS[category]
+        )
         assert not missing, (
             f"[{category}] schema columns not in 2_migrate.CATEGORY_COLUMNS — "
             f"these would be silently dropped on every migrate: {sorted(missing)}"
