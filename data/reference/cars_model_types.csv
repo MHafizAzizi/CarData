@@ -1,0 +1,1066 @@
+car_make,car_model,vehicle_type,classification_method,evidence,source_url,verification_status
+Alfa Romeo,145,Hatchback,llm-knowledge,"3/5-door hatchback, not a sedan.",,LLM-reviewed
+Alfa Romeo,147,Hatchback,llm-knowledge,3/5-door hatchback.,,LLM-reviewed
+Alfa Romeo,155,Sedan,make/model heuristic,LLM pass concurs; DB majority 4 Wheels:1.,,LLM-reviewed
+Alfa Romeo,156,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:6.,,LLM-reviewed
+Alfa Romeo,159,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:1.,,LLM-reviewed
+Alfa Romeo,166,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:1.,,LLM-reviewed
+Alfa Romeo,Alfasud,Sedan,make/model heuristic,LLM pass concurs; DB majority Hatchback:1.,,LLM-reviewed
+Alfa Romeo,Giulia,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:6.,,LLM-reviewed
+Alfa Romeo,Gt,Coupe,llm-knowledge,Alfa GT (937) 2-door coupe.,,LLM-reviewed
+Alfa Romeo,Stelvio,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:3.,,LLM-reviewed
+Alpine,A110,Sports car,llm-knowledge,Mid-engine two-seat sports car.,,LLM-reviewed
+Aston Martin,Db11,Coupe,llm-knowledge,2-door grand tourer.,,LLM-reviewed
+Aston Martin,Db12,Coupe,llm-knowledge,2-door grand tourer.,,LLM-reviewed
+Aston Martin,Db9,Coupe,llm-knowledge,2-door grand tourer.,,LLM-reviewed
+Aston Martin,Dbs,Sports car,llm-knowledge,Flagship performance GT.,,LLM-reviewed
+Aston Martin,Dbx,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:4.,,LLM-reviewed
+Aston Martin,Rapide,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:1.,,LLM-reviewed
+Aston Martin,Vantage,Sports car,llm-knowledge,Two-door sports car.,,LLM-reviewed
+Audi,A1,Hatchback,make/model heuristic,LLM pass concurs; DB majority Coupe:3.,,LLM-reviewed
+Audi,A3,Sedan / Hatchback,make/model heuristic,LLM pass concurs; DB majority Sedan:30.,,LLM-reviewed
+Audi,A4,Sedan,llm-knowledge,Executive saloon; MY listings overwhelmingly sedan.,,LLM-reviewed
+Audi,A5,Sedan,llm-knowledge,Sportback fastback dominates MY; coupe variant exists.,,LLM-reviewed
+Audi,A6,Sedan,llm-knowledge,Executive saloon.,,LLM-reviewed
+Audi,A7,Sedan,llm-knowledge,"Sportback fastback, 4-door sedan profile.",,LLM-reviewed
+Audi,A8,Sedan,llm-knowledge,Luxury saloon.,,LLM-reviewed
+Audi,A8 L,Sedan,llm-knowledge,Long-wheelbase luxury saloon.,,LLM-reviewed
+Audi,E-Tron,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Sedan:3.,,LLM-reviewed
+Audi,Q2,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Hatchback:1.,,LLM-reviewed
+Audi,Q3,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:37.,,LLM-reviewed
+Audi,Q5,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:77.,,LLM-reviewed
+Audi,Q7,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:60.,,LLM-reviewed
+Audi,Q8,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:33.,,LLM-reviewed
+Audi,R8,Sports car,llm-knowledge,Mid-engine supercar.,,LLM-reviewed
+Audi,Rs Q3,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:12.,,LLM-reviewed
+Audi,Rs Q8,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:6.,,LLM-reviewed
+Audi,Rs3,Sedan / Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:22.,,LLM-reviewed
+Audi,Rs4,Wagon / Estate,llm-knowledge,Modern RS4 sold as Avant estate only.,,LLM-reviewed
+Audi,Rs5,Coupe,llm-knowledge,RS5 coupe (Sportback variant exists).,,LLM-reviewed
+Audi,Rs6,Wagon / Estate,llm-knowledge,RS6 Avant estate.,,LLM-reviewed
+Audi,S3,Sedan / Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:2.,,LLM-reviewed
+Audi,S4,Sedan,llm-knowledge,Performance saloon.,,LLM-reviewed
+Audi,S5,Sedan,llm-knowledge,Sportback dominates MY; coupe variant exists.,,LLM-reviewed
+Audi,S6,Sedan,llm-knowledge,Performance saloon.,,LLM-reviewed
+Audi,S7,Sedan,llm-knowledge,Sportback fastback.,,LLM-reviewed
+Audi,Sq5,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:4.,,LLM-reviewed
+Audi,Tt,Sports car,llm-knowledge,Compact sports coupe/roadster.,,LLM-reviewed
+Audi,Ttrs,Sports car,llm-knowledge,Compact sports coupe.,,LLM-reviewed
+Audi,Tts,Sports car,llm-knowledge,Compact sports coupe.,,LLM-reviewed
+Austin,7,Unknown / Needs Web Check,fallback heuristic,Model label not identifiable; needs web check.,,Needs source URL
+Austin,A50,Sedan,llm-knowledge,Cambridge saloon.,,LLM-reviewed
+Austin,Healey Sprite,Convertible / Roadster,llm-knowledge,Classic open two-seater.,,LLM-reviewed
+Austin,Mini,Hatchback,make/model heuristic,LLM pass concurs; DB majority Coupe:5.,,LLM-reviewed
+Austin,Morris,Unknown / Needs Web Check,fallback heuristic,Model label not identifiable; needs web check.,,Needs source URL
+Baic,Bj40,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Mpvs:1.,,LLM-reviewed
+Bentley,Bentayga,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:36.,,LLM-reviewed
+Bentley,Continental Gt,Coupe,llm-knowledge,2-door grand tourer.,,LLM-reviewed
+Bentley,Continental Gt Speed,Coupe,llm-knowledge,2-door grand tourer.,,LLM-reviewed
+Bentley,Continental Gtc,Convertible / Roadster,llm-knowledge,GTC = convertible Continental.,,LLM-reviewed
+Bentley,Continental Supersports,Sports car,llm-knowledge,Performance flagship coupe.,,LLM-reviewed
+Bentley,Flying Spur,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:29.,,LLM-reviewed
+Bentley,Mulsanne,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:3.,,LLM-reviewed
+Bentley,Turbo R Auto,Sedan,llm-knowledge,Turbo R performance saloon.,,LLM-reviewed
+Bmw,1 M,Coupe,llm-knowledge,1M Coupe (E82).,,LLM-reviewed
+Bmw,116I,Hatchback,llm-knowledge,1 Series hatchback; DB majority Hatchback.,,LLM-reviewed
+Bmw,118I,Hatchback,llm-knowledge,1 Series hatchback; DB majority Hatchback.,,LLM-reviewed
+Bmw,120I,Hatchback,llm-knowledge,1 Series hatchback; DB majority Hatchback.,,LLM-reviewed
+Bmw,130I,Hatchback,llm-knowledge,1 Series hatchback.,,LLM-reviewed
+Bmw,135I,Hatchback,llm-knowledge,MY listings mostly hatch (coupe variant exists).,,LLM-reviewed
+Bmw,218I Active Tourer,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Sedan:118.,,LLM-reviewed
+Bmw,220I,MPV / Minivan,llm-knowledge,MY 220i sold as Active/Gran Tourer; DB majority MPV.,,LLM-reviewed
+Bmw,235I,Coupe,llm-knowledge,M235i 2 Series coupe.,,LLM-reviewed
+Bmw,316I,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:68.,,LLM-reviewed
+Bmw,318Ci,Coupe,llm-knowledge,Ci = E46 coupe.,,LLM-reviewed
+Bmw,318I,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:167.,,LLM-reviewed
+Bmw,320Ci,Coupe,llm-knowledge,Ci = E46 coupe.,,LLM-reviewed
+Bmw,320D,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:26.,,LLM-reviewed
+Bmw,320D Gt,Sedan,llm-knowledge,"3 Series GT liftback, sedan profile.",,LLM-reviewed
+Bmw,320I,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:578.,,LLM-reviewed
+Bmw,323I,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:17.,,LLM-reviewed
+Bmw,325Ci,Coupe,llm-knowledge,Ci = E46 coupe.,,LLM-reviewed
+Bmw,325I,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:31.,,LLM-reviewed
+Bmw,328Ci,Coupe,llm-knowledge,Ci = E46 coupe.,,LLM-reviewed
+Bmw,328I,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:107.,,LLM-reviewed
+Bmw,328I Gt,Sedan,llm-knowledge,"3 Series GT liftback, sedan profile.",,LLM-reviewed
+Bmw,330Ci,Coupe,llm-knowledge,Ci = E46 coupe.,,LLM-reviewed
+Bmw,330E,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:191.,,LLM-reviewed
+Bmw,330I,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:252.,,LLM-reviewed
+Bmw,330Li,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:32.,,LLM-reviewed
+Bmw,335Ci,Coupe,llm-knowledge,Ci = E92 coupe.,,LLM-reviewed
+Bmw,335I,Sedan,make/model heuristic,LLM pass concurs; DB majority Coupe:3.,,LLM-reviewed
+Bmw,340I,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:34.,,LLM-reviewed
+Bmw,420I,Coupe,llm-knowledge,4 Series coupe (Gran Coupe/convertible variants exist).,,LLM-reviewed
+Bmw,428I,Coupe,llm-knowledge,4 Series coupe.,,LLM-reviewed
+Bmw,428I Gran Coupe,Sedan,llm-knowledge,Gran Coupe = 4-door fastback.,,LLM-reviewed
+Bmw,430I,Coupe,llm-knowledge,4 Series coupe.,,LLM-reviewed
+Bmw,435I,Coupe,llm-knowledge,4 Series coupe.,,LLM-reviewed
+Bmw,440I,Coupe,llm-knowledge,4 Series coupe.,,LLM-reviewed
+Bmw,520D,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:29.,,LLM-reviewed
+Bmw,520I,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:165.,,LLM-reviewed
+Bmw,523I,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:94.,,LLM-reviewed
+Bmw,525I,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:65.,,LLM-reviewed
+Bmw,528I,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:133.,,LLM-reviewed
+Bmw,530D,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:1.,,LLM-reviewed
+Bmw,530E,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:204.,,LLM-reviewed
+Bmw,530I,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:283.,,LLM-reviewed
+Bmw,535I,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:11.,,LLM-reviewed
+Bmw,630Ci,Coupe,llm-knowledge,6 Series coupe.,,LLM-reviewed
+Bmw,630I,Sedan,llm-knowledge,MY 630i mostly 6 Series GT liftback.,,LLM-reviewed
+Bmw,640Ci,Coupe,llm-knowledge,6 Series coupe.,,LLM-reviewed
+Bmw,640I Gran Coupe,Sedan,llm-knowledge,Gran Coupe = 4-door fastback.,,LLM-reviewed
+Bmw,645Ci,Coupe,llm-knowledge,6 Series coupe.,,LLM-reviewed
+Bmw,650I,Coupe,llm-knowledge,6 Series coupe.,,LLM-reviewed
+Bmw,728I,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:4.,,LLM-reviewed
+Bmw,730Li,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:43.,,LLM-reviewed
+Bmw,735I,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:1.,,LLM-reviewed
+Bmw,740I,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:1.,,LLM-reviewed
+Bmw,740Le,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:96.,,LLM-reviewed
+Bmw,740Li,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:31.,,LLM-reviewed
+Bmw,750I,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:20.,,LLM-reviewed
+Bmw,750Li,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:1.,,LLM-reviewed
+Bmw,840I,Coupe,llm-knowledge,8 Series coupe (Gran Coupe variant exists); DB split 14/12.,,LLM-reviewed
+Bmw,Activehybrid 3,Sedan,llm-knowledge,3 Series hybrid saloon.,,LLM-reviewed
+Bmw,Alpina B3,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:1.,,LLM-reviewed
+Bmw,E3,Sedan,llm-knowledge,Classic large saloon.,,LLM-reviewed
+Bmw,I4,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:8.,,LLM-reviewed
+Bmw,I5,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:12.,,LLM-reviewed
+Bmw,I7,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:5.,,LLM-reviewed
+Bmw,I8,Sports car,llm-knowledge,Plug-in hybrid sports car.,,LLM-reviewed
+Bmw,Ix,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:46.,,LLM-reviewed
+Bmw,Ix1,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:7.,,LLM-reviewed
+Bmw,Ix2,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:5.,,LLM-reviewed
+Bmw,Ix3,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:7.,,LLM-reviewed
+Bmw,M140I,Hatchback,llm-knowledge,1 Series hot hatch.,,LLM-reviewed
+Bmw,M2,Coupe,llm-knowledge,2-door M coupe.,,LLM-reviewed
+Bmw,M3,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:33.,,LLM-reviewed
+Bmw,M4,Coupe,llm-knowledge,2-door M coupe.,,LLM-reviewed
+Bmw,M5,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:22.,,LLM-reviewed
+Bmw,M6,Coupe,llm-knowledge,2-door M coupe.,,LLM-reviewed
+Bmw,M6 Gran Coupe,Sedan,llm-knowledge,Gran Coupe = 4-door fastback.,,LLM-reviewed
+Bmw,M8,Coupe,llm-knowledge,2-door M coupe.,,LLM-reviewed
+Bmw,X1,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:335.,,LLM-reviewed
+Bmw,X2,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:8.,,LLM-reviewed
+Bmw,X3,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:252.,,LLM-reviewed
+Bmw,X4,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:149.,,LLM-reviewed
+Bmw,X4 M,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:9.,,LLM-reviewed
+Bmw,X5,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:407.,,LLM-reviewed
+Bmw,X6,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:74.,,LLM-reviewed
+Bmw,X6 M,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:17.,,LLM-reviewed
+Bmw,X7,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:26.,,LLM-reviewed
+Bmw,Z3,Convertible / Roadster,llm-knowledge,Roadster.,,LLM-reviewed
+Bmw,Z4,Convertible / Roadster,llm-knowledge,Roadster.,,LLM-reviewed
+Bmw,Z4 Coupe,Coupe,llm-knowledge,Fixed-roof Z4.,,LLM-reviewed
+Bmw,Z4 M,Convertible / Roadster,llm-knowledge,M roadster (coupe variant exists).,,LLM-reviewed
+Borgward,Bx5,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:1.,,LLM-reviewed
+Brabus,B50,Sedan,llm-knowledge,Brabus-tuned Mercedes saloon; DB all Sedan.,,LLM-reviewed
+Byd,Atto 2,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:6.,,LLM-reviewed
+Byd,Atto 3,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:22.,,LLM-reviewed
+Byd,Dolphin,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:5.,,LLM-reviewed
+Byd,M6,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:2.,,LLM-reviewed
+Byd,Seal,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:37.,,LLM-reviewed
+Byd,Seal 6,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:10.,,LLM-reviewed
+Byd,Sealion 7,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:8.,,LLM-reviewed
+Cadillac,Cts,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:1.,,LLM-reviewed
+Cadillac,Escalade,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:2.,,LLM-reviewed
+Cam,Kingo,Van / Commercial,make default heuristic,LLM pass concurs; DB majority Others:3.,,LLM-reviewed
+Cam,Placer-X,Van / Commercial,make default heuristic,LLM pass concurs; DB majority Others:20.,,LLM-reviewed
+Caterham,Seven,Sports car,llm-knowledge,Lightweight open sports car.,,LLM-reviewed
+Chana,Era Star,Van / Commercial,make default heuristic,LLM pass concurs; DB majority Others:3.,,LLM-reviewed
+Chery,Eastar,MPV / Minivan,llm-knowledge,Eastar sold in MY as an MPV; DB unanimous MPV.,,LLM-reviewed
+Chery,H5,Unknown / Needs Web Check,fallback heuristic,Model label not identifiable; needs web check.,,Needs source URL
+Chery,Maxime,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:4.,,LLM-reviewed
+Chery,O5,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:6.,,LLM-reviewed
+Chery,Omoda,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:87.,,LLM-reviewed
+Chery,Tiggo,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:83.,,LLM-reviewed
+Chery,Tiggo Cross,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:13.,,LLM-reviewed
+Chevrolet,Aveo,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:13.,,LLM-reviewed
+Chevrolet,Camaro,Sports car,llm-knowledge,Muscle/pony car.,,LLM-reviewed
+Chevrolet,Captiva,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:7.,,LLM-reviewed
+Chevrolet,Colorado,Pickup / Truck,make/model heuristic,LLM pass concurs; DB majority 4 Wheels:8.,,LLM-reviewed
+Chevrolet,Corvette,Sports car,llm-knowledge,Two-seat sports car.,,LLM-reviewed
+Chevrolet,Cruze,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:13.,,LLM-reviewed
+Chevrolet,Malibu,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:6.,,LLM-reviewed
+Chevrolet,Nabira,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:2.,,LLM-reviewed
+Chevrolet,Optra,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:6.,,LLM-reviewed
+Chevrolet,Optra 5,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:2.,,LLM-reviewed
+Chevrolet,Orlando,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:3.,,LLM-reviewed
+Chevrolet,Sonic,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:3.,,LLM-reviewed
+Chrysler,Crossfire,Sports car,llm-knowledge,Two-seat sports coupe.,,LLM-reviewed
+Chrysler,Pt Cruiser,Hatchback,llm-knowledge,Compact 5-door.,,LLM-reviewed
+Citroen,Berlingo,Van / Commercial,make/model heuristic,LLM pass concurs; DB majority Others:1.,,LLM-reviewed
+Citroen,C3,SUV / Crossover,llm-knowledge,MY C3 listings are C3 Aircross; DB majority SUV.,,LLM-reviewed
+Citroen,C4,Hatchback,llm-knowledge,C4 hatchback (MY listings may include Picasso MPVs).,,Needs source URL
+Citroen,C5,Sedan,llm-knowledge,Large saloon/liftback.,,LLM-reviewed
+Citroen,C8,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:1.,,LLM-reviewed
+Citroen,Ds3,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:1.,,LLM-reviewed
+Citroen,Ds4,Hatchback,llm-knowledge,Compact 5-door.,,LLM-reviewed
+Citroen,Ds5,Hatchback,llm-knowledge,5-door liftback; DB majority Hatchback.,,LLM-reviewed
+Citroen,Grand C4 Picasso,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:3.,,LLM-reviewed
+Citroen,Xsara,Hatchback,llm-knowledge,Compact hatch (wagon existed).,,LLM-reviewed
+Daihatsu,Ascent,Unknown / Needs Web Check,fallback heuristic,Model label not identifiable; needs web check.,,Needs source URL
+Daihatsu,Charade,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:9.,,LLM-reviewed
+Daihatsu,Copen,Convertible / Roadster,llm-knowledge,Kei roadster.,,LLM-reviewed
+Daihatsu,Feroza,SUV / Crossover,llm-knowledge,Compact 4x4.,,LLM-reviewed
+Daihatsu,Gran Max,Van / Commercial,make/model heuristic,LLM pass concurs; DB majority Others:42.,,LLM-reviewed
+Daihatsu,Hijet,Pickup / Truck,llm-knowledge,MY listings are kei trucks; DB all Pick-Up.,,LLM-reviewed
+Daihatsu,Move,Hatchback,make/model heuristic,LLM pass concurs; DB majority Mpvs:27.,,LLM-reviewed
+Daihatsu,Rocky,SUV / Crossover,llm-knowledge,Compact 4x4 / compact SUV.,,LLM-reviewed
+Daihatsu,Taft,SUV / Crossover,llm-knowledge,Compact 4x4; DB majority SUV.,,LLM-reviewed
+Daihatsu,Tanto,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:2.,,LLM-reviewed
+Daihatsu,Wake,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:1.,,LLM-reviewed
+Daimler,Limousine,Sedan,make default heuristic,LLM pass concurs; DB majority Sedan:1.,,LLM-reviewed
+Datsun,100A,Unknown / Needs Web Check,fallback heuristic,Model label not identifiable; needs web check.,,Needs source URL
+Datsun,1600 Sss,Sedan,llm-knowledge,Datsun 1600 SSS saloon.,,Needs source URL
+Datsun,240,Unknown / Needs Web Check,fallback heuristic,Model label not identifiable; needs web check.,,Needs source URL
+Datsun,5581,Unknown / Needs Web Check,fallback heuristic,Model label not identifiable; needs web check.,,Needs source URL
+Datsun,620,Pickup / Truck,make/model heuristic,LLM pass concurs; DB majority Pick-Up:3.,,LLM-reviewed
+Denza,D9,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:13.,,LLM-reviewed
+Dodge,Challenger,Sports car,llm-knowledge,"Muscle coupe, not an SUV.",,LLM-reviewed
+Dodge,Nitro,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority 4 Wheels:2.,,LLM-reviewed
+Dodge,Ram,Pickup / Truck,make/model heuristic,LLM pass concurs; DB majority Pick-Up:1.,,LLM-reviewed
+Dongfeng,007,Sedan,llm-knowledge,eP 007 electric fastback sedan.,,Needs source URL
+Dongfeng,Box,Hatchback,llm-knowledge,Nammi Box EV hatchback; DB majority Hatchback.,,LLM-reviewed
+Dongfeng,Vigo,Unknown / Needs Web Check,fallback heuristic,Model label not identifiable; needs web check.,,Needs source URL
+Ds Automobiles,Ds 7 Crossback,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:8.,,LLM-reviewed
+Ferrari,296,Sports car,llm-knowledge,Mid-engine sports car.,,LLM-reviewed
+Ferrari,328 Gts,Sports car,llm-knowledge,Targa sports car.,,LLM-reviewed
+Ferrari,355,Sports car,llm-knowledge,Mid-engine sports car.,,LLM-reviewed
+Ferrari,360,Sports car,llm-knowledge,Mid-engine sports car.,,LLM-reviewed
+Ferrari,430,Sports car,llm-knowledge,Mid-engine sports car.,,LLM-reviewed
+Ferrari,458,Sports car,llm-knowledge,Mid-engine sports car.,,LLM-reviewed
+Ferrari,488,Sports car,llm-knowledge,Mid-engine sports car.,,LLM-reviewed
+Ferrari,812,Sports car,llm-knowledge,Front-engine V12 sports car.,,LLM-reviewed
+Ferrari,California,Convertible / Roadster,llm-knowledge,Folding hard-top convertible GT.,,LLM-reviewed
+Ferrari,F12,Sports car,llm-knowledge,Front-engine V12 sports car.,,LLM-reviewed
+Ferrari,F8 Tributo,Sports car,llm-knowledge,Mid-engine sports car.,,LLM-reviewed
+Ferrari,Ff,Sports car,llm-knowledge,Shooting-brake GT.,,LLM-reviewed
+Ferrari,Gtc 4 Lusso,Sports car,llm-knowledge,Shooting-brake GT.,,LLM-reviewed
+Ferrari,Portofino,Convertible / Roadster,llm-knowledge,Folding hard-top convertible GT.,,LLM-reviewed
+Ferrari,Purosangue,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:21.,,LLM-reviewed
+Ferrari,Roma,Sports car,llm-knowledge,Front-engine GT coupe.,,LLM-reviewed
+Ferrari,Sf90,Sports car,llm-knowledge,Hybrid supercar.,,LLM-reviewed
+Fiat,Abarth,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:3.,,LLM-reviewed
+Fiat,Bravo,Hatchback,llm-knowledge,Compact hatch.,,LLM-reviewed
+Fiat,Coupe,Coupe,llm-knowledge,Fiat Coupe 2-door.,,LLM-reviewed
+Fiat,Multipla,MPV / Minivan,llm-knowledge,Compact MPV.,,LLM-reviewed
+Fiat,Punto,Hatchback,llm-knowledge,Supermini hatch.,,LLM-reviewed
+Ford,Econovan,Van / Commercial,make/model heuristic,LLM pass concurs; DB majority Others:6.,,LLM-reviewed
+Ford,Ecosport,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:17.,,LLM-reviewed
+Ford,Escape,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority 4 Wheels:2.,,LLM-reviewed
+Ford,Escort,Sedan / Hatchback,make/model heuristic,LLM pass concurs; DB majority 4 Wheels:1.,,LLM-reviewed
+Ford,Everest,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:12.,,LLM-reviewed
+Ford,F150,Pickup / Truck,make/model heuristic,LLM pass concurs; DB majority 4 Wheels:3.,,LLM-reviewed
+Ford,Fiesta,Sedan / Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:73.,,LLM-reviewed
+Ford,Focus,Sedan / Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:49.,,LLM-reviewed
+Ford,Kuga,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:24.,,LLM-reviewed
+Ford,Laser,Sedan / Hatchback,make/model heuristic,LLM pass concurs; DB majority Sedan:3.,,LLM-reviewed
+Ford,Lynx,Sedan,llm-knowledge,MY Laser sedan twin.,,LLM-reviewed
+Ford,Mondeo,Sedan,llm-knowledge,MY Mondeo = saloon; DB majority Sedan.,,LLM-reviewed
+Ford,Mustang,Sports car,llm-knowledge,Pony car (convertible variant exists).,,LLM-reviewed
+Ford,Ranger,Pickup / Truck,make/model heuristic,LLM pass concurs; DB majority Pick-Up:619.,,LLM-reviewed
+Ford,S-Max,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:7.,,LLM-reviewed
+Ford,Spectron,Van / Commercial,make/model heuristic,LLM pass concurs; DB majority Others:1.,,LLM-reviewed
+Ford,Telstar,Sedan,llm-knowledge,MY Telstar saloon.,,LLM-reviewed
+Ford,Transit,Van / Commercial,make/model heuristic,LLM pass concurs; DB majority Others:3.,,LLM-reviewed
+Foton,View,Van / Commercial,make default heuristic,LLM pass concurs; DB majority Others:32.,,LLM-reviewed
+Gac,Gs3,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:5.,,LLM-reviewed
+Gac Aion,Y Plus,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Others:1.,,LLM-reviewed
+Gac Motor,Emkoo,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:2.,,LLM-reviewed
+Gac Motor,Gs3 Emzoom,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Others:3.,,LLM-reviewed
+Gmc,Hummer,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:1.,,LLM-reviewed
+Golden Dragon,Rk Commuter,Van / Commercial,make default heuristic,LLM pass concurs; DB majority Others:1.,,LLM-reviewed
+Great Wall,Haval,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:17.,,LLM-reviewed
+Great Wall,M4,SUV / Crossover,llm-knowledge,GWM M4 compact crossover; DB majority SUV.,,LLM-reviewed
+Great Wall,Ora,Hatchback,llm-knowledge,Ora Good Cat EV hatchback.,,LLM-reviewed
+Great Wall,Tank,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:7.,,LLM-reviewed
+Great Wall,Wey,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Mpvs:2.,,LLM-reviewed
+Great Wall,Wingle,Pickup / Truck,make/model heuristic,LLM pass concurs; DB majority Pick-Up:3.,,LLM-reviewed
+Haval,H1,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:21.,,LLM-reviewed
+Haval,H2,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:17.,,LLM-reviewed
+Haval,H9,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Mpvs:2.,,LLM-reviewed
+Honda,Accord,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:872.,,LLM-reviewed
+Honda,Airwave,Wagon / Estate,make/model heuristic,LLM pass concurs; DB majority Others:1.,,LLM-reviewed
+Honda,Br-V,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:185.,,LLM-reviewed
+Honda,City,Sedan / Hatchback,llm-knowledge,City Sedan and City Hatchback both official in MY.,https://www.honda.com.my/model/city/spec,Verified
+Honda,Civic,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:2327.,,LLM-reviewed
+Honda,Civic Type R,Hatchback,llm-knowledge,Type R generations are hatchbacks (FD2R sedan rare).,,LLM-reviewed
+Honda,Cr-V,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:1120.,,LLM-reviewed
+Honda,Cr-X,Coupe,llm-knowledge,Compact sports kammback coupe.,,LLM-reviewed
+Honda,Cr-Z,Coupe,llm-knowledge,Hybrid sports coupe.,,LLM-reviewed
+Honda,Crossroad,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:2.,,LLM-reviewed
+Honda,E,Hatchback,llm-knowledge,Honda e EV hatchback.,,LLM-reviewed
+Honda,Edix,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:3.,,LLM-reviewed
+Honda,Elysion,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:8.,,LLM-reviewed
+Honda,Fit,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:6.,,LLM-reviewed
+Honda,Freed,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:14.,,LLM-reviewed
+Honda,Hr-V,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:1127.,,LLM-reviewed
+Honda,Insight,Hatchback,llm-knowledge,ZE2 liftback hatch dominates MY.,,LLM-reviewed
+Honda,Integra,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:5.,,LLM-reviewed
+Honda,Integra Type R,Coupe,llm-knowledge,DC2/DC5 coupe.,,LLM-reviewed
+Honda,Jade,MPV / Minivan,llm-knowledge,6-seater MPV-wagon; DB majority MPV.,,LLM-reviewed
+Honda,Jazz,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:612.,,LLM-reviewed
+Honda,Jazz Hybrid,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:66.,,LLM-reviewed
+Honda,Legend,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:2.,,LLM-reviewed
+Honda,N Box,Hatchback,make/model heuristic,LLM pass concurs; DB majority Mpvs:73.,,LLM-reviewed
+Honda,N-One,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:7.,,LLM-reviewed
+Honda,Nsx,Sports car,llm-knowledge,Mid-engine sports car.,,LLM-reviewed
+Honda,Odyssey,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:240.,,LLM-reviewed
+Honda,Prelude,Coupe,llm-knowledge,2-door sports coupe.,,LLM-reviewed
+Honda,S2000,Convertible / Roadster,llm-knowledge,Roadster.,,LLM-reviewed
+Honda,S600,Convertible / Roadster,llm-knowledge,Classic roadster (coupe existed).,,LLM-reviewed
+Honda,S660,Convertible / Roadster,llm-knowledge,Kei roadster.,,LLM-reviewed
+Honda,Shuttle,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:1.,,LLM-reviewed
+Honda,Stepwagon,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:182.,,LLM-reviewed
+Honda,Stream,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:110.,,LLM-reviewed
+Honda,Wr-V,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:89.,,LLM-reviewed
+Huanghai,Plutus,Pickup / Truck,make/model heuristic,LLM pass concurs; DB majority Others:1.,,LLM-reviewed
+Hummer,H2,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:2.,,LLM-reviewed
+Hummer,H3,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:6.,,LLM-reviewed
+Hyundai,Accent,Sedan,llm-knowledge,MY Accent = saloon; DB majority Sedan.,,LLM-reviewed
+Hyundai,Atos,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:9.,,LLM-reviewed
+Hyundai,Avante,Sedan,make/model heuristic,LLM pass concurs; DB majority 4 Wheels:2.,,LLM-reviewed
+Hyundai,Coupe,Coupe,llm-knowledge,Hyundai Coupe 2-door.,,LLM-reviewed
+Hyundai,Creta,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:10.,,LLM-reviewed
+Hyundai,Elantra,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:166.,,LLM-reviewed
+Hyundai,Getz,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:20.,,LLM-reviewed
+Hyundai,Grand Starex,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:291.,,LLM-reviewed
+Hyundai,I10,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:29.,,LLM-reviewed
+Hyundai,I30,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:3.,,LLM-reviewed
+Hyundai,I40,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:13.,,LLM-reviewed
+Hyundai,Ioniq,Hatchback,llm-knowledge,Ioniq (AE) liftback.,,LLM-reviewed
+Hyundai,Ioniq 5,SUV / Crossover,llm-knowledge,Crossover EV.,,LLM-reviewed
+Hyundai,Ioniq 6,Sedan,make/model heuristic,LLM pass concurs; DB majority Sports:1.,,LLM-reviewed
+Hyundai,Kona,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:14.,,LLM-reviewed
+Hyundai,Matrix,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:20.,,LLM-reviewed
+Hyundai,Palisade,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:1.,,LLM-reviewed
+Hyundai,Santa Fe,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:86.,,LLM-reviewed
+Hyundai,Sonata,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:91.,,LLM-reviewed
+Hyundai,Staria,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:32.,,LLM-reviewed
+Hyundai,Trajet,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:4.,,LLM-reviewed
+Hyundai,Tucson,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:134.,,LLM-reviewed
+Hyundai,Veloster,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:4.,,LLM-reviewed
+Hyundai,Xg,Sedan,make/model heuristic,LLM pass concurs; DB majority 4 Wheels:1.,,LLM-reviewed
+Icaur,03,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:3.,,LLM-reviewed
+Icaur,V23,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority 4 Wheels:1.,,LLM-reviewed
+Infiniti,Ex,SUV / Crossover,llm-knowledge,EX crossover.,,LLM-reviewed
+Infiniti,Fx,SUV / Crossover,llm-knowledge,FX crossover.,,LLM-reviewed
+Infiniti,M,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:2.,,LLM-reviewed
+Infiniti,Q50,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:9.,,LLM-reviewed
+Infiniti,Q70,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:4.,,LLM-reviewed
+Infiniti,Qx50,SUV / Crossover,pattern heuristic,LLM pass concurs; DB majority Suvs:2.,,LLM-reviewed
+Infiniti,Qx70,SUV / Crossover,pattern heuristic,LLM pass concurs; DB majority Suvs:7.,,LLM-reviewed
+Inokom,Atos,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:17.,,LLM-reviewed
+Inokom,Elantra,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:28.,,LLM-reviewed
+Inokom,Getz,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:4.,,LLM-reviewed
+Inokom,I10,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:27.,,LLM-reviewed
+Inokom,Matrix,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:8.,,LLM-reviewed
+Inokom,Permas,Van / Commercial,make/model heuristic,LLM pass concurs; DB majority Others:1.,,LLM-reviewed
+Inokom,Santa Fe,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:34.,,LLM-reviewed
+Isuzu,Citation,Unknown / Needs Web Check,fallback heuristic,Model label not identifiable; needs web check.,,Needs source URL
+Isuzu,D-Max,Pickup / Truck,make/model heuristic,LLM pass concurs; DB majority Pick-Up:313.,,LLM-reviewed
+Isuzu,Invader,Pickup / Truck,make/model heuristic,LLM pass concurs; DB majority 4 Wheels:5.,,LLM-reviewed
+Isuzu,Mu,SUV / Crossover,llm-knowledge,Body-on-frame SUV.,,LLM-reviewed
+Isuzu,Mu-X,SUV / Crossover,llm-knowledge,D-Max-based SUV; DB majority SUV.,,LLM-reviewed
+Isuzu,Rodeo,Pickup / Truck,make/model heuristic,LLM pass concurs; DB majority Pick-Up:1.,,LLM-reviewed
+Isuzu,Trooper,SUV / Crossover,llm-knowledge,Body-on-frame SUV.,,LLM-reviewed
+Isuzu,Vehicross,SUV / Crossover,llm-knowledge,Two-door SUV.,,LLM-reviewed
+Jaecoo,J5,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:16.,,LLM-reviewed
+Jaecoo,J7,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:72.,,LLM-reviewed
+Jaecoo,J8,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:4.,,LLM-reviewed
+Jaecoo,Omoda,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:39.,,LLM-reviewed
+Jaguar,Daimler,Sedan,llm-knowledge,Daimler-badged Jaguar saloon.,,LLM-reviewed
+Jaguar,E-Type,Sports car,llm-knowledge,Classic sports car.,,LLM-reviewed
+Jaguar,F-Pace,SUV / Crossover,llm-knowledge,Jaguar SUV.,,LLM-reviewed
+Jaguar,F-Type,Sports car,llm-knowledge,Two-seat sports car.,,LLM-reviewed
+Jaguar,F-Type S,Sports car,llm-knowledge,Two-seat sports car.,,LLM-reviewed
+Jaguar,I-Pace,SUV / Crossover,llm-knowledge,Electric crossover.,,LLM-reviewed
+Jaguar,S-Type,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:4.,,LLM-reviewed
+Jaguar,X-Type,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:2.,,LLM-reviewed
+Jaguar,Xe,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:1.,,LLM-reviewed
+Jaguar,Xf,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:13.,,LLM-reviewed
+Jaguar,Xfr,Sedan,llm-knowledge,Performance saloon.,,LLM-reviewed
+Jaguar,Xj,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:6.,,LLM-reviewed
+Jaguar,Xj6,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:7.,,LLM-reviewed
+Jaguar,Xj8,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:3.,,LLM-reviewed
+Jaguar,Xjl,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:10.,,LLM-reviewed
+Jaguar,Xjr,Sedan,llm-knowledge,Performance saloon.,,LLM-reviewed
+Jaguar,Xjs,Coupe,llm-knowledge,GT coupe (convertible existed).,,LLM-reviewed
+Jaguar,Xk,Coupe,llm-knowledge,GT coupe (convertible variant exists).,,LLM-reviewed
+Jeep,Cherokee,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority 4 Wheels:7.,,LLM-reviewed
+Jeep,Cj,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority 4 Wheels:1.,,LLM-reviewed
+Jeep,Grand Cherokee,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Others:2.,,LLM-reviewed
+Jeep,Wrangler,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:46.,,LLM-reviewed
+Jetour,Dashing,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:20.,,LLM-reviewed
+Jetour,T2,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:8.,,LLM-reviewed
+Jetour,Vt9,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:14.,,LLM-reviewed
+Jmc,Vigus Pro,Pickup / Truck,make/model heuristic,LLM pass concurs; DB majority 4 Wheels:1.,,LLM-reviewed
+Joylong,Era Komuter,Van / Commercial,make default heuristic,LLM pass concurs; DB majority Others:4.,,LLM-reviewed
+Kaicene,Era Star Ii,Van / Commercial,make default heuristic,LLM pass concurs; DB majority Others:1.,,LLM-reviewed
+Kia,Carens,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:7.,,LLM-reviewed
+Kia,Carnival,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:83.,,LLM-reviewed
+Kia,Cerato,Sedan,llm-knowledge,MY Cerato = K3 saloon; DB 206 Sedan vs 3 Hatchback.,,LLM-reviewed
+Kia,Ev6,SUV / Crossover,llm-knowledge,Crossover EV.,,LLM-reviewed
+Kia,Forte,Sedan,llm-knowledge,MY Forte = saloon; DB majority Sedan.,,LLM-reviewed
+Kia,Forte Coup,Coupe,llm-knowledge,Forte Koup 2-door.,,LLM-reviewed
+Kia,Grand Carnival,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:83.,,LLM-reviewed
+Kia,Optima,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:95.,,LLM-reviewed
+Kia,Picanto,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:77.,,LLM-reviewed
+Kia,Pregio,Van / Commercial,make/model heuristic,LLM pass concurs; DB majority Others:10.,,LLM-reviewed
+Kia,Rio,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:89.,,LLM-reviewed
+Kia,Rocsta,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority 4 Wheels:1.,,LLM-reviewed
+Kia,Seltos,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:4.,,LLM-reviewed
+Kia,Sorento,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:126.,,LLM-reviewed
+Kia,Spectra,Sedan,llm-knowledge,MY Spectra = saloon; DB majority Sedan.,,LLM-reviewed
+Kia,Sportage,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:142.,,LLM-reviewed
+King Long,Kingo,Van / Commercial,make default heuristic,LLM pass concurs; DB majority Mpvs:2.,,LLM-reviewed
+King Long,Placer,Van / Commercial,make default heuristic,LLM pass concurs; DB majority Others:3.,,LLM-reviewed
+Lamborghini,Aventador,Sports car,llm-knowledge,V12 supercar.,,LLM-reviewed
+Lamborghini,Gallardo,Sports car,llm-knowledge,V10 supercar.,,LLM-reviewed
+Lamborghini,Huracan,Sports car,llm-knowledge,V10 supercar.,,LLM-reviewed
+Lamborghini,Murcielago,Sports car,llm-knowledge,V12 supercar.,,LLM-reviewed
+Lamborghini,Revuelto,Sports car,llm-knowledge,Hybrid V12 supercar.,,LLM-reviewed
+Lamborghini,Urus,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:133.,,LLM-reviewed
+Land Rover,Defender,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:251.,,LLM-reviewed
+Land Rover,Discovery,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:14.,,LLM-reviewed
+Land Rover,Discovery Sport,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:13.,,LLM-reviewed
+Land Rover,Freelander,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:11.,,LLM-reviewed
+Land Rover,Range Rover,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:118.,,LLM-reviewed
+Land Rover,Range Rover Evoque,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:117.,,LLM-reviewed
+Land Rover,Range Rover Sport,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:244.,,LLM-reviewed
+Land Rover,Range Rover Velar,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:87.,,LLM-reviewed
+Land Rover,Range Rover Vogue,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:128.,,LLM-reviewed
+Land Rover,Series,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Pick-Up:1.,,LLM-reviewed
+Leapmotor,B10,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:2.,,LLM-reviewed
+Leapmotor,C10,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:2.,,LLM-reviewed
+Lexus,Ct 200,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:60.,,LLM-reviewed
+Lexus,Es 250,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:89.,,LLM-reviewed
+Lexus,Es 300,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:3.,,LLM-reviewed
+Lexus,Gs 250,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:5.,,LLM-reviewed
+Lexus,Gs 300,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:11.,,LLM-reviewed
+Lexus,Gs 350,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:2.,,LLM-reviewed
+Lexus,Gx 550,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:3.,,LLM-reviewed
+Lexus,Is 200,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:5.,,LLM-reviewed
+Lexus,Is 250,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:47.,,LLM-reviewed
+Lexus,Is 300,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:288.,,LLM-reviewed
+Lexus,Is 350,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:3.,,LLM-reviewed
+Lexus,Is 500,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:3.,,LLM-reviewed
+Lexus,Lbx,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:6.,,LLM-reviewed
+Lexus,Lc 500,Coupe,llm-knowledge,Luxury GT coupe.,,LLM-reviewed
+Lexus,Lm,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:40.,,LLM-reviewed
+Lexus,Ls 430,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:1.,,LLM-reviewed
+Lexus,Ls 460,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:13.,,LLM-reviewed
+Lexus,Ls 500,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:12.,,LLM-reviewed
+Lexus,Lx 450,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:1.,,LLM-reviewed
+Lexus,Lx 470,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:2.,,LLM-reviewed
+Lexus,Lx 500D,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:3.,,LLM-reviewed
+Lexus,Lx 570,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:29.,,LLM-reviewed
+Lexus,Lx 600,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:71.,,LLM-reviewed
+Lexus,Nx 200T,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:82.,,LLM-reviewed
+Lexus,Nx 250,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:309.,,LLM-reviewed
+Lexus,Nx 300,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:114.,,LLM-reviewed
+Lexus,Nx 350,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:207.,,LLM-reviewed
+Lexus,Rc 300,Coupe,llm-knowledge,2-door coupe.,,LLM-reviewed
+Lexus,Rc F,Coupe,llm-knowledge,Performance coupe.,,LLM-reviewed
+Lexus,Rx 200T,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:93.,,LLM-reviewed
+Lexus,Rx 270,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:29.,,LLM-reviewed
+Lexus,Rx 300,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:454.,,LLM-reviewed
+Lexus,Rx 350,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:393.,,LLM-reviewed
+Lexus,Rx 350 F Sport,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:271.,,LLM-reviewed
+Lexus,Rx 450,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:4.,,LLM-reviewed
+Lexus,Rx 500,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:11.,,LLM-reviewed
+Lexus,Rz,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:4.,,LLM-reviewed
+Lexus,Ux 200,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:25.,,LLM-reviewed
+Lmg,Lms31Sle,Unknown / Needs Web Check,fallback heuristic,Model label not identifiable; needs web check.,,Needs source URL
+Lotus,Eletre,SUV / Crossover,llm-knowledge,Lotus Eletre electric SUV; DB unanimous SUV.,,LLM-reviewed
+Lotus,Elise,Sports car,llm-knowledge,Lightweight sports car.,,LLM-reviewed
+Lotus,Emira,Sports car,llm-knowledge,Mid-engine sports car.,,LLM-reviewed
+Lotus,Europa,Sports car,llm-knowledge,Mid-engine sports car.,,LLM-reviewed
+Lotus,Evora,Sports car,llm-knowledge,Mid-engine sports car.,,LLM-reviewed
+Lotus,Exige,Sports car,llm-knowledge,Track-focused sports car.,,LLM-reviewed
+Mahindra,Scorpio,SUV / Crossover,llm-knowledge,Body-on-frame SUV.,,LLM-reviewed
+Maserati,3200Gt,Coupe,llm-knowledge,GT coupe.,,LLM-reviewed
+Maserati,Ghibli,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:23.,,LLM-reviewed
+Maserati,Granturismo,Coupe,llm-knowledge,GT coupe.,,LLM-reviewed
+Maserati,Grecale,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:3.,,LLM-reviewed
+Maserati,Levante,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:58.,,LLM-reviewed
+Maserati,Mc20,Sports car,llm-knowledge,Mid-engine supercar.,,LLM-reviewed
+Maserati,Quattroporte,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:8.,,LLM-reviewed
+Maxus,G10,MPV / Minivan,llm-knowledge,G10 people-mover MPV; DB unanimous MPV.,,LLM-reviewed
+Maxus,Mifa,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:3.,,LLM-reviewed
+Maxus,T60,Pickup / Truck,make/model heuristic,LLM pass concurs; DB majority Pick-Up:1.,,LLM-reviewed
+Maxus,V80,Van / Commercial,make/model heuristic,LLM pass concurs; DB majority Others:19.,,LLM-reviewed
+Mazda,121,Sedan,llm-knowledge,MY 121 saloon.,,LLM-reviewed
+Mazda,2,Sedan / Hatchback,llm-knowledge,Sold in MY as both sedan and hatchback; DB split.,,LLM-reviewed
+Mazda,3,Sedan / Hatchback,llm-knowledge,Sold in MY as both sedan and hatchback; DB split.,,LLM-reviewed
+Mazda,323,Sedan / Hatchback,llm-knowledge,Saloon and hatch both common; DB split.,,LLM-reviewed
+Mazda,5,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:26.,,LLM-reviewed
+Mazda,6,Sedan,llm-knowledge,MY Mazda 6 = sedan; DB 141 Sedan vs 3 Hatchback.,,LLM-reviewed
+Mazda,626,Sedan,llm-knowledge,MY 626 saloon.,,LLM-reviewed
+Mazda,8,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:37.,,LLM-reviewed
+Mazda,B2200,Pickup / Truck,make/model heuristic,LLM pass concurs; DB majority Others:1.,,LLM-reviewed
+Mazda,B2500,Pickup / Truck,make/model heuristic,LLM pass concurs; DB majority Pick-Up:3.,,LLM-reviewed
+Mazda,Biante,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:59.,,LLM-reviewed
+Mazda,Bt-50,Pickup / Truck,make/model heuristic,LLM pass concurs; DB majority Pick-Up:33.,,LLM-reviewed
+Mazda,Carol,Hatchback,make/model heuristic,LLM pass concurs; DB majority Sedan:1.,,LLM-reviewed
+Mazda,Cx-3,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:149.,,LLM-reviewed
+Mazda,Cx-30,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:150.,,LLM-reviewed
+Mazda,Cx-5,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:1023.,,LLM-reviewed
+Mazda,Cx-60,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:9.,,LLM-reviewed
+Mazda,Cx-7,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:12.,,LLM-reviewed
+Mazda,Cx-8,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:136.,,LLM-reviewed
+Mazda,Cx-80,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:1.,,LLM-reviewed
+Mazda,Cx-9,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:31.,,LLM-reviewed
+Mazda,Familia,Sedan / Hatchback,llm-knowledge,"323 family, both bodies.",,LLM-reviewed
+Mazda,Fighter,Pickup / Truck,make/model heuristic,LLM pass concurs; DB majority Pick-Up:3.,,LLM-reviewed
+Mazda,Lantis,Sedan / Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:1.,,LLM-reviewed
+Mazda,Luce,Sedan,llm-knowledge,Luce large saloon.,,LLM-reviewed
+Mazda,Mpv,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:1.,,LLM-reviewed
+Mazda,Mx-3,Coupe,llm-knowledge,Compact coupe.,,LLM-reviewed
+Mazda,Mx-30,SUV / Crossover,llm-knowledge,Crossover EV; DB unanimous SUV.,,LLM-reviewed
+Mazda,Mx-5,Convertible / Roadster,llm-knowledge,Roadster.,,LLM-reviewed
+Mazda,Premacy,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:3.,,LLM-reviewed
+Mazda,Roadster,Convertible / Roadster,llm-knowledge,JDM-import MX-5 roadster.,,LLM-reviewed
+Mazda,Rx-7,Sports car,llm-knowledge,Rotary sports car.,,LLM-reviewed
+Mazda,Rx-8,Sports car,llm-knowledge,Rotary sports car.,,LLM-reviewed
+Mclaren,570,Sports car,llm-knowledge,Mid-engine supercar.,,LLM-reviewed
+Mclaren,600Lt,Sports car,llm-knowledge,Mid-engine supercar.,,LLM-reviewed
+Mclaren,650S,Sports car,llm-knowledge,Mid-engine supercar.,,LLM-reviewed
+Mclaren,675Lt,Sports car,llm-knowledge,Mid-engine supercar.,,LLM-reviewed
+Mclaren,720S,Sports car,llm-knowledge,Mid-engine supercar.,,LLM-reviewed
+Mclaren,Artura,Sports car,llm-knowledge,Hybrid supercar.,,LLM-reviewed
+Mclaren,Gt,Sports car,llm-knowledge,Mid-engine GT.,,LLM-reviewed
+Mclaren,Mp4-12C,Sports car,llm-knowledge,Mid-engine supercar.,,LLM-reviewed
+Mercedes Benz,190E,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:8.,,LLM-reviewed
+Mercedes Benz,200,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:34.,,LLM-reviewed
+Mercedes Benz,200D,Sedan,make/model heuristic,LLM pass concurs; DB majority Hatchback:1.,,LLM-reviewed
+Mercedes Benz,200E,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:11.,,LLM-reviewed
+Mercedes Benz,200Te,Wagon / Estate,llm-knowledge,TE = T-model estate.,,LLM-reviewed
+Mercedes Benz,220E,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:10.,,LLM-reviewed
+Mercedes Benz,230,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:15.,,LLM-reviewed
+Mercedes Benz,230Ce,Coupe,llm-knowledge,CE = W123/W124 coupe.,,LLM-reviewed
+Mercedes Benz,230E,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:24.,,LLM-reviewed
+Mercedes Benz,230Te,Wagon / Estate,llm-knowledge,TE = T-model estate.,,LLM-reviewed
+Mercedes Benz,240D,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:3.,,LLM-reviewed
+Mercedes Benz,250S,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:1.,,LLM-reviewed
+Mercedes Benz,260E,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:9.,,LLM-reviewed
+Mercedes Benz,280Se,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:13.,,LLM-reviewed
+Mercedes Benz,280Sl,Convertible / Roadster,llm-knowledge,SL roadster.,,LLM-reviewed
+Mercedes Benz,280Te,Wagon / Estate,llm-knowledge,TE = T-model estate.,,LLM-reviewed
+Mercedes Benz,300Ce,Coupe,llm-knowledge,CE = W124 coupe.,,LLM-reviewed
+Mercedes Benz,300E,Sedan,make/model heuristic,LLM pass concurs; DB majority Coupe:1.,,LLM-reviewed
+Mercedes Benz,300Ge,SUV / Crossover,llm-knowledge,G-Wagen.,,LLM-reviewed
+Mercedes Benz,300Se,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:10.,,LLM-reviewed
+Mercedes Benz,300Sel,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:3.,,LLM-reviewed
+Mercedes Benz,300Sl,Convertible / Roadster,llm-knowledge,SL roadster.,,LLM-reviewed
+Mercedes Benz,300Te,Wagon / Estate,llm-knowledge,TE = T-model estate.,,LLM-reviewed
+Mercedes Benz,320Ce,Coupe,llm-knowledge,CE = W124 coupe.,,LLM-reviewed
+Mercedes Benz,500 Sec,Coupe,llm-knowledge,SEC = C126 coupe.,,LLM-reviewed
+Mercedes Benz,A150,Hatchback,llm-knowledge,W169 hatch only.,,LLM-reviewed
+Mercedes Benz,A160,Sedan / Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:1.,,LLM-reviewed
+Mercedes Benz,A170,Hatchback,llm-knowledge,W168/W169 hatch only.,,LLM-reviewed
+Mercedes Benz,A180,Sedan / Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:317.,,LLM-reviewed
+Mercedes Benz,A200,Sedan / Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:153.,,LLM-reviewed
+Mercedes Benz,A250,Sedan / Hatchback,make/model heuristic,LLM pass concurs; DB majority Sedan:159.,,LLM-reviewed
+Mercedes Benz,A35,Sedan / Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:62.,,LLM-reviewed
+Mercedes Benz,A45,Hatchback,llm-knowledge,A45 sold as hatch only (A35 has a sedan).,,LLM-reviewed
+Mercedes Benz,Amg Gt,Sports car,llm-knowledge,AMG GT sports car (4-door variant exists).,,LLM-reviewed
+Mercedes Benz,Amg Gt S,Sports car,llm-knowledge,AMG GT S sports car.,,LLM-reviewed
+Mercedes Benz,B Sports Tourer,MPV / Minivan,llm-knowledge,B-Class Sports Tourer.,,LLM-reviewed
+Mercedes Benz,B170,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Hatchback:7.,,LLM-reviewed
+Mercedes Benz,B180,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Hatchback:19.,,LLM-reviewed
+Mercedes Benz,B200,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Hatchback:19.,,LLM-reviewed
+Mercedes Benz,C180,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:118.,,LLM-reviewed
+Mercedes Benz,C200,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:633.,,LLM-reviewed
+Mercedes Benz,C200 Amg,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:222.,,LLM-reviewed
+Mercedes Benz,C200K,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:3.,,LLM-reviewed
+Mercedes Benz,C220,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:1.,,LLM-reviewed
+Mercedes Benz,C230,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:13.,,LLM-reviewed
+Mercedes Benz,C240,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:2.,,LLM-reviewed
+Mercedes Benz,C250,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:120.,,LLM-reviewed
+Mercedes Benz,C280,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:1.,,LLM-reviewed
+Mercedes Benz,C300,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:183.,,LLM-reviewed
+Mercedes Benz,C320,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:1.,,LLM-reviewed
+Mercedes Benz,C350E,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:53.,,LLM-reviewed
+Mercedes Benz,C43,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:56.,,LLM-reviewed
+Mercedes Benz,C63,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:8.,,LLM-reviewed
+Mercedes Benz,Cl500,Coupe,llm-knowledge,CL = large luxury coupe.,,LLM-reviewed
+Mercedes Benz,Cla180,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:97.,,LLM-reviewed
+Mercedes Benz,Cla200,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:58.,,LLM-reviewed
+Mercedes Benz,Cla220,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:3.,,LLM-reviewed
+Mercedes Benz,Cla250,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:56.,,LLM-reviewed
+Mercedes Benz,Cla35,Sedan,make/model heuristic,LLM pass concurs; DB majority Coupe:26.,,LLM-reviewed
+Mercedes Benz,Cla45,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:108.,,LLM-reviewed
+Mercedes Benz,Clc180,Coupe,llm-knowledge,CLC sports coupe.,,LLM-reviewed
+Mercedes Benz,Clc200,Coupe,llm-knowledge,CLC sports coupe.,,LLM-reviewed
+Mercedes Benz,Cle 200,Coupe,llm-knowledge,CLE coupe.,,LLM-reviewed
+Mercedes Benz,Cle 300,Coupe,llm-knowledge,CLE coupe.,,LLM-reviewed
+Mercedes Benz,Cle 53,Coupe,llm-knowledge,CLE coupe.,,LLM-reviewed
+Mercedes Benz,Clk200,Coupe,llm-knowledge,CLK coupe (cabriolet variant exists).,,LLM-reviewed
+Mercedes Benz,Clk230,Coupe,llm-knowledge,CLK coupe.,,LLM-reviewed
+Mercedes Benz,Clk240,Coupe,llm-knowledge,CLK coupe.,,LLM-reviewed
+Mercedes Benz,Clk270,Coupe,llm-knowledge,CLK coupe.,,LLM-reviewed
+Mercedes Benz,Clk320,Coupe,llm-knowledge,CLK coupe.,,LLM-reviewed
+Mercedes Benz,Clk55,Coupe,llm-knowledge,CLK coupe.,,LLM-reviewed
+Mercedes Benz,Cls350,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:22.,,LLM-reviewed
+Mercedes Benz,Cls450,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:7.,,LLM-reviewed
+Mercedes Benz,Cls53,Sedan,make/model heuristic,LLM pass concurs; DB majority Coupe:8.,,LLM-reviewed
+Mercedes Benz,Cls55,Sedan,make/model heuristic,LLM pass concurs; DB majority Sports:2.,,LLM-reviewed
+Mercedes Benz,Cls63,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:3.,,LLM-reviewed
+Mercedes Benz,E200,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:359.,,LLM-reviewed
+Mercedes Benz,E220,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:3.,,LLM-reviewed
+Mercedes Benz,E230,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:11.,,LLM-reviewed
+Mercedes Benz,E240,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:42.,,LLM-reviewed
+Mercedes Benz,E250,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:250.,,LLM-reviewed
+Mercedes Benz,E270,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:2.,,LLM-reviewed
+Mercedes Benz,E280,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:18.,,LLM-reviewed
+Mercedes Benz,E300,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:163.,,LLM-reviewed
+Mercedes Benz,E350,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:56.,,LLM-reviewed
+Mercedes Benz,E350E Amg,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:29.,,LLM-reviewed
+Mercedes Benz,E350E Exclusive,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:18.,,LLM-reviewed
+Mercedes Benz,E400,Sedan,make/model heuristic,LLM pass concurs; DB majority Coupe:2.,,LLM-reviewed
+Mercedes Benz,E43,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:9.,,LLM-reviewed
+Mercedes Benz,E53,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:8.,,LLM-reviewed
+Mercedes Benz,E63,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:3.,,LLM-reviewed
+Mercedes Benz,Eqb,SUV / Crossover,llm-knowledge,EQB electric SUV.,,LLM-reviewed
+Mercedes Benz,Eqc,SUV / Crossover,llm-knowledge,EQC electric SUV; DB unanimous SUV.,,LLM-reviewed
+Mercedes Benz,Eqe,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:5.,,LLM-reviewed
+Mercedes Benz,Eqs,Sedan,make/model heuristic,LLM pass concurs; DB majority Suvs:5.,,LLM-reviewed
+Mercedes Benz,Eqv,MPV / Minivan,llm-knowledge,Electric V-Class people mover.,,LLM-reviewed
+Mercedes Benz,G-Class,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:9.,,LLM-reviewed
+Mercedes Benz,G350,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:35.,,LLM-reviewed
+Mercedes Benz,G400,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:35.,,LLM-reviewed
+Mercedes Benz,G55,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority 4 Wheels:1.,,LLM-reviewed
+Mercedes Benz,G580,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority 4 Wheels:1.,,LLM-reviewed
+Mercedes Benz,G63,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:132.,,LLM-reviewed
+Mercedes Benz,Gl350,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:1.,,LLM-reviewed
+Mercedes Benz,Gla180,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:7.,,LLM-reviewed
+Mercedes Benz,Gla200,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:90.,,LLM-reviewed
+Mercedes Benz,Gla220,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:5.,,LLM-reviewed
+Mercedes Benz,Gla250,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:129.,,LLM-reviewed
+Mercedes Benz,Gla35,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:35.,,LLM-reviewed
+Mercedes Benz,Gla45,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:44.,,LLM-reviewed
+Mercedes Benz,Glb200,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:16.,,LLM-reviewed
+Mercedes Benz,Glb250,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:13.,,LLM-reviewed
+Mercedes Benz,Glb35,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:14.,,LLM-reviewed
+Mercedes Benz,Glc200,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:124.,,LLM-reviewed
+Mercedes Benz,Glc250,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:189.,,LLM-reviewed
+Mercedes Benz,Glc300,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:242.,,LLM-reviewed
+Mercedes Benz,Glc350,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:14.,,LLM-reviewed
+Mercedes Benz,Glc43,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:53.,,LLM-reviewed
+Mercedes Benz,Glc63,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:7.,,LLM-reviewed
+Mercedes Benz,Gle250D,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:1.,,LLM-reviewed
+Mercedes Benz,Gle350D,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:2.,,LLM-reviewed
+Mercedes Benz,Gle400,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:5.,,LLM-reviewed
+Mercedes Benz,Gle43,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:10.,,LLM-reviewed
+Mercedes Benz,Gle450 Coupe,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:69.,,LLM-reviewed
+Mercedes Benz,Gle53,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:35.,,LLM-reviewed
+Mercedes Benz,Gle63 S Amg,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Hatchback:1.,,LLM-reviewed
+Mercedes Benz,Gls350,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:3.,,LLM-reviewed
+Mercedes Benz,Gls450,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:1.,,LLM-reviewed
+Mercedes Benz,Gls600,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:7.,,LLM-reviewed
+Mercedes Benz,Gls63 Amg,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Others:1.,,LLM-reviewed
+Mercedes Benz,Mb100,Van / Commercial,make/model heuristic,LLM pass concurs; DB majority Others:1.,,LLM-reviewed
+Mercedes Benz,Mb140D,Van / Commercial,make/model heuristic,LLM pass concurs; DB majority Others:3.,,LLM-reviewed
+Mercedes Benz,Ml270,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:1.,,LLM-reviewed
+Mercedes Benz,Ml300,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:1.,,LLM-reviewed
+Mercedes Benz,Ml350,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:19.,,LLM-reviewed
+Mercedes Benz,R280L,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:2.,,LLM-reviewed
+Mercedes Benz,R300L,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:3.,,LLM-reviewed
+Mercedes Benz,R350L,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:3.,,LLM-reviewed
+Mercedes Benz,S-Class,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:11.,,LLM-reviewed
+Mercedes Benz,S280,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:10.,,LLM-reviewed
+Mercedes Benz,S300L,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:18.,,LLM-reviewed
+Mercedes Benz,S320,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:3.,,LLM-reviewed
+Mercedes Benz,S320L,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:10.,,LLM-reviewed
+Mercedes Benz,S350L,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:21.,,LLM-reviewed
+Mercedes Benz,S400 Hybrid,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:16.,,LLM-reviewed
+Mercedes Benz,S400L Hybrid,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:90.,,LLM-reviewed
+Mercedes Benz,S430,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:1.,,LLM-reviewed
+Mercedes Benz,S450L,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:6.,,LLM-reviewed
+Mercedes Benz,S500L,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:13.,,LLM-reviewed
+Mercedes Benz,S560,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:20.,,LLM-reviewed
+Mercedes Benz,S580,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:17.,,LLM-reviewed
+Mercedes Benz,S63,Coupe,llm-knowledge,MY S63 listings are C217 coupes; DB unanimous Coupe.,,LLM-reviewed
+Mercedes Benz,Sl320,Convertible / Roadster,llm-knowledge,SL roadster.,,LLM-reviewed
+Mercedes Benz,Sl350,Convertible / Roadster,llm-knowledge,SL roadster.,,LLM-reviewed
+Mercedes Benz,Sl400 Amg,Convertible / Roadster,llm-knowledge,SL roadster.,,LLM-reviewed
+Mercedes Benz,Sl500,Convertible / Roadster,llm-knowledge,SL roadster.,,LLM-reviewed
+Mercedes Benz,Sl55,Convertible / Roadster,llm-knowledge,SL roadster.,,LLM-reviewed
+Mercedes Benz,Sl63,Convertible / Roadster,llm-knowledge,SL roadster.,,LLM-reviewed
+Mercedes Benz,Slc 200,Convertible / Roadster,llm-knowledge,SLC folding hard-top roadster.,,LLM-reviewed
+Mercedes Benz,Slc 300,Convertible / Roadster,llm-knowledge,SLC folding hard-top roadster.,,LLM-reviewed
+Mercedes Benz,Slc 43,Convertible / Roadster,llm-knowledge,SLC folding hard-top roadster.,,LLM-reviewed
+Mercedes Benz,Slk200,Convertible / Roadster,llm-knowledge,SLK folding hard-top roadster.,,LLM-reviewed
+Mercedes Benz,Slk230,Convertible / Roadster,llm-knowledge,SLK folding hard-top roadster.,,LLM-reviewed
+Mercedes Benz,Slk250,Convertible / Roadster,llm-knowledge,SLK folding hard-top roadster.,,LLM-reviewed
+Mercedes Benz,Slk280,Convertible / Roadster,llm-knowledge,SLK folding hard-top roadster.,,LLM-reviewed
+Mercedes Benz,Slk350,Convertible / Roadster,llm-knowledge,SLK folding hard-top roadster.,,LLM-reviewed
+Mercedes Benz,Sls Amg,Sports car,llm-knowledge,Gullwing supercar.,,LLM-reviewed
+Mercedes Benz,V220,MPV / Minivan,llm-knowledge,V-Class people mover.,,LLM-reviewed
+Mercedes Benz,V250,MPV / Minivan,llm-knowledge,V-Class people mover.,,LLM-reviewed
+Mercedes Benz,V300,MPV / Minivan,llm-knowledge,V-Class people mover.,,LLM-reviewed
+Mercedes Benz,Viano,MPV / Minivan,llm-knowledge,Viano people mover.,,LLM-reviewed
+Mercedes Benz,Vito,MPV / Minivan,llm-knowledge,MY Vito = Tourer people mover; DB majority MPV.,,LLM-reviewed
+Mercedes Benz,X250 D,Pickup / Truck,make/model heuristic,LLM pass concurs; DB majority Pick-Up:1.,,LLM-reviewed
+Mg,Cyberster,Convertible / Roadster,llm-knowledge,Electric roadster.,,LLM-reviewed
+Mg,Hs,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:5.,,LLM-reviewed
+Mg,Mg4,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:7.,,LLM-reviewed
+Mg,Mg5,Sedan,llm-knowledge,MG5 saloon; DB 21 Sedan.,,LLM-reviewed
+Mg,Mgb,Convertible / Roadster,llm-knowledge,Classic roadster (GT coupe existed).,,LLM-reviewed
+Mg,Mghs,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:3.,,LLM-reviewed
+Mg,S5,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:7.,,LLM-reviewed
+Mg,Yt,Unknown / Needs Web Check,fallback heuristic,Model label not identifiable; needs web check.,,Needs source URL
+Mg,Zs Ev,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:1.,,LLM-reviewed
+Mg,Zt,Sedan,llm-knowledge,MG ZT saloon.,,LLM-reviewed
+Mini,Aceman,SUV / Crossover,llm-knowledge,Aceman EV crossover.,,LLM-reviewed
+Mini,Cooper,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:118.,,LLM-reviewed
+Mini,Cooper Clubman,Wagon / Estate,llm-knowledge,Clubman compact estate.,,LLM-reviewed
+Mini,Cooper S,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:300.,,LLM-reviewed
+Mini,Cooper S Clubman,Wagon / Estate,llm-knowledge,Clubman compact estate.,,LLM-reviewed
+Mini,Countryman,SUV / Crossover,llm-knowledge,Countryman crossover; DB majority SUV.,,LLM-reviewed
+Mini,Countryman S,SUV / Crossover,llm-knowledge,Countryman crossover; DB majority SUV.,,LLM-reviewed
+Mini,John Cooper Works,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:167.,,LLM-reviewed
+Mini,One,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:8.,,LLM-reviewed
+Mini,Paceman,SUV / Crossover,llm-knowledge,Countryman-based 3-door crossover.,,LLM-reviewed
+Mitsubishi,Airtrek,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:7.,,LLM-reviewed
+Mitsubishi,Asx,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:199.,,LLM-reviewed
+Mitsubishi,Attrage,Sedan,llm-knowledge,Mirage-based saloon.,,LLM-reviewed
+Mitsubishi,Challenger,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority 4 Wheels:1.,,LLM-reviewed
+Mitsubishi,Chariot,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:1.,,LLM-reviewed
+Mitsubishi,Colt,Hatchback,llm-knowledge,Colt hatchback; DB all Hatchback.,,LLM-reviewed
+Mitsubishi,Delica,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Hatchback:1.,,LLM-reviewed
+Mitsubishi,Fto,Coupe,llm-knowledge,FTO sports coupe.,,LLM-reviewed
+Mitsubishi,Galant,Sedan,llm-knowledge,Galant saloon.,,LLM-reviewed
+Mitsubishi,Grandis,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:35.,,LLM-reviewed
+Mitsubishi,Gto,Sports car,llm-knowledge,GTO/3000GT sports car.,,LLM-reviewed
+Mitsubishi,Lancer,Sedan,llm-knowledge,Lancer saloon; DB 110 Sedan.,,LLM-reviewed
+Mitsubishi,Mirage,Hatchback,llm-knowledge,Mirage hatch (sedan = Attrage); DB majority Hatchback.,,LLM-reviewed
+Mitsubishi,Outlander,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:83.,,LLM-reviewed
+Mitsubishi,Pajero,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority 4 Wheels:82.,,LLM-reviewed
+Mitsubishi,Space Gear,MPV / Minivan,llm-knowledge,Delica Space Gear people mover.,,LLM-reviewed
+Mitsubishi,Storm,Pickup / Truck,llm-knowledge,Triton Storm; DB Pick-Up majority.,,LLM-reviewed
+Mitsubishi,Triton,Pickup / Truck,official source,Mitsubishi Motors Malaysia official Triton model page; Triton is a pickup truck.,https://www.mitsubishi-motors.com.my/model/triton/,Verified
+Mitsubishi,Xforce,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:13.,,LLM-reviewed
+Mitsubishi,Xpander,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:213.,,LLM-reviewed
+Mitsuoka,Cute,Hatchback,llm-knowledge,Mitsuoka microcar.,,Needs source URL
+Morris,Mini,Hatchback,make/model heuristic,LLM pass concurs; DB majority Coupe:3.,,LLM-reviewed
+Morris,Minor,Sedan,llm-knowledge,2/4-door saloon (Traveller estate existed).,,LLM-reviewed
+Naza,Bestari,Sedan,llm-knowledge,Rebadged Kia Spectra saloon.,,LLM-reviewed
+Naza,Citra,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:82.,,LLM-reviewed
+Naza,Forte,Sedan,llm-knowledge,Rebadged Kia Forte saloon; DB majority Sedan.,,LLM-reviewed
+Naza,Picanto,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:4.,,LLM-reviewed
+Naza,Ria,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:27.,,LLM-reviewed
+Naza,Sorento,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:8.,,LLM-reviewed
+Naza,Suria,Hatchback,llm-knowledge,Rebadged Kia Pride hatch; DB majority Hatchback.,,LLM-reviewed
+Naza,Sutera,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:1.,,LLM-reviewed
+Neta,V,SUV / Crossover,llm-knowledge,Small crossover EV; DB unanimous SUV.,,LLM-reviewed
+Nissan,180Sx,Sports car,llm-knowledge,S13 sports coupe.,,LLM-reviewed
+Nissan,370Z,Sports car,llm-knowledge,Z sports car.,,LLM-reviewed
+Nissan,720,Pickup / Truck,make/model heuristic,LLM pass concurs; DB majority Pick-Up:1.,,LLM-reviewed
+Nissan,Ad Resort,Wagon / Estate,make/model heuristic,LLM pass concurs; DB majority Others:3.,,LLM-reviewed
+Nissan,Almera,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:784.,,LLM-reviewed
+Nissan,Bluebird,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:1.,,LLM-reviewed
+Nissan,Cefiro,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:33.,,LLM-reviewed
+Nissan,Cube,Hatchback,llm-knowledge,Boxy compact hatch.,,LLM-reviewed
+Nissan,Elgrand,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:47.,,LLM-reviewed
+Nissan,Fairlady Z,Sports car,llm-knowledge,Z sports car.,,LLM-reviewed
+Nissan,Figaro,Convertible / Roadster,llm-knowledge,Retro fixed-profile convertible.,,LLM-reviewed
+Nissan,Frontier,Pickup / Truck,make/model heuristic,LLM pass concurs; DB majority Pick-Up:17.,,LLM-reviewed
+Nissan,Grand Livina,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:365.,,LLM-reviewed
+Nissan,Gtr,Sports car,llm-knowledge,GT-R supercar.,,LLM-reviewed
+Nissan,Juke,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:8.,,LLM-reviewed
+Nissan,Kicks,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:4.,,LLM-reviewed
+Nissan,Latio,Sedan / Hatchback,llm-knowledge,MY Latio sold both bodies; DB split 35/37.,,LLM-reviewed
+Nissan,Laurel,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:1.,,LLM-reviewed
+Nissan,Leaf,Hatchback,llm-knowledge,EV hatchback.,,LLM-reviewed
+Nissan,Livina,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:32.,,LLM-reviewed
+Nissan,March,Hatchback,llm-knowledge,Supermini hatch.,,LLM-reviewed
+Nissan,Murano,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:27.,,LLM-reviewed
+Nissan,Navara,Pickup / Truck,make/model heuristic,LLM pass concurs; DB majority Pick-Up:313.,,LLM-reviewed
+Nissan,Note,Hatchback,llm-knowledge,Compact hatch.,,LLM-reviewed
+Nissan,Nv200,Van / Commercial,make/model heuristic,LLM pass concurs; DB majority Others:64.,,LLM-reviewed
+Nissan,Pulsar,Sedan / Hatchback,make/model heuristic,LLM pass concurs; DB majority Sedan:1.,,LLM-reviewed
+Nissan,Roox,Hatchback,llm-knowledge,Kei tall wagon.,,LLM-reviewed
+Nissan,Sentra,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:136.,,LLM-reviewed
+Nissan,Serena,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:650.,,LLM-reviewed
+Nissan,Silvia,Sports car,llm-knowledge,S-chassis sports coupe.,,LLM-reviewed
+Nissan,Skyline,Coupe,llm-knowledge,MY imports mostly R33/R34 coupes (sedans exist).,,LLM-reviewed
+Nissan,Stagea,Wagon / Estate,make/model heuristic,LLM pass concurs; DB majority 4 Wheels:1.,,LLM-reviewed
+Nissan,Sunny,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:12.,,LLM-reviewed
+Nissan,Sylphy,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:141.,,LLM-reviewed
+Nissan,Teana,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:166.,,LLM-reviewed
+Nissan,Terrano,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:2.,,LLM-reviewed
+Nissan,Urvan,Van / Commercial,make/model heuristic,LLM pass concurs; DB majority Others:69.,,LLM-reviewed
+Nissan,Vanette,Van / Commercial,make/model heuristic,LLM pass concurs; DB majority Others:92.,,LLM-reviewed
+Nissan,X-Gear,Hatchback,llm-knowledge,Livina X-Gear crossover-styled hatch; DB majority Hatchback.,,LLM-reviewed
+Nissan,X-Trail,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:527.,,LLM-reviewed
+Perodua,5448,SUV / Crossover,web-verify,Mudah model-code label for the 2026 Perodua Ativa (SUV).,https://www.mudah.my/all-new-2026-perodua-ativa-av-d-cvt-cash-back-1k-114529541.htm,Verified
+Perodua,Alza,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:1302.,,LLM-reviewed
+Perodua,Aruz,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Mpvs:229.,,LLM-reviewed
+Perodua,Ativa,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:445.,,LLM-reviewed
+Perodua,Axia,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:1449.,,LLM-reviewed
+Perodua,Bezza,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:1229.,,LLM-reviewed
+Perodua,Kancil,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:151.,,LLM-reviewed
+Perodua,Kelisa,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:155.,,LLM-reviewed
+Perodua,Kembara,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority 4 Wheels:39.,,LLM-reviewed
+Perodua,Kenari,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:97.,,LLM-reviewed
+Perodua,Myvi,Hatchback,official source,Perodua official Myvi page is under its hatchback model path.,https://www.perodua.com.my/our-models/hatchback/myvi,Verified
+Perodua,Nautica,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:4.,,LLM-reviewed
+Perodua,Rusa,Van / Commercial,make/model heuristic,LLM pass concurs; DB majority Others:5.,,LLM-reviewed
+Perodua,Traz,SUV / Crossover,web-verify,"Toyota Yaris Cross twin B-segment SUV, launched Dec 2025.",https://paultan.org/2025/12/17/2026-perodua-traz-launched-in-malaysia-toyota-yaris-cross-b-suv-twin-1-5l-na-cvt-x-h-variants-fr-rm76k/,Verified
+Perodua,Viva,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:368.,,LLM-reviewed
+Peugeot,2008,SUV / Crossover,llm-knowledge,Compact crossover; DB majority SUV.,,LLM-reviewed
+Peugeot,206 Coupe,Convertible / Roadster,llm-knowledge,206 CC coupe-cabriolet.,,LLM-reviewed
+Peugeot,207,Sedan,llm-knowledge,MY 207 = Naza-assembled sedan; DB majority Sedan.,,LLM-reviewed
+Peugeot,207 Sv,Sedan,llm-knowledge,MY 207 SV sedan trim.,,LLM-reviewed
+Peugeot,208,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:73.,,LLM-reviewed
+Peugeot,208 Gti,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:3.,,LLM-reviewed
+Peugeot,3008,SUV / Crossover,llm-knowledge,SUV; DB 156 SUV.,,LLM-reviewed
+Peugeot,306,Sedan / Hatchback,llm-knowledge,Both bodies sold in MY.,,LLM-reviewed
+Peugeot,307,Hatchback,llm-knowledge,Compact hatch.,,LLM-reviewed
+Peugeot,308,Hatchback,llm-knowledge,Compact hatch; DB majority Hatchback.,,LLM-reviewed
+Peugeot,405,Sedan,llm-knowledge,405 saloon.,,LLM-reviewed
+Peugeot,407,Sedan,llm-knowledge,407 saloon.,,LLM-reviewed
+Peugeot,408,Sedan,llm-knowledge,MY 408 saloon; DB majority Sedan.,,LLM-reviewed
+Peugeot,5008,SUV / Crossover,llm-knowledge,Gen-2 5008 SUV (gen-1 was an MPV); DB split.,,LLM-reviewed
+Peugeot,508,Sedan,llm-knowledge,508 saloon/fastback.,,LLM-reviewed
+Peugeot,Landtrek,Pickup / Truck,make/model heuristic,LLM pass concurs; DB majority Pick-Up:5.,,LLM-reviewed
+Peugeot,Rcz,Coupe,llm-knowledge,RCZ sports coupe.,,LLM-reviewed
+Peugeot,Traveller,MPV / Minivan,llm-knowledge,Traveller people mover; DB all MPV.,,LLM-reviewed
+Porsche,718,Sports car,llm-knowledge,Cayman/Boxster mid-engine sports car.,,LLM-reviewed
+Porsche,911 Carrera,Sports car,llm-knowledge,911 sports car.,,LLM-reviewed
+Porsche,911 Carrera 4S,Sports car,llm-knowledge,911 sports car.,,LLM-reviewed
+Porsche,911 Carrera S,Sports car,llm-knowledge,911 sports car.,,LLM-reviewed
+Porsche,911 Gt2,Sports car,llm-knowledge,911 track special.,,LLM-reviewed
+Porsche,911 Gt3,Sports car,llm-knowledge,911 track special.,,LLM-reviewed
+Porsche,911 Gt3 Rs,Sports car,llm-knowledge,911 track special.,,LLM-reviewed
+Porsche,911 Targa,Sports car,llm-knowledge,911 targa.,,LLM-reviewed
+Porsche,911 Turbo,Sports car,llm-knowledge,911 sports car.,,LLM-reviewed
+Porsche,911S,Sports car,llm-knowledge,Classic 911.,,LLM-reviewed
+Porsche,944,Sports car,llm-knowledge,Front-engine sports car.,,LLM-reviewed
+Porsche,992 Carrera S,Sports car,llm-knowledge,911 sports car.,,LLM-reviewed
+Porsche,Boxster,Convertible / Roadster,llm-knowledge,Mid-engine roadster.,,LLM-reviewed
+Porsche,Boxster S,Convertible / Roadster,llm-knowledge,Mid-engine roadster.,,LLM-reviewed
+Porsche,Cayenne,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:220.,,LLM-reviewed
+Porsche,Cayenne Diesel,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:20.,,LLM-reviewed
+Porsche,Cayenne Gts,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:7.,,LLM-reviewed
+Porsche,Cayenne S,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:53.,,LLM-reviewed
+Porsche,Cayenne Turbo,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:20.,,LLM-reviewed
+Porsche,Cayman,Sports car,llm-knowledge,Mid-engine sports coupe.,,LLM-reviewed
+Porsche,Cayman Gt4,Sports car,llm-knowledge,Mid-engine sports coupe.,,LLM-reviewed
+Porsche,Cayman Gts,Sports car,llm-knowledge,Mid-engine sports coupe.,,LLM-reviewed
+Porsche,Cayman S,Sports car,llm-knowledge,Mid-engine sports coupe.,,LLM-reviewed
+Porsche,Macan,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:337.,,LLM-reviewed
+Porsche,Macan Gts,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:28.,,LLM-reviewed
+Porsche,Macan S,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:59.,,LLM-reviewed
+Porsche,Macan Turbo,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:10.,,LLM-reviewed
+Porsche,Panamera,Sedan,llm-knowledge,"4-door fastback, sedan profile.",,LLM-reviewed
+Porsche,Taycan,Sedan,llm-knowledge,"4-door EV fastback, sedan profile.",,LLM-reviewed
+Proton,Arena,Pickup / Truck,llm-knowledge,Arena ute; DB majority Pick-Up.,,LLM-reviewed
+Proton,Emas 5,Hatchback,web-verify,"B-segment EV hatchback, launched Oct 2025.",https://www.zigwheels.my/new-cars/proton/emas-5,Verified
+Proton,Emas 7,SUV / Crossover,llm-knowledge,eMas 7 electric SUV; DB 67 SUV.,,LLM-reviewed
+Proton,Ertiga,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:55.,,LLM-reviewed
+Proton,Exora,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:572.,,LLM-reviewed
+Proton,Gen2,Hatchback,make/model heuristic,LLM pass concurs; DB majority Sedan:61.,,LLM-reviewed
+Proton,Inspira,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:160.,,LLM-reviewed
+Proton,Iriz,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:437.,,LLM-reviewed
+Proton,Iswara,Sedan / Hatchback,llm-knowledge,Saloon and Aeroback hatch; DB split.,,LLM-reviewed
+Proton,Juara,Hatchback,llm-knowledge,Kei tall wagon (Daihatsu Move-based).,,LLM-reviewed
+Proton,Perdana,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:199.,,LLM-reviewed
+Proton,Persona,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:1184.,,LLM-reviewed
+Proton,Preve,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:309.,,LLM-reviewed
+Proton,Putra,Coupe,llm-knowledge,2-door coupe; DB 17 Coupe.,,LLM-reviewed
+Proton,S70,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:187.,,LLM-reviewed
+Proton,Saga,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:1761.,,LLM-reviewed
+Proton,Satria,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:157.,,LLM-reviewed
+Proton,Savvy,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:19.,,LLM-reviewed
+Proton,Suprima S,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:60.,,LLM-reviewed
+Proton,Waja,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:265.,,LLM-reviewed
+Proton,Wira,Sedan / Hatchback,llm-knowledge,Saloon and Aeroback hatch; DB 416/108.,,LLM-reviewed
+Proton,X50,SUV / Crossover,official source,Proton official X50 model page; X50 is marketed as a compact SUV/crossover.,https://www.proton.com/models/all-new-x50,Verified
+Proton,X70,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:937.,,LLM-reviewed
+Proton,X90,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:66.,,LLM-reviewed
+Renault,Captur,SUV / Crossover,llm-knowledge,Compact crossover; DB majority SUV.,,LLM-reviewed
+Renault,Clio,Hatchback,llm-knowledge,Supermini hatch.,,LLM-reviewed
+Renault,Fluence,Sedan,llm-knowledge,Fluence saloon; DB all Sedan.,,LLM-reviewed
+Renault,Kangoo,Van / Commercial,make/model heuristic,LLM pass concurs; DB majority Mpvs:2.,,LLM-reviewed
+Renault,Koleos,SUV / Crossover,llm-knowledge,Koleos SUV.,,LLM-reviewed
+Renault,Megane,Hatchback,llm-knowledge,Megane hatch (RS); DB majority Hatchback.,,LLM-reviewed
+Renault,Scenic,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Sports:1.,,LLM-reviewed
+Renault,Twizy,Hatchback,llm-knowledge,Electric microcar quadricycle.,,LLM-reviewed
+Rolls-Royce,Cullinan,SUV / Crossover,llm-knowledge,Cullinan SUV; DB unanimous SUV.,,LLM-reviewed
+Rolls-Royce,Dawn,Convertible / Roadster,llm-knowledge,Dawn convertible.,,LLM-reviewed
+Rolls-Royce,Ghost,Sedan,make default heuristic,LLM pass concurs; DB majority Sedan:44.,,LLM-reviewed
+Rolls-Royce,Phantom,Sedan,make default heuristic,LLM pass concurs; DB majority Sedan:8.,,LLM-reviewed
+Rolls-Royce,Silver Spirit,Sedan,make default heuristic,LLM pass concurs; DB majority Sedan:2.,,LLM-reviewed
+Rolls-Royce,Spectre,Coupe,llm-knowledge,Electric luxury coupe.,,LLM-reviewed
+Rolls-Royce,Wraith,Coupe,llm-knowledge,Luxury coupe; DB majority Coupe.,,LLM-reviewed
+Rover,200,Hatchback,llm-knowledge,R3 200 hatch.,,LLM-reviewed
+Rover,600,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:1.,,LLM-reviewed
+Rover,75,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:1.,,LLM-reviewed
+Saab,9-5,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:2.,,LLM-reviewed
+Saab,900,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:1.,,LLM-reviewed
+Shenyang Brilliance,Era Jinbei,Van / Commercial,llm-knowledge,Jinbei van assembled in MY.,,LLM-reviewed
+Skoda,Octavia,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:1.,,LLM-reviewed
+Skoda,Superb,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:1.,,LLM-reviewed
+Smart,1,SUV / Crossover,llm-knowledge,Smart #1 EV crossover; DB majority SUV.,,LLM-reviewed
+Smart,3,SUV / Crossover,llm-knowledge,Smart #3 EV coupe-crossover; DB all SUV.,,LLM-reviewed
+Smart,Forfour,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:6.,,LLM-reviewed
+Smart,Fortwo,Hatchback,make/model heuristic,LLM pass concurs; DB majority Coupe:6.,,LLM-reviewed
+Smart,Roadster,Convertible / Roadster,llm-knowledge,Smart Roadster.,,LLM-reviewed
+Ssangyong,Actyon,SUV / Crossover,llm-knowledge,Actyon SUV.,,LLM-reviewed
+Ssangyong,Chairman,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:2.,,LLM-reviewed
+Ssangyong,Rexton,SUV / Crossover,llm-knowledge,Rexton SUV.,,LLM-reviewed
+Ssangyong,Stavic,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:14.,,LLM-reviewed
+Subaru,Brz,Sports car,llm-knowledge,Toyota 86 twin sports car.,,LLM-reviewed
+Subaru,Forester,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:171.,,LLM-reviewed
+Subaru,Impreza,Sedan / Hatchback,llm-knowledge,Both bodies sold in MY; DB 20/6.,,LLM-reviewed
+Subaru,Legacy,Sedan,llm-knowledge,Saloon (estate variant exists); DB Sedan.,,LLM-reviewed
+Subaru,Levorg,Wagon / Estate,make/model heuristic,LLM pass concurs; DB majority Others:14.,,LLM-reviewed
+Subaru,Outback,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:4.,,LLM-reviewed
+Subaru,Wrx,Sedan,llm-knowledge,WRX saloon; DB 20 Sedan.,,LLM-reviewed
+Subaru,Xv,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:329.,,LLM-reviewed
+Suzuki,Alto,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:13.,,LLM-reviewed
+Suzuki,Erv,MPV / Minivan,web-verify,Discontinued 1.3L MPV/people mover per Zigwheels MY.,https://www.zigwheels.my/new-cars/suzuki/erv,Verified
+Suzuki,Fronx,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Hatchback:1.,,LLM-reviewed
+Suzuki,Grand Vitara,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:26.,,LLM-reviewed
+Suzuki,Ignis,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:1.,,LLM-reviewed
+Suzuki,Jimny,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority 4 Wheels:155.,,LLM-reviewed
+Suzuki,Kizashi,Sedan,llm-knowledge,Kizashi saloon.,,LLM-reviewed
+Suzuki,Spacia,Hatchback,make/model heuristic,LLM pass concurs; DB majority Others:1.,,LLM-reviewed
+Suzuki,Swift,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:362.,,LLM-reviewed
+Suzuki,Sx4,Hatchback,llm-knowledge,MY SX4 crossover hatch (sedan variant exists); DB majority Hatchback.,,LLM-reviewed
+Suzuki,Vitara,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority 4 Wheels:22.,,LLM-reviewed
+Suzuki,X-90,SUV / Crossover,llm-knowledge,Two-door SUV.,,LLM-reviewed
+Tata,Telcoline,Pickup / Truck,make/model heuristic,LLM pass concurs; DB majority Pick-Up:1.,,LLM-reviewed
+Td2000,Silverstone,Convertible / Roadster,llm-knowledge,MY-built classic-style roadster.,,LLM-reviewed
+Tesla,Model 3,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:26.,,LLM-reviewed
+Tesla,Model S 75D,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:1.,,LLM-reviewed
+Tesla,Model X 100D,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:1.,,LLM-reviewed
+Tesla,Model X 75D,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Mpvs:1.,,LLM-reviewed
+Tesla,Model X P100D,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:4.,,LLM-reviewed
+Tesla,Model X P90D,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:1.,,LLM-reviewed
+Tesla,Model Y,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:15.,,LLM-reviewed
+Toyota,86,Sports car,llm-knowledge,86 sports car.,,LLM-reviewed
+Toyota,Ae86,Coupe,llm-knowledge,AE86 Levin/Trueno coupe.,,LLM-reviewed
+Toyota,Alphard,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:2507.,,LLM-reviewed
+Toyota,Altezza,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:2.,,LLM-reviewed
+Toyota,Altis,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:434.,,LLM-reviewed
+Toyota,Aristo,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:1.,,LLM-reviewed
+Toyota,Avanza,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:290.,,LLM-reviewed
+Toyota,Bb,Hatchback,llm-knowledge,Boxy compact hatch.,,LLM-reviewed
+Toyota,C-Hr,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:79.,,LLM-reviewed
+Toyota,Caldina,Wagon / Estate,make/model heuristic,LLM pass concurs; DB majority Hatchback:6.,,LLM-reviewed
+Toyota,Camroad,Pickup / Truck,llm-knowledge,Truck-based camper chassis.,,Needs source URL
+Toyota,Camry,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:619.,,LLM-reviewed
+Toyota,Celica,Coupe,llm-knowledge,Celica sports coupe.,,LLM-reviewed
+Toyota,Celsior,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:1.,,LLM-reviewed
+Toyota,Chaser,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:1.,,LLM-reviewed
+Toyota,Copen,Convertible / Roadster,llm-knowledge,Copen GR kei roadster.,,LLM-reviewed
+Toyota,Corolla,Sedan / Hatchback,llm-knowledge,Classic sedans plus hatch imports; DB 84/47.,,LLM-reviewed
+Toyota,Corolla Cross,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:205.,,LLM-reviewed
+Toyota,Corona,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:1.,,LLM-reviewed
+Toyota,Crown,SUV / Crossover,llm-knowledge,Recent MY imports are Crown Crossover; DB majority SUV.,,LLM-reviewed
+Toyota,Cygnus,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:5.,,LLM-reviewed
+Toyota,Estima,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:443.,,LLM-reviewed
+Toyota,Fj Cruiser,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:18.,,LLM-reviewed
+Toyota,Fortuner,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:212.,,LLM-reviewed
+Toyota,Gaia,MPV / Minivan,llm-knowledge,Ipsum-class MPV.,,LLM-reviewed
+Toyota,Gr Supra,Sports car,llm-knowledge,Supra sports car.,,LLM-reviewed
+Toyota,Gr Yaris,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:133.,,LLM-reviewed
+Toyota,Gr86,Sports car,llm-knowledge,GR86 sports car.,,LLM-reviewed
+Toyota,Granace,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:2.,,LLM-reviewed
+Toyota,Grmn Yaris,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:5.,,LLM-reviewed
+Toyota,Harrier,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:1132.,,LLM-reviewed
+Toyota,Hiace,Van / Commercial,make/model heuristic,LLM pass concurs; DB majority Others:185.,,LLM-reviewed
+Toyota,Hilux,Pickup / Truck,make/model heuristic,LLM pass concurs; DB majority Pick-Up:548.,,LLM-reviewed
+Toyota,Innova,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:441.,,LLM-reviewed
+Toyota,Ipsum,MPV / Minivan,llm-knowledge,Ipsum MPV; DB all MPV.,,LLM-reviewed
+Toyota,Isis,MPV / Minivan,llm-knowledge,Isis MPV.,,LLM-reviewed
+Toyota,Ist,Hatchback,llm-knowledge,ist compact hatch.,,LLM-reviewed
+Toyota,Kluger,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:1.,,LLM-reviewed
+Toyota,Land Cruiser,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:315.,,LLM-reviewed
+Toyota,Liteace,Van / Commercial,make/model heuristic,LLM pass concurs; DB majority Others:4.,,LLM-reviewed
+Toyota,Mark X,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:20.,,LLM-reviewed
+Toyota,Mr2,Sports car,llm-knowledge,Mid-engine sports car.,,LLM-reviewed
+Toyota,Noah,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:103.,,LLM-reviewed
+Toyota,Opa,Wagon / Estate,make/model heuristic,LLM pass concurs; DB majority Suvs:1.,,LLM-reviewed
+Toyota,Prado,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:43.,,LLM-reviewed
+Toyota,Previa,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:14.,,LLM-reviewed
+Toyota,Prius,Hatchback,llm-knowledge,Liftback hatch all generations; DB majority Hatchback.,,LLM-reviewed
+Toyota,Prius C,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:39.,,LLM-reviewed
+Toyota,Publica,Sedan,make/model heuristic,LLM pass concurs; DB majority 4 Wheels:1.,,LLM-reviewed
+Toyota,Rav 4,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:33.,,LLM-reviewed
+Toyota,Roomy,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:21.,,LLM-reviewed
+Toyota,Rush,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:67.,,LLM-reviewed
+Toyota,Sienta,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:35.,,LLM-reviewed
+Toyota,Soarer,Coupe,llm-knowledge,Soarer GT coupe.,,LLM-reviewed
+Toyota,Starlet,Hatchback,llm-knowledge,Starlet hatch.,,LLM-reviewed
+Toyota,Supra,Sports car,llm-knowledge,Supra sports car.,,LLM-reviewed
+Toyota,Tank,MPV / Minivan,llm-knowledge,"Roomy twin, sliding-door tall wagon.",,LLM-reviewed
+Toyota,Townace,Van / Commercial,make/model heuristic,LLM pass concurs; DB majority Mpvs:1.,,LLM-reviewed
+Toyota,Unser,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:43.,,LLM-reviewed
+Toyota,Vanguard,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:3.,,LLM-reviewed
+Toyota,Vellfire,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:1474.,,LLM-reviewed
+Toyota,Veloz,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:42.,,LLM-reviewed
+Toyota,Vios,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:1568.,,LLM-reviewed
+Toyota,Voxy,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:325.,,LLM-reviewed
+Toyota,Wald,MPV / Minivan,llm-knowledge,Wald-bodykit Alphard/Vellfire listings.,,Needs source URL
+Toyota,Wish,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:251.,,LLM-reviewed
+Toyota,Yaris,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:391.,,LLM-reviewed
+Toyota,Yaris Cross,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:15.,,LLM-reviewed
+Tq Wuling,Bingo,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:4.,,LLM-reviewed
+Triumph,Herald,Sedan,llm-knowledge,Small saloon (convertible existed).,,LLM-reviewed
+Volkswagen,Arteon,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:60.,,LLM-reviewed
+Volkswagen,Beetle,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:87.,,LLM-reviewed
+Volkswagen,Cc,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:25.,,LLM-reviewed
+Volkswagen,Cross Touran,MPV / Minivan,llm-knowledge,Touran MPV with cladding; DB majority MPV.,,LLM-reviewed
+Volkswagen,Eos,Convertible / Roadster,llm-knowledge,Coupe-cabriolet.,,LLM-reviewed
+Volkswagen,Golf,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:455.,,LLM-reviewed
+Volkswagen,Jetta,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:110.,,LLM-reviewed
+Volkswagen,Kombi,Van / Commercial,llm-knowledge,Kombi van/people mover.,,LLM-reviewed
+Volkswagen,Passat,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:306.,,LLM-reviewed
+Volkswagen,Passat Cc,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:13.,,LLM-reviewed
+Volkswagen,Polo,Sedan / Hatchback,llm-knowledge,MY Polo hatch and Polo Sedan both official; DB 165/78.,,LLM-reviewed
+Volkswagen,Polo Gti,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:27.,,LLM-reviewed
+Volkswagen,Scirocco,Coupe,llm-knowledge,3-door sports coupe.,,LLM-reviewed
+Volkswagen,Scirocco R,Coupe,llm-knowledge,3-door sports coupe.,,LLM-reviewed
+Volkswagen,Sharan,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:17.,,LLM-reviewed
+Volkswagen,T-Roc,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:2.,,LLM-reviewed
+Volkswagen,Tiguan,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:302.,,LLM-reviewed
+Volkswagen,Touareg,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:18.,,LLM-reviewed
+Volkswagen,Touran,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:8.,,LLM-reviewed
+Volkswagen,Vento,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:92.,,LLM-reviewed
+Volvo,122S,Sedan,llm-knowledge,Amazon saloon.,,LLM-reviewed
+Volvo,123Gt,Sedan,llm-knowledge,Amazon 2-door saloon.,,LLM-reviewed
+Volvo,144,Sedan,llm-knowledge,140-series saloon.,,LLM-reviewed
+Volvo,164,Sedan,llm-knowledge,160-series saloon.,,LLM-reviewed
+Volvo,240,Sedan,llm-knowledge,Saloon (estate variant exists); DB all Sedan.,,LLM-reviewed
+Volvo,260,Sedan,llm-knowledge,Saloon (estate variant exists).,,LLM-reviewed
+Volvo,740,Sedan,llm-knowledge,Saloon (estate variant exists).,,LLM-reviewed
+Volvo,850,Sedan,llm-knowledge,Saloon (estate variant exists); DB Sedan.,,LLM-reviewed
+Volvo,940,Sedan,llm-knowledge,Saloon (estate variant exists); DB all Sedan.,,LLM-reviewed
+Volvo,960,Sedan,llm-knowledge,Saloon (estate variant exists).,,LLM-reviewed
+Volvo,C40,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:6.,,LLM-reviewed
+Volvo,Ex30,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:3.,,LLM-reviewed
+Volvo,Ex90,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:2.,,LLM-reviewed
+Volvo,S40,Sedan,llm-knowledge,S = saloon.,,LLM-reviewed
+Volvo,S60,Sedan,llm-knowledge,S = saloon; DB 51 Sedan.,,LLM-reviewed
+Volvo,S70,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:4.,,LLM-reviewed
+Volvo,S80,Sedan,llm-knowledge,S = saloon.,,LLM-reviewed
+Volvo,S90,Sedan,llm-knowledge,S = saloon; DB 34 Sedan.,,LLM-reviewed
+Volvo,V40,Hatchback,llm-knowledge,2012+ V40 hatch; DB majority Hatchback.,,LLM-reviewed
+Volvo,V50,Wagon / Estate,make/model heuristic,LLM pass concurs; DB majority Others:5.,,LLM-reviewed
+Volvo,V60,Wagon / Estate,make/model heuristic,LLM pass concurs; DB majority Hatchback:4.,,LLM-reviewed
+Volvo,V70,Wagon / Estate,make/model heuristic,LLM pass concurs; DB majority Others:2.,,LLM-reviewed
+Volvo,Xc40,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:79.,,LLM-reviewed
+Volvo,Xc60,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:134.,,LLM-reviewed
+Volvo,Xc90,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:172.,,LLM-reviewed
+Weststar,Maxus,Van / Commercial,make default heuristic,LLM pass concurs; DB majority Mpvs:14.,,LLM-reviewed
+Xpeng,G6,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:5.,,LLM-reviewed
+Xpeng,X9,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:5.,,LLM-reviewed
+Zeekr,009,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:4.,,LLM-reviewed
+Zeekr,7X,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:3.,,LLM-reviewed
+Zeekr,X,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:1.,,LLM-reviewed
+Zxauto,Grandtiger,Pickup / Truck,make/model heuristic,LLM pass concurs; DB majority Pick-Up:1.,,LLM-reviewed

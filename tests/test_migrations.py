@@ -143,7 +143,7 @@ class TestMigrate:
         # v6 dead-weight columns must be gone
         for col in cars_dropped:
             assert col not in cols, f"{col} should be dropped at v6"
-        assert _schema_version(conn) == 7
+        assert _schema_version(conn) == 8
 
     def test_migrate_motorcycles_adds_only_shared(self, patched_connect):
         rm.migrate("motorcycles", dry_run=False)
@@ -162,7 +162,7 @@ class TestMigrate:
             assert col in cols, f"missing v5 col {col}"
         for col in moto_dropped:
             assert col not in cols, f"{col} should be dropped at v6"
-        assert _schema_version(conn) == 7
+        assert _schema_version(conn) == 8
 
     def test_migrate_idempotent(self, patched_connect):
         rm.migrate("cars", dry_run=False)
@@ -170,7 +170,7 @@ class TestMigrate:
         rm.migrate("cars", dry_run=False)
         conn = sqlite3.connect(patched_connect / "cardata_cars.db")
         conn.row_factory = sqlite3.Row
-        assert _schema_version(conn) == 7
+        assert _schema_version(conn) == 8
         # All surviving columns still present, no duplicates (sqlite would raise
         # if duplicated)
         cols = _columns_of(conn, "listings")
@@ -239,7 +239,7 @@ class TestV3DropBody:
         assert "body" not in cols
         # v2->v3 drops body; v5->v6 drops dead cols; v6->v7 adds type cols
         # → full chain ends at v7
-        assert _schema_version(conn) == 7
+        assert _schema_version(conn) == 8
 
     def test_drops_body_and_adds_v5_cols(self, tmp_path, monkeypatch):
         """v2->v3 drops body; v4->v5 adds ad_expiry + sold_inference in same run."""
@@ -297,7 +297,7 @@ class TestV4Retype:
         conn = sqlite3.connect(patched_connect / "cardata_motorcycles.db")
         conn.row_factory = sqlite3.Row
 
-        assert _schema_version(conn) == 7  # full chain ends at v7
+        assert _schema_version(conn) == 8  # full chain ends at v8
         moto_dropped = set(rm.DROPPED_COLS_V6_MOTORCYCLES)
         for col in rm.RETYPE_COLS_BOTH:
             if col in moto_dropped:
@@ -471,7 +471,7 @@ class TestV5AddExpiry:
         cols = _columns_of(conn, "listings")
         assert "ad_expiry" in cols
         assert "sold_inference" in cols
-        assert _schema_version(conn) == 7
+        assert _schema_version(conn) == 8
 
     def test_v5_idempotent_on_v5_db(self, tmp_path, monkeypatch):
         """Running migrate() on an already-v5 DB is a clean no-op."""
@@ -491,7 +491,7 @@ class TestV5AddExpiry:
 
         conn = sqlite3.connect(tmp_path / "cardata_cars.db")
         conn.row_factory = sqlite3.Row
-        assert _schema_version(conn) == 7
+        assert _schema_version(conn) == 8
 
     def test_dry_run_does_not_add_v5_cols(self, tmp_path, monkeypatch):
         self._make_v4_db(tmp_path, "motorcycles")
@@ -533,7 +533,7 @@ class TestV6DropDeadCols:
         assert "mileage_bucket" in cols
         assert "year_verified" in cols
         assert "variant" in cols
-        assert _schema_version(conn) == 7
+        assert _schema_version(conn) == 8
 
     def test_motorcycles_drops_dead_cols_keeps_ad_expiry(self, patched_connect):
         rm.migrate("motorcycles", dry_run=False)
@@ -544,7 +544,7 @@ class TestV6DropDeadCols:
         for col in rm.DROPPED_COLS_V6_MOTORCYCLES:
             assert col not in cols, f"{col} should be dropped at v6"
         assert "ad_expiry" in cols
-        assert _schema_version(conn) == 7
+        assert _schema_version(conn) == 8
 
     def test_v6_dry_run_keeps_cols(self, tmp_path, monkeypatch):
         """Dry-run on a v5 DB drops nothing and leaves version at 5."""
@@ -595,20 +595,53 @@ class TestV7MotorcycleTypeCols:
         cols = _columns_of(conn, "listings")
         for col, _type in rm.V7_MOTORCYCLE_COLS:
             assert col in cols, f"missing v7 col {col}"
-        assert _schema_version(conn) == 7
+        assert _schema_version(conn) == 8
 
-    def test_cars_version_bump_without_type_cols(self, patched_connect):
+    def test_cars_version_bump_without_motorcycle_type_col(self, patched_connect):
+        # type_group legitimately appears on cars at v8, so only the
+        # motorcycle-specific column proves v7 left cars alone.
         rm.migrate("cars", dry_run=False)
         conn = sqlite3.connect(patched_connect / "cardata_cars.db")
         conn.row_factory = sqlite3.Row
         cols = _columns_of(conn, "listings")
-        for col, _type in rm.V7_MOTORCYCLE_COLS:
-            assert col not in cols, f"{col} must not be added to cars"
-        assert _schema_version(conn) == 7
+        assert "motorcycle_type" not in cols, "motorcycle_type must not be added to cars"
+        assert _schema_version(conn) == 8
 
     def test_v7_idempotent(self, patched_connect):
         rm.migrate("motorcycles", dry_run=False)
         rm.migrate("motorcycles", dry_run=False)  # no-op
         conn = sqlite3.connect(patched_connect / "cardata_motorcycles.db")
         conn.row_factory = sqlite3.Row
-        assert _schema_version(conn) == 7
+        assert _schema_version(conn) == 8
+
+
+# ---------------------------------------------------------------------------
+# v7 -> v8: car vehicle-type columns
+# ---------------------------------------------------------------------------
+
+class TestV8CarVehicleTypeCols:
+    def test_cars_gains_vehicle_type_cols(self, patched_connect):
+        rm.migrate("cars", dry_run=False)
+        conn = sqlite3.connect(patched_connect / "cardata_cars.db")
+        conn.row_factory = sqlite3.Row
+        cols = _columns_of(conn, "listings")
+        for col, _type in rm.V8_CAR_COLS:
+            assert col in cols, f"missing v8 col {col}"
+        assert _schema_version(conn) == 8
+
+    def test_motorcycles_version_bump_without_vehicle_type_col(self, patched_connect):
+        # type_group legitimately exists on motorcycles since v7, so only
+        # the car-specific column proves v8 left motorcycles alone.
+        rm.migrate("motorcycles", dry_run=False)
+        conn = sqlite3.connect(patched_connect / "cardata_motorcycles.db")
+        conn.row_factory = sqlite3.Row
+        cols = _columns_of(conn, "listings")
+        assert "vehicle_type" not in cols, "vehicle_type must not be added to motorcycles"
+        assert _schema_version(conn) == 8
+
+    def test_v8_idempotent(self, patched_connect):
+        rm.migrate("cars", dry_run=False)
+        rm.migrate("cars", dry_run=False)  # no-op
+        conn = sqlite3.connect(patched_connect / "cardata_cars.db")
+        conn.row_factory = sqlite3.Row
+        assert _schema_version(conn) == 8

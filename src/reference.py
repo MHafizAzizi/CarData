@@ -14,6 +14,9 @@ Curated (hand-maintained, not scraped):
         (motorcycle_make, motorcycle_model) -> motorcycle_type
         The coarse type_group is NOT stored in the CSV — it is derived from
         motorcycle_type via TYPE_TO_GROUP below, so the two can never desync.
+    data/reference/cars_model_types.csv
+        (car_make, car_model) -> vehicle_type, same convention: the coarse
+        type_group is derived via CAR_TYPE_TO_GROUP, never stored.
 """
 
 import csv
@@ -132,4 +135,70 @@ def load_model_types() -> Dict[Tuple[str, str], Tuple[str, str]]:
                     f"— must be one of {sorted(TYPE_TO_GROUP)}"
                 )
             mapping[key] = (mtype, TYPE_TO_GROUP[mtype])
+    return mapping
+
+
+def car_types_path() -> Path:
+    return REFERENCE_DIR / "cars_model_types.csv"
+
+
+# Granular vehicle_type -> coarse ML grouping for cars. Single source of
+# truth for the grouping; the mapping CSV stores only the granular type.
+CAR_TYPE_TO_GROUP: Dict[str, str] = {
+    "Sedan":                     "Sedan",
+    "Hatchback":                 "Hatchback",
+    "Sedan / Hatchback":         "Sedan / Hatchback",
+    "SUV / Crossover":           "SUV / Crossover",
+    "MPV / Minivan":             "MPV / Van",
+    "Van / Commercial":          "MPV / Van",
+    "Pickup / Truck":            "Pickup / Truck",
+    "Coupe":                     "Coupe / Sports",
+    "Sports car":                "Coupe / Sports",
+    "Convertible / Roadster":    "Coupe / Sports",
+    "Wagon / Estate":            "Wagon / Estate",
+    "Unknown / Needs Web Check": "Unknown",
+}
+
+# Mudah API car_type -> canonical vehicle_type for the clean buckets.
+# The junk buckets ('4 Wheels', 'Others') are deliberately absent: rows
+# carrying those fall back to the curated cars_model_types.csv mapping.
+API_CAR_TYPE_TO_VEHICLE: Dict[str, str] = {
+    "Sedan":     "Sedan",
+    "Suvs":      "SUV / Crossover",
+    "Hatchback": "Hatchback",
+    "Mpvs":      "MPV / Minivan",
+    "Coupe":     "Coupe",
+    "Sports":    "Sports car",
+    "Pick-Up":   "Pickup / Truck",
+}
+
+
+def load_car_types() -> Dict[Tuple[str, str], Tuple[str, str]]:
+    """Load the car vehicle-type mapping keyed by casefolded (make, model).
+
+    Returns {} when the file is missing. Values are
+    (vehicle_type, type_group), e.g. ('Sports car', 'Coupe / Sports') —
+    the group is derived from CAR_TYPE_TO_GROUP, not read from the file.
+
+    Raises ValueError on a vehicle_type not in CAR_TYPE_TO_GROUP so a typo
+    in a hand-edited row fails loudly instead of writing a bad group.
+    """
+    path = car_types_path()
+    if not path.exists():
+        return {}
+    mapping: Dict[Tuple[str, str], Tuple[str, str]] = {}
+    with open(path, encoding="utf-8-sig", newline="") as f:
+        for row in csv.DictReader(f):
+            key = (
+                (row.get("car_make") or "").casefold().strip(),
+                (row.get("car_model") or "").casefold().strip(),
+            )
+            vtype = (row.get("vehicle_type") or "").strip()
+            if vtype not in CAR_TYPE_TO_GROUP:
+                raise ValueError(
+                    f"{path.name}: unknown vehicle_type {vtype!r} for "
+                    f"{row.get('car_make')}/{row.get('car_model')} "
+                    f"— must be one of {sorted(CAR_TYPE_TO_GROUP)}"
+                )
+            mapping[key] = (vtype, CAR_TYPE_TO_GROUP[vtype])
     return mapping
