@@ -7,7 +7,15 @@ Usage:
     python src/1_scrape.py --category cars --max-ads 1000
     python src/1_scrape.py --category cars --make toyota --max-ads 5000
     python src/1_scrape.py --category cars --make toyota --model vios
+    python src/1_scrape.py --category cars --all-makes --smart   # full coverage
     python src/1_scrape.py                          # interactive prompts
+
+Depth-cap evasion (--smart):
+    A single EagleSearch query paginates to at most ~10,000 ads. Makes with
+    more inventory than that (e.g. Toyota cars ~18.8k) lose the overflow.
+    --smart probes each make's total-results and splits any make over ~9,500
+    into one query per model, so the full inventory is captured. Combine with
+    --all-makes for a complete scrape. Costs one extra probe call per make.
 
 Filters:
     --make  <slug>   Filter by make  (e.g. 'toyota', 'perodua'). Narrows API
@@ -87,6 +95,15 @@ from reference import (  # noqa: E402
 
 CATEGORY_CHOICES = ["cars", "motorcycles"]
 DEFAULT_OUTPUT_DIR = _ROOT / "data" / "raw"
+
+# A single EagleSearch query can only paginate to ~10,000 ads (the depth cap,
+# `from >= 10000` returns empty). A make whose total-results exceeds this loses
+# the overflow. `--smart` mode splits any such make into one query per model so
+# each sub-query stays under the cap. Threshold sits below 10k for safety
+# margin: inventory shifts during a run, and totals fluctuate between probe and
+# scrape. Empirically (Toyota), per-model totals sum exactly to the make total,
+# so the split is lossless — Mudah requires sellers to pick a known model.
+MODEL_SPLIT_THRESHOLD = 9500
 
 
 # ---------------------------------------------------------------------------
@@ -501,6 +518,14 @@ def parse_args() -> argparse.Namespace:
              "--max-ads is given. Used by run_pipeline.bat.",
     )
     p.add_argument(
+        "--smart",
+        action="store_true",
+        help="Adaptive depth-cap evasion. Probes each make's total-results and "
+             "splits any make over ~9,500 listings into per-model queries so the "
+             "full inventory is captured past the 10k EagleSearch depth cap. "
+             "Costs one extra probe call per make; recommended for full scrapes.",
+    )
+    p.add_argument(
         "--list-active-makes",
         action="store_true",
         help="Probe every make in the reference data and print only those with "
@@ -591,6 +616,74 @@ def _preview_count(
     except Exception as e:
         logging.warning(f"Could not preview total count: {e}")
         return None
+
+
+def _expand_capped_makes(
+    eagle: EagleClient,
+    category: str,
+    makes_list: List[Tuple[str, str, str, Optional[str]]],
+    threshold: int = MODEL_SPLIT_THRESHOLD,
+) -> List[Tuple[str, str, str, Optional[str]]]:
+    """Probe each make's total-results; split over-cap makes into per-model entries.
+
+    Takes the standard makes_list of (slug, make_id, name, model_id) tuples and
+    returns a new list where any make whose total-results exceeds `threshold`
+    is replaced by one entry per model (so each downstream query stays under the
+    EagleSearch depth cap and captures the make's full inventory).
+
+    Entries already carrying a model_id (user filtered by model explicitly) are
+    left untouched — they are already at model granularity. Makes under the
+    threshold pass through unchanged (still a single make-level query).
+
+    Per-model entries use a composite name_tag (`<make>_<model>`) so the
+    per-make CSV files don't collide, and a display name of "<Make> <Model>".
+    """
+    models_by_make = _load_models(category)
+    expanded: List[Tuple[str, str, str, Optional[str]]] = []
+    for slug, make_id, name, model_id in makes_list:
+        if model_id is not None:
+            expanded.append((slug, make_id, name, model_id))
+            continue
+
+        total = _preview_count(eagle, category, make_id, None)
+        if total is None:
+            # Probe failed — keep make-level; the scrape itself will retry/log.
+            logging.warning(
+                f"[{slug}] could not probe total-results; scraping make-level"
+            )
+            expanded.append((slug, make_id, name, model_id))
+            continue
+
+        if total <= threshold:
+            expanded.append((slug, make_id, name, model_id))
+            continue
+
+        models = models_by_make.get(slug, [])
+        if not models:
+            logging.warning(
+                f"[{slug}] total-results={total:,} exceeds cap but no models in "
+                f"reference data — scraping make-level (will cap at ~10k). "
+                f"Run scrape_makes_models.py to refresh models."
+            )
+            expanded.append((slug, make_id, name, model_id))
+            continue
+
+        logging.info(
+            f"[{slug}] total-results={total:,} > {threshold:,} cap — "
+            f"splitting into {len(models)} model-level queries"
+        )
+        print(
+            f"  [split] {name}: {total:,} listings > {threshold:,} cap "
+            f"-> {len(models)} model-level queries"
+        )
+        for m in models:
+            expanded.append((
+                f"{slug}_{m['slug']}",
+                make_id,
+                f"{name} {m['name']}",
+                m["id"],
+            ))
+    return expanded
 
 
 def _ask_max_ads_with_preview(
@@ -696,6 +789,17 @@ def main() -> None:
         return
 
     args = _interactive_fill(args, eagle)
+
+    # --smart: probe each make and split over-cap makes into per-model queries
+    # so the 10k depth cap doesn't truncate high-volume makes.
+    if getattr(args, "smart", False) and args.makes_list:
+        if args.max_ads is not None:
+            logging.info(
+                "--smart with --max-ads: the cap applies PER model query, "
+                "not per make. Omit --max-ads for full coverage."
+            )
+        print(f"\n[smart] probing {len(args.makes_list)} make(s) for depth-cap splits...")
+        args.makes_list = _expand_capped_makes(eagle, args.category, args.makes_list)
 
     # Compat flag warnings
     deprecated_set = [

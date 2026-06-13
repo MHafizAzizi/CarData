@@ -61,7 +61,7 @@ echo.
 echo ==================================================
 echo   %C% : STEP 1/3 scrape
 echo ==================================================
-python "src\1_scrape.py" --category %C% --all-makes || exit /b 1
+python "src\1_scrape.py" --category %C% --all-makes --smart || exit /b 1
 echo.
 echo ==================================================
 echo   %C% : STEP 2/3 migrate

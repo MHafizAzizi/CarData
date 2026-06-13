@@ -47,11 +47,11 @@ Audi,Sq5,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs
 Audi,Tt,Sports car,llm-knowledge,Compact sports coupe/roadster.,,LLM-reviewed
 Audi,Ttrs,Sports car,llm-knowledge,Compact sports coupe.,,LLM-reviewed
 Audi,Tts,Sports car,llm-knowledge,Compact sports coupe.,,LLM-reviewed
-Austin,7,Unknown / Needs Web Check,fallback heuristic,Model label not identifiable; needs web check.,,Needs source URL
+Austin,7,Sedan,web-verified,Austin Seven 'Baby Austin'; saloon was the most common body style.,https://en.wikipedia.org/wiki/Austin_7,Verified
 Austin,A50,Sedan,llm-knowledge,Cambridge saloon.,,LLM-reviewed
 Austin,Healey Sprite,Convertible / Roadster,llm-knowledge,Classic open two-seater.,,LLM-reviewed
 Austin,Mini,Hatchback,make/model heuristic,LLM pass concurs; DB majority Coupe:5.,,LLM-reviewed
-Austin,Morris,Unknown / Needs Web Check,fallback heuristic,Model label not identifiable; needs web check.,,Needs source URL
+Austin,Morris,Sedan / Hatchback,web-verified,"Austin/Morris badge-engineered classic Mini, 2-door small car.",https://www.carlist.my/cars-for-sale/mini/austin-morris/malaysia,Verified
 Baic,Bj40,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Mpvs:1.,,LLM-reviewed
 Bentley,Bentayga,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:36.,,LLM-reviewed
 Bentley,Continental Gt,Coupe,llm-knowledge,2-door grand tourer.,,LLM-reviewed
@@ -190,7 +190,7 @@ Chrysler,Crossfire,Sports car,llm-knowledge,Two-seat sports coupe.,,LLM-reviewed
 Chrysler,Pt Cruiser,Hatchback,llm-knowledge,Compact 5-door.,,LLM-reviewed
 Citroen,Berlingo,Van / Commercial,make/model heuristic,LLM pass concurs; DB majority Others:1.,,LLM-reviewed
 Citroen,C3,SUV / Crossover,llm-knowledge,MY C3 listings are C3 Aircross; DB majority SUV.,,LLM-reviewed
-Citroen,C4,Hatchback,llm-knowledge,C4 hatchback (MY listings may include Picasso MPVs).,,Needs source URL
+Citroen,C4,Hatchback,web-verified,Citroen C4 hatchback (MY used market).,https://www.mudah.my/malaysia/cars-for-sale/citroen/c4/hatchback,Verified
 Citroen,C5,Sedan,llm-knowledge,Large saloon/liftback.,,LLM-reviewed
 Citroen,C8,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:1.,,LLM-reviewed
 Citroen,Ds3,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:1.,,LLM-reviewed
@@ -198,7 +198,7 @@ Citroen,Ds4,Hatchback,llm-knowledge,Compact 5-door.,,LLM-reviewed
 Citroen,Ds5,Hatchback,llm-knowledge,5-door liftback; DB majority Hatchback.,,LLM-reviewed
 Citroen,Grand C4 Picasso,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:3.,,LLM-reviewed
 Citroen,Xsara,Hatchback,llm-knowledge,Compact hatch (wagon existed).,,LLM-reviewed
-Daihatsu,Ascent,Unknown / Needs Web Check,fallback heuristic,Model label not identifiable; needs web check.,,Needs source URL
+Daihatsu,Ascent,Sedan,web-verified,"Daihatsu Ascent sedan, 1598cc.",https://www.pcauto.com/my/find-cars/daihatsu-car,Verified
 Daihatsu,Charade,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:9.,,LLM-reviewed
 Daihatsu,Copen,Convertible / Roadster,llm-knowledge,Kei roadster.,,LLM-reviewed
 Daihatsu,Feroza,SUV / Crossover,llm-knowledge,Compact 4x4.,,LLM-reviewed
@@ -210,18 +210,18 @@ Daihatsu,Taft,SUV / Crossover,llm-knowledge,Compact 4x4; DB majority SUV.,,LLM-r
 Daihatsu,Tanto,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:2.,,LLM-reviewed
 Daihatsu,Wake,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:1.,,LLM-reviewed
 Daimler,Limousine,Sedan,make default heuristic,LLM pass concurs; DB majority Sedan:1.,,LLM-reviewed
-Datsun,100A,Unknown / Needs Web Check,fallback heuristic,Model label not identifiable; needs web check.,,Needs source URL
-Datsun,1600 Sss,Sedan,llm-knowledge,Datsun 1600 SSS saloon.,,Needs source URL
-Datsun,240,Unknown / Needs Web Check,fallback heuristic,Model label not identifiable; needs web check.,,Needs source URL
+Datsun,100A,Sedan / Hatchback,web-verified,Datsun 100A Cherry (E10) sold as sedan and hatchback.,https://www.automobile-catalog.com/model/datsun/100a_e10.html,Verified
+Datsun,1600 Sss,Sedan,web-verified,"Datsun 1600 SSS = Super Sport Sedan, 4-door (510).",https://en.wikipedia.org/wiki/Datsun_510,Verified
+Datsun,240,Coupe,web-verified,Datsun 240Z fastback sports coupe (Nissan S30).,https://en.wikipedia.org/wiki/Nissan_S30,Verified
 Datsun,5581,Unknown / Needs Web Check,fallback heuristic,Model label not identifiable; needs web check.,,Needs source URL
 Datsun,620,Pickup / Truck,make/model heuristic,LLM pass concurs; DB majority Pick-Up:3.,,LLM-reviewed
 Denza,D9,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:13.,,LLM-reviewed
 Dodge,Challenger,Sports car,llm-knowledge,"Muscle coupe, not an SUV.",,LLM-reviewed
 Dodge,Nitro,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority 4 Wheels:2.,,LLM-reviewed
 Dodge,Ram,Pickup / Truck,make/model heuristic,LLM pass concurs; DB majority Pick-Up:1.,,LLM-reviewed
-Dongfeng,007,Sedan,llm-knowledge,eP 007 electric fastback sedan.,,Needs source URL
+Dongfeng,007,Sedan,web-verified,Dongfeng e-pi 007 electric liftback sedan.,https://en.wikipedia.org/wiki/Dongfeng_e%CF%80_007,Verified
 Dongfeng,Box,Hatchback,llm-knowledge,Nammi Box EV hatchback; DB majority Hatchback.,,LLM-reviewed
-Dongfeng,Vigo,Unknown / Needs Web Check,fallback heuristic,Model label not identifiable; needs web check.,,Needs source URL
+Dongfeng,Vigo,Pickup / Truck,web-verified,Dongfeng Vigo pickup (Rich pickup series).,https://en.wikipedia.org/wiki/Dongfeng_Rich,Verified
 Ds Automobiles,Ds 7 Crossback,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:8.,,LLM-reviewed
 Ferrari,296,Sports car,llm-knowledge,Mid-engine sports car.,,LLM-reviewed
 Ferrari,328 Gts,Sports car,llm-knowledge,Targa sports car.,,LLM-reviewed
@@ -743,7 +743,7 @@ Mitsubishi,Storm,Pickup / Truck,llm-knowledge,Triton Storm; DB Pick-Up majority.
 Mitsubishi,Triton,Pickup / Truck,official source,Mitsubishi Motors Malaysia official Triton model page; Triton is a pickup truck.,https://www.mitsubishi-motors.com.my/model/triton/,Verified
 Mitsubishi,Xforce,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:13.,,LLM-reviewed
 Mitsubishi,Xpander,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:213.,,LLM-reviewed
-Mitsuoka,Cute,Hatchback,llm-knowledge,Mitsuoka microcar.,,Needs source URL
+Mitsuoka,Cute,Hatchback,web-verified,"Mitsuoka Cute, Nissan March-based compact.",http://mitsuokamalaysia.blogspot.com/2010/09/mitsuoka-cute.html,Verified
 Morris,Mini,Hatchback,make/model heuristic,LLM pass concurs; DB majority Coupe:3.,,LLM-reviewed
 Morris,Minor,Sedan,llm-knowledge,2/4-door saloon (Traveller estate existed).,,LLM-reviewed
 Naza,Bestari,Sedan,llm-knowledge,Rebadged Kia Spectra saloon.,,LLM-reviewed
@@ -952,7 +952,7 @@ Toyota,Avanza,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority M
 Toyota,Bb,Hatchback,llm-knowledge,Boxy compact hatch.,,LLM-reviewed
 Toyota,C-Hr,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:79.,,LLM-reviewed
 Toyota,Caldina,Wagon / Estate,make/model heuristic,LLM pass concurs; DB majority Hatchback:6.,,LLM-reviewed
-Toyota,Camroad,Pickup / Truck,llm-knowledge,Truck-based camper chassis.,,Needs source URL
+Toyota,Camroad,Pickup / Truck,web-verified,Toyota Camroad = Dyna cab-over truck/motorhome chassis.,https://www.japanesecartrade.com/make-model/toyota-1-camroad-7608.html,Verified
 Toyota,Camry,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:619.,,LLM-reviewed
 Toyota,Celica,Coupe,llm-knowledge,Celica sports coupe.,,LLM-reviewed
 Toyota,Celsior,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:1.,,LLM-reviewed
@@ -1006,7 +1006,7 @@ Toyota,Vellfire,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority
 Toyota,Veloz,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:42.,,LLM-reviewed
 Toyota,Vios,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:1568.,,LLM-reviewed
 Toyota,Voxy,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:325.,,LLM-reviewed
-Toyota,Wald,MPV / Minivan,llm-knowledge,Wald-bodykit Alphard/Vellfire listings.,,Needs source URL
+Toyota,Wald,MPV / Minivan,web-verified,Wald-bodykit Toyota Alphard/Vellfire MPV.,https://paultan.org/2015/11/24/toyota-alphard-and-vellfire-gets-wald-sports-line-kits/,Verified
 Toyota,Wish,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:251.,,LLM-reviewed
 Toyota,Yaris,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchback:391.,,LLM-reviewed
 Toyota,Yaris Cross,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:15.,,LLM-reviewed

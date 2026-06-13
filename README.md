@@ -203,10 +203,28 @@ Flags:
 | Flag | Default | Description |
 |---|---|---|
 | `--category` | *prompted* | `cars` or `motorcycles` |
+| `--make` | *prompted* | Make slug(s), comma-separated (`toyota` or `toyota,honda`). Prompts with a numbered picker if omitted |
+| `--model` | — | Model slug (e.g. `vios`). Requires `--make` |
 | `--max-ads` | *prompted* | Max ads to collect (API pagination cap) |
+| `--all-makes` | off | Scrape every reference make non-interactively (used by `run_pipeline.bat`) |
+| `--smart` | off | **Depth-cap evasion** — probe each make and split any make over ~9,500 listings into per-model queries (see below) |
+| `--list-active-makes` | off | Probe every make, print those with >0 listings sorted by count (discovery only, no scrape) |
 | `--output-dir` | `data/raw/<category>/` | Where to save CSVs |
 
-CSV filename: `mudah_eagle_{category}_final_{timestamp}.csv` (per-make runs add a `{make}` tag).
+CSV filename: `mudah_eagle_{category}_final_{timestamp}.csv` (per-make runs add a `{make}` tag; `--smart` model splits add a `{make}_{model}` tag).
+
+### Beating the 10,000-listing depth cap — `--smart`
+
+A single EagleSearch query paginates to **at most ~10,000 ads** (`from >= 10000` returns empty). Any make with more inventory loses the overflow — e.g. **Toyota cars ≈ 18,800 listings**, so a plain make-level scrape captures only ~53%.
+
+`--smart` fixes this: it probes each make's `total-results` (one cheap `limit=1` call) and, for any make over ~9,500, scrapes **one query per model** instead. Each model is well under the cap, so the make's full inventory is captured. Per-model totals sum exactly to the make total (Mudah forces sellers to pick a known model), so the split is lossless. Makes under the cap stay a single query.
+
+```bash
+# full, complete scrape of every make (auto-splits the big ones)
+python src/1_scrape.py --category cars --all-makes --smart
+```
+
+`run_pipeline.bat` already passes `--smart`. Cost is one extra probe call per make; net pages fetched are roughly unchanged (you fetch the same ads, just partitioned).
 
 ### Examples
 
@@ -220,9 +238,9 @@ python src/1_scrape.py --category cars --make toyota
 python src/1_scrape.py --category cars --make toyota,honda,perodua
 ```
 
-**Scrape all makes, then load into database:**
+**Scrape all makes (full coverage past the 10k cap), then load into database:**
 ```bash
-python src/1_scrape.py --category cars      # Enter at the picker = all makes
+python src/1_scrape.py --category cars --all-makes --smart
 python src/2_migrate.py --category cars
 ```
 
@@ -380,9 +398,9 @@ python src/scrape_makes_models.py
 | File | Shape | Sample |
 |---|---|---|
 | `cars_makes.json` | List of `{id, name, slug, founding_country, icon_png, icon_svg}` | 128 entries (Alfa Romeo, Alpine, ...) |
-| `cars_models.json` | `{make_slug: [{id, name, slug}, ...]}` | Toyota: 99 models, total 1,533 |
-| `motorcycles_makes.json` | List of `{id, name, slug}` (no `founding_country`) | 93 entries (Adiva, Aprilia, ...) |
-| `motorcycles_models.json` | `{make_slug: [{id, name, slug}, ...]}` | Yamaha: 109 models, total 1,362 |
+| `cars_models.json` | `{make_slug: [{id, name, slug}, ...]}` | Toyota: 99 models, total 1,540 |
+| `motorcycles_makes.json` | List of `{id, name, slug}` (no `founding_country`) | 96 entries (Adiva, Aprilia, ...) |
+| `motorcycles_models.json` | `{make_slug: [{id, name, slug}, ...]}` | total 1,434 |
 | `cars_variants.json` | `{model_slug: {make, model, by_cc: {cc: [tokens]}, _all: [tokens]}}` | 985 models, 9,723 variant tokens |
 
 ### How it works
@@ -422,7 +440,7 @@ This fills ~83% of NULL variant rows using longest-match against the vocabulary.
 ### Suggested uses
 
 - **Validation** — `3_clean.py` could fuzzy-match scraped `make`/`model` strings against the canonical list to fix typos and casing variants.
-- **Coverage planning** — feed the make slugs into a state × brand grid runner to bypass Mudah's 250-page-per-query cap.
+- **Coverage planning** — the model lists power `1_scrape.py --smart`, which splits over-cap makes into per-model queries to bypass Mudah's ~10,000-listing (250-page) depth cap. A single model still over the cap would need a further axis (year/region).
 - **URL construction** — slugs map directly to Mudah filter URLs (`/cars-for-sale/{make_slug}/{model_slug}`).
 
 ---
@@ -562,6 +580,10 @@ Every probe appends one row to the `availability_checks` table in the same DB:
 ## Changelog
 
 This section tracks every revision of this README. Add a new entry at the top whenever the document is updated.
+
+### 2026-06-13
+- **`--smart` depth-cap evasion.** New `1_scrape.py --smart` flag probes each make's `total-results` and splits any make over ~9,500 listings into per-model queries, capturing the full inventory past the ~10,000-listing EagleSearch depth cap (e.g. Toyota cars ≈ 18,800 — a plain make-level scrape captured only ~53%). The split is lossless (per-model totals sum to the make total). `run_pipeline.bat` scrape step now passes `--all-makes --smart`. Added a "Beating the 10,000-listing depth cap" subsection, expanded the scraper flags table (`--make`, `--model`, `--all-makes`, `--smart`, `--list-active-makes`), and updated the all-makes example. 6 new tests (`TestExpandCappedMakes`), 218 passing.
+- **Reference data refreshed.** Re-ran `scrape_makes_models.py`: cars 1,533 → 1,540 models; motorcycles 93 → 96 makes (+cyclone, peugeot, zxmoto) and 1,362 → 1,434 models. Updated the reference output-table counts.
 
 ### 2026-05-28
 - **Schema v5: `ad_expiry` + `sold_inference`.** Added two columns to both DBs via `migrations/run_migrations.py` (now at `TARGET_VERSION=5`). `ad_expiry TEXT` stores the ISO datetime when a listing's paid slot expires (returned by EagleSearch as `ad_expiry`). `sold_inference TEXT` is written by `recheck.py` when a listing goes offline: `likely_sold` if it vanished before `ad_expiry`, `likely_expired` if it vanished at/after, or `unknown` if `ad_expiry` was NULL. Added `ad_expiry` field capture to `eagle_client.py` so all future scrapes populate it automatically.
