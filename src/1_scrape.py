@@ -494,6 +494,13 @@ def parse_args() -> argparse.Namespace:
         help="Resume from the latest phase1 checkpoint CSV in output_dir (skip re-scrape)",
     )
     p.add_argument(
+        "--all-makes",
+        action="store_true",
+        help="Scrape every make in the reference data non-interactively (no picker "
+             "prompt). max_ads defaults to all available (~10k API cap) unless "
+             "--max-ads is given. Used by run_pipeline.bat.",
+    )
+    p.add_argument(
         "--list-active-makes",
         action="store_true",
         help="Probe every make in the reference data and print only those with "
@@ -611,6 +618,15 @@ def _interactive_fill(args: argparse.Namespace, eagle: EagleClient) -> argparse.
         args.category = _prompt_choice("Category", CATEGORY_CHOICES)
 
     if not args.resume:
+        if args.all_makes:
+            # Non-interactive all-makes: expand to per-make runs, no picker prompt.
+            # max_ads stays as supplied (None = all available; no prompt).
+            all_makes = _load_makes(args.category)
+            args.makes_list = [(m["slug"], m["id"], m["name"], None) for m in all_makes]
+            if args.output_dir is None:
+                args.output_dir = str(DEFAULT_OUTPUT_DIR / args.category)
+            return args
+
         # Resolve makes list — either from --make CLI arg or interactive picker.
         if args.make is not None:
             makes_list = _resolve_makes_from_cli(args.category, args.make)
