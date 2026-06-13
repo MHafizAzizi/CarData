@@ -257,3 +257,80 @@ class TestPhase1IncrementalCheckpoint:
         mock_eagle.fetch_all.return_value = iter([page])
         scraper._phase1_collect(max_ads=None)  # no timestamp
         assert list(tmp_path.glob("*phase1*.csv")) == []
+
+
+# ---------------------------------------------------------------------------
+# --smart depth-cap evasion: _expand_capped_makes
+# ---------------------------------------------------------------------------
+
+import scraper as _scraper_mod  # noqa: E402
+
+
+def _meta(total):
+    return ([], {"total-results": total})
+
+
+class TestExpandCappedMakes:
+    def test_make_under_threshold_passes_through(self, mock_eagle):
+        mock_eagle.fetch_page.return_value = _meta(500)
+        out = _scraper_mod._expand_capped_makes(
+            mock_eagle, "cars", [("toyota", "35", "Toyota", None)], threshold=9500
+        )
+        assert out == [("toyota", "35", "Toyota", None)]
+
+    def test_make_over_threshold_splits_into_models(self, mock_eagle, monkeypatch):
+        mock_eagle.fetch_page.return_value = _meta(18813)
+        monkeypatch.setattr(_scraper_mod, "_load_models", lambda cat: {
+            "toyota": [
+                {"id": "100", "name": "Vios", "slug": "vios"},
+                {"id": "101", "name": "Alphard", "slug": "alphard"},
+            ]
+        })
+        out = _scraper_mod._expand_capped_makes(
+            mock_eagle, "cars", [("toyota", "35", "Toyota", None)], threshold=9500
+        )
+        assert out == [
+            ("toyota_vios", "35", "Toyota Vios", "100"),
+            ("toyota_alphard", "35", "Toyota Alphard", "101"),
+        ]
+
+    def test_entry_with_model_id_is_untouched(self, mock_eagle):
+        # Already model-level: no probe, no split, even though fetch_page would
+        # report a huge total.
+        mock_eagle.fetch_page.return_value = _meta(99999)
+        out = _scraper_mod._expand_capped_makes(
+            mock_eagle, "cars", [("toyota", "35", "Toyota Vios", "100")], threshold=9500
+        )
+        assert out == [("toyota", "35", "Toyota Vios", "100")]
+        mock_eagle.fetch_page.assert_not_called()
+
+    def test_probe_failure_keeps_make_level(self, mock_eagle):
+        mock_eagle.fetch_page.side_effect = RuntimeError("network down")
+        out = _scraper_mod._expand_capped_makes(
+            mock_eagle, "cars", [("toyota", "35", "Toyota", None)], threshold=9500
+        )
+        assert out == [("toyota", "35", "Toyota", None)]
+
+    def test_over_threshold_no_models_keeps_make_level(self, mock_eagle, monkeypatch):
+        mock_eagle.fetch_page.return_value = _meta(18813)
+        monkeypatch.setattr(_scraper_mod, "_load_models", lambda cat: {})
+        out = _scraper_mod._expand_capped_makes(
+            mock_eagle, "cars", [("toyota", "35", "Toyota", None)], threshold=9500
+        )
+        assert out == [("toyota", "35", "Toyota", None)]
+
+    def test_mixed_list_only_splits_capped(self, mock_eagle, monkeypatch):
+        # Toyota over cap (split), Perodua under cap (passthrough).
+        mock_eagle.fetch_page.side_effect = [_meta(18813), _meta(224)]
+        monkeypatch.setattr(_scraper_mod, "_load_models", lambda cat: {
+            "toyota": [{"id": "100", "name": "Vios", "slug": "vios"}],
+        })
+        out = _scraper_mod._expand_capped_makes(
+            mock_eagle, "cars",
+            [("toyota", "35", "Toyota", None), ("perodua", "23", "Perodua", None)],
+            threshold=9500,
+        )
+        assert out == [
+            ("toyota_vios", "35", "Toyota Vios", "100"),
+            ("perodua", "23", "Perodua", None),
+        ]
