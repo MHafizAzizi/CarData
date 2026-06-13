@@ -9,10 +9,11 @@ Usage — variant enrichment (cars only, requires cars_variants.json):
     python src/3_clean.py --category cars --enrich-variants
     python src/3_clean.py --category cars --enrich-variants --dry-run
 
-Usage — type enrichment (motorcycles only, requires
-data/reference/motorcycles_model_types.csv):
+Usage — type enrichment (requires the category's model-types CSV under
+data/reference/: motorcycles_model_types.csv / cars_model_types.csv):
     python src/3_clean.py --category motorcycles --enrich-types
-    python src/3_clean.py --category motorcycles --enrich-types --dry-run
+    python src/3_clean.py --category cars --enrich-types
+    python src/3_clean.py --category cars --enrich-types --dry-run
 
 Usage — legacy xlsx mode:
     python src/3_clean.py --input raw.xlsx --output clean.xlsx
@@ -447,6 +448,92 @@ def apply_type_hints(conn, *, dry_run: bool = False) -> Dict:
 
 
 # ---------------------------------------------------------------------------
+# Car vehicle-type enrichment (cars only)
+# ---------------------------------------------------------------------------
+
+
+def apply_vehicle_type_hints(conn, *, dry_run: bool = False) -> Dict:
+    """Populate vehicle_type / type_group for car rows where they are NULL.
+
+    API-first strategy: a clean API car_type ('Sedan', 'Suvs', ...) is
+    normalised per listing via API_CAR_TYPE_TO_VEHICLE; junk buckets
+    ('4 Wheels', 'Others') fall back to the curated mapping in
+    data/reference/cars_model_types.csv. Junk rows whose (make, model) is
+    not in the mapping stay NULL and are reported with listing counts so
+    new models from future scrapes surface as mapping-CSV to-dos.
+
+    Returns stats dict: {candidates, filled_api, filled_mapping, unmapped_pairs}.
+    """
+    sys.path.insert(0, str(_ROOT / "src"))
+    from reference import (  # noqa: PLC0415
+        API_CAR_TYPE_TO_VEHICLE,
+        CAR_TYPE_TO_GROUP,
+        car_types_path,
+        load_car_types,
+    )
+
+    mapping = load_car_types()
+    if not mapping:
+        raise FileNotFoundError(
+            f"{car_types_path()} not found or empty — the car vehicle-type "
+            "mapping is required for --enrich-types."
+        )
+
+    rows = conn.execute(
+        "SELECT ads_id, make, model, car_type "
+        "FROM listings "
+        "WHERE vehicle_type IS NULL"
+    ).fetchall()
+
+    candidates = len(rows)
+    filled_api = 0
+    filled_mapping = 0
+    updates: List[Tuple] = []
+    unmapped: Dict[Tuple[str, str], int] = {}
+
+    for ads_id, make, model, car_type in rows:
+        vtype = API_CAR_TYPE_TO_VEHICLE.get((car_type or "").strip())
+        if vtype:
+            filled_api += 1
+        else:
+            key = ((make or "").casefold().strip(), (model or "").casefold().strip())
+            hit = mapping.get(key)
+            if hit:
+                vtype = hit[0]
+                filled_mapping += 1
+            else:
+                unmapped[(make, model)] = unmapped.get((make, model), 0) + 1
+                continue
+        updates.append((vtype, CAR_TYPE_TO_GROUP[vtype], ads_id))
+
+    print(
+        f"  Vehicle-type hints: {candidates} candidates, "
+        f"{filled_api} from API car_type, {filled_mapping} from mapping, "
+        f"{len(unmapped)} unmapped pair(s)"
+    )
+    if unmapped:
+        print("  Unmapped (make, model) pairs — add to "
+              "data/reference/cars_model_types.csv:")
+        for (make, model), n in sorted(unmapped.items(), key=lambda x: -x[1]):
+            print(f"    {make} | {model} ({n} listing(s))")
+
+    if not dry_run and updates:
+        with conn:
+            conn.executemany(
+                "UPDATE listings SET vehicle_type = ?, type_group = ? "
+                "WHERE ads_id = ?",
+                updates,
+            )
+
+    return {
+        "candidates": candidates,
+        "filled_api": filled_api,
+        "filled_mapping": filled_mapping,
+        "unmapped_pairs": len(unmapped),
+    }
+
+
+# ---------------------------------------------------------------------------
 # DB clean-in-place
 # ---------------------------------------------------------------------------
 
@@ -555,8 +642,10 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--enrich-types",
         action="store_true",
-        help="Populate motorcycle_type/type_group for NULL rows using "
-             "data/reference/motorcycles_model_types.csv (motorcycles only).",
+        help="Populate the type columns for NULL rows: motorcycle_type/"
+             "type_group from motorcycles_model_types.csv (motorcycles) or "
+             "vehicle_type/type_group from API car_type + "
+             "cars_model_types.csv (cars).",
     )
     parser.add_argument(
         "--enrich-variants",
@@ -607,14 +696,18 @@ def main() -> None:
                 conn.close()
 
         if args.enrich_types:
-            if args.category != "motorcycles":
-                print("[enrich-types] Only supported for --category motorcycles; skipping.")
-            else:
-                sys.path.insert(0, str(_ROOT / "src"))
-                from db import connect  # noqa: PLC0415
+            sys.path.insert(0, str(_ROOT / "src"))
+            from db import connect  # noqa: PLC0415
+            if args.category == "motorcycles":
                 conn = connect("motorcycles")
                 apply_type_hints(conn, dry_run=args.dry_run)
                 conn.close()
+            elif args.category == "cars":
+                conn = connect("cars")
+                apply_vehicle_type_hints(conn, dry_run=args.dry_run)
+                conn.close()
+            else:
+                print("[enrich-types] Requires --category cars or motorcycles; skipping.")
         return
 
     # Legacy xlsx mode (only entered when --input was explicitly provided)

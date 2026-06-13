@@ -29,6 +29,11 @@ CREATE TABLE IF NOT EXISTS listings (
     engine_capacity     INTEGER,   -- cc (was TEXT pre-v4)
     variant             TEXT,
     fuel_type           TEXT,
+    -- enrichment-only (v8): filled by 3_clean.py --enrich-types; clean API
+    -- car_type normalised per listing, junk buckets fall back to
+    -- data/reference/cars_model_types.csv. Never written by 2_migrate.py.
+    vehicle_type        TEXT,
+    type_group          TEXT,
     -- availability tracking (shared with motorcycles)
     first_seen_at       TEXT NOT NULL,
     last_seen_at        TEXT,

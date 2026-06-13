@@ -79,7 +79,7 @@ from db import CATEGORIES, connect, schema_version, set_meta  # noqa: E402
 # Migration spec — v1 -> v2
 # ---------------------------------------------------------------------------
 
-TARGET_VERSION = 7
+TARGET_VERSION = 8
 
 # (column_name, sqlite_type) — applied to BOTH cars and motorcycles
 SHARED_NEW_COLS: List[Tuple[str, str]] = [
@@ -148,6 +148,15 @@ def _dropped_cols_v6(category: str) -> List[str]:
 V7_MOTORCYCLE_COLS: List[Tuple[str, str]] = [
     ("motorcycle_type", "TEXT"),
     ("type_group",      "TEXT"),
+]
+
+# v7 -> v8: car vehicle-type columns (cars only; motorcycles version-bump
+# no-op). Filled by 3_clean.py --enrich-types: clean API car_type values are
+# normalised per listing, junk buckets fall back to
+# data/reference/cars_model_types.csv.
+V8_CAR_COLS: List[Tuple[str, str]] = [
+    ("vehicle_type", "TEXT"),
+    ("type_group",   "TEXT"),
 ]
 
 # ---------------------------------------------------------------------------
@@ -492,6 +501,42 @@ def _migrate_v6_to_v7(
     )
 
 
+def _migrate_v7_to_v8(
+    conn: sqlite3.Connection, category: str, *, dry_run: bool
+) -> None:
+    """Add vehicle_type / type_group (cars only; motorcycles bump version)."""
+    cols = V8_CAR_COLS if category == "cars" else []
+    logging.info(
+        f"[{category}] step v7 -> v8 ({len(cols)} column(s) to evaluate)"
+    )
+
+    added = 0
+    with conn:
+        for col_name, col_type in cols:
+            if _safe_add_column(conn, "listings", col_name, col_type, dry_run=dry_run):
+                added += 1
+
+        if dry_run:
+            logging.info(
+                f"[{category}] DRY-RUN v7->v8: would add {added} column(s)"
+            )
+            return
+
+        conn.execute(
+            "INSERT INTO meta (key, value) VALUES ('schema_version', '8') "
+            "ON CONFLICT(key) DO UPDATE SET value = excluded.value"
+        )
+
+    logging.info(
+        f"[{category}] v7 -> v8 complete — added {added} column(s)"
+    )
+    set_meta(
+        conn,
+        "last_migration_v8_at",
+        __import__("datetime").datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+    )
+
+
 def migrate(category: str, *, dry_run: bool = False) -> None:
     """Run all pending migrations on the given category's DB."""
     if category not in CATEGORIES:
@@ -528,6 +573,8 @@ def migrate(category: str, *, dry_run: bool = False) -> None:
         _migrate_v5_to_v6(conn, category, dry_run=dry_run)
     if current < 7:
         _migrate_v6_to_v7(conn, category, dry_run=dry_run)
+    if current < 8:
+        _migrate_v7_to_v8(conn, category, dry_run=dry_run)
 
     logging.info(
         f"[{category}] migration complete; "

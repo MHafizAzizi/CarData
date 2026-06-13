@@ -84,7 +84,9 @@ MOTORCYCLE_ONLY_COLUMNS: List[str] = ["motorcycle_make", "motorcycle_model"]
 # they are filled by 3_clean.py enrichment steps and must stay out of
 # CATEGORY_COLUMNS so a re-scrape upsert can never clobber them.
 ENRICHMENT_ONLY_COLUMNS: Dict[str, Set[str]] = {
-    "cars": set(),
+    # vehicle_type/type_group (schema v8) come from API car_type
+    # normalisation + data/reference/cars_model_types.csv via --enrich-types
+    "cars": {"vehicle_type", "type_group"},
     # motorcycle_type/type_group (schema v7) come from
     # data/reference/motorcycles_model_types.csv via --enrich-types
     "motorcycles": {"motorcycle_type", "type_group"},

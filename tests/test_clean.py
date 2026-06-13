@@ -419,3 +419,160 @@ class TestLoadModelTypes:
         monkeypatch.setattr(reference, "model_types_path", lambda: p)
         with __import__("pytest").raises(ValueError, match="Hoverbike"):
             load_model_types()
+
+
+# ---------------------------------------------------------------------------
+# apply_vehicle_type_hints / load_car_types (car vehicle-type enrichment)
+# ---------------------------------------------------------------------------
+
+from clean import apply_vehicle_type_hints
+from reference import load_car_types
+
+
+def _cars_db_with_types():
+    """In-memory cars DB at schema v8 (vehicle-type cols present)."""
+    conn = sqlite3.connect(":memory:")
+    conn.execute(
+        """CREATE TABLE listings (
+            ads_id INTEGER PRIMARY KEY,
+            make TEXT,
+            model TEXT,
+            car_type TEXT,
+            vehicle_type TEXT,
+            type_group TEXT
+        )"""
+    )
+    conn.executemany(
+        "INSERT INTO listings (ads_id, make, model, car_type) "
+        "VALUES (?, ?, ?, ?)",
+        [
+            (1, "Proton", "Saga", "Sedan"),        # clean API bucket
+            (2, "Suzuki", "Jimny", "4 Wheels"),    # junk -> mapping
+            (3, "suzuki", "jimny", "Others"),      # junk, case-insensitive
+            (4, "Newbrand", "Mystery", "Others"),  # junk, not in mapping
+            (5, "Toyota", "Hilux", "Pick-Up"),     # clean API bucket
+        ],
+    )
+    return conn
+
+
+class TestApplyVehicleTypeHints:
+    def test_api_first_with_mapping_fallback(self, monkeypatch, capsys):
+        import reference
+        monkeypatch.setattr(
+            reference, "load_car_types",
+            lambda: {("suzuki", "jimny"): ("SUV / Crossover", "SUV / Crossover")},
+        )
+        conn = _cars_db_with_types()
+        stats = apply_vehicle_type_hints(conn)
+
+        assert stats == {
+            "candidates": 5,
+            "filled_api": 2,
+            "filled_mapping": 2,
+            "unmapped_pairs": 1,
+        }
+        rows = dict(
+            (r[0], (r[1], r[2]))
+            for r in conn.execute(
+                "SELECT ads_id, vehicle_type, type_group FROM listings"
+            )
+        )
+        assert rows[1] == ("Sedan", "Sedan")
+        assert rows[2] == ("SUV / Crossover", "SUV / Crossover")
+        assert rows[3] == ("SUV / Crossover", "SUV / Crossover")
+        assert rows[4] == (None, None)
+        assert rows[5] == ("Pickup / Truck", "Pickup / Truck")
+        out = capsys.readouterr().out
+        assert "Newbrand | Mystery" in out
+
+    def test_api_value_wins_over_mapping(self, monkeypatch):
+        # A clean API bucket must be used even when the mapping disagrees —
+        # per-listing seller data resolves dual-body models.
+        import reference
+        monkeypatch.setattr(
+            reference, "load_car_types",
+            lambda: {("proton", "saga"): ("Hatchback", "Hatchback")},
+        )
+        conn = _cars_db_with_types()
+        apply_vehicle_type_hints(conn)
+        row = conn.execute(
+            "SELECT vehicle_type FROM listings WHERE ads_id = 1"
+        ).fetchone()
+        assert row[0] == "Sedan"
+
+    def test_dry_run_writes_nothing(self, monkeypatch):
+        import reference
+        monkeypatch.setattr(
+            reference, "load_car_types",
+            lambda: {("suzuki", "jimny"): ("SUV / Crossover", "SUV / Crossover")},
+        )
+        conn = _cars_db_with_types()
+        apply_vehicle_type_hints(conn, dry_run=True)
+        filled = conn.execute(
+            "SELECT COUNT(*) FROM listings WHERE vehicle_type IS NOT NULL"
+        ).fetchone()[0]
+        assert filled == 0
+
+    def test_missing_mapping_raises(self, monkeypatch):
+        import reference
+        monkeypatch.setattr(reference, "load_car_types", lambda: {})
+        conn = _cars_db_with_types()
+        with __import__("pytest").raises(FileNotFoundError):
+            apply_vehicle_type_hints(conn)
+
+    def test_skips_already_typed_rows(self, monkeypatch):
+        import reference
+        monkeypatch.setattr(
+            reference, "load_car_types",
+            lambda: {("suzuki", "jimny"): ("SUV / Crossover", "SUV / Crossover")},
+        )
+        conn = _cars_db_with_types()
+        conn.execute(
+            "UPDATE listings SET vehicle_type = 'X', type_group = 'Y' "
+            "WHERE ads_id = 1"
+        )
+        stats = apply_vehicle_type_hints(conn)
+        assert stats["candidates"] == 4  # row 1 excluded (already typed)
+        row = conn.execute(
+            "SELECT vehicle_type FROM listings WHERE ads_id = 1"
+        ).fetchone()
+        assert row[0] == "X"  # untouched
+
+
+class TestLoadCarTypes:
+    def test_missing_file_returns_empty(self, monkeypatch, tmp_path):
+        import reference
+        monkeypatch.setattr(
+            reference, "car_types_path", lambda: tmp_path / "nope.csv"
+        )
+        assert load_car_types() == {}
+
+    def test_loads_casefolded_keys_and_derives_group(self, monkeypatch, tmp_path):
+        import reference
+        p = tmp_path / "types.csv"
+        p.write_text(
+            "car_make,car_model,vehicle_type\n"
+            "Perodua,Myvi,Hatchback\n"
+            "Mazda,Mx-5,Convertible / Roadster\n",
+            encoding="utf-8",
+        )
+        monkeypatch.setattr(reference, "car_types_path", lambda: p)
+        mapping = load_car_types()
+        assert mapping[("perodua", "myvi")] == ("Hatchback", "Hatchback")
+        # group derived from CAR_TYPE_TO_GROUP, not stored in the file
+        assert mapping[("mazda", "mx-5")] == (
+            "Convertible / Roadster", "Coupe / Sports"
+        )
+
+    def test_unknown_type_raises(self, monkeypatch, tmp_path):
+        import reference
+        p = tmp_path / "types.csv"
+        p.write_text(
+            "car_make,car_model,vehicle_type\n"
+            "Perodua,Myvi,Hovercar\n",
+            encoding="utf-8",
+        )
+        monkeypatch.setattr(reference, "car_types_path", lambda: p)
+        with __import__("pytest").raises(ValueError, match="Hovercar"):
+            load_car_types()
