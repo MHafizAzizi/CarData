@@ -54,7 +54,7 @@ python src/recheck.py --category motorcycles
 | `src/eagle_client.py` | EagleSearch API wrapper | Library — do not run directly |
 | `src/mudah_client.py` | Shared HTTP client (used by `recheck.py`) | Library — do not run directly |
 | `src/db.py` | Database connection helper | Library — do not run directly |
-| `src/test_eaglesearch.py` | Manual API connectivity check | Dev/debug only |
+| `src/probe_eaglesearch.py` | Manual API connectivity check | Dev/debug only |
 
 ---
 
@@ -148,7 +148,7 @@ CarData/
 │   ├── eagle_client.py                    # EagleSearch API wrapper (library)
 │   ├── mudah_client.py                    # Shared HTTP client — used by recheck.py (library)
 │   ├── db.py                              # Database connection helper (library)
-│   └── test_eaglesearch.py                # Manual API connectivity check (dev)
+│   └── probe_eaglesearch.py               # Manual API connectivity check (dev)
 │
 ├── migrations/                            # Schema migration runners
 │   └── run_migrations.py                  # v1 → v5: idempotent schema upgrade

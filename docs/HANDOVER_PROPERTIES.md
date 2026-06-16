@@ -330,7 +330,7 @@ There's no contract. They could add auth tomorrow. The whole codebase has `Eagle
 
 ### 7.2 Schema drift in API responses
 
-The API field names have changed once already (we caught it via `test_eaglesearch.py`, a manual connectivity check kept just for this purpose). Build the equivalent for properties. Run it before every weekly scrape. If field names changed, you'll know on day one instead of after a corrupted CSV ships into the DB.
+The API field names have changed once already (we caught it via `probe_eaglesearch.py`, a manual connectivity check kept just for this purpose). Build the equivalent for properties. Run it before every weekly scrape. If field names changed, you'll know on day one instead of after a corrupted CSV ships into the DB.
 
 ### 7.3 Rentals have higher churn than used cars
 
@@ -358,7 +358,7 @@ pip install -r requirements.txt
 python migrations/run_migrations.py --category properties
 
 # Discovery
-python src/test_eaglesearch.py        # Adapt this for properties API smoke test
+python src/probe_eaglesearch.py        # Adapt this for properties API smoke test
 
 # Daily workflow (once running)
 python src/scraper.py --category properties
