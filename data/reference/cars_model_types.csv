@@ -168,7 +168,7 @@ Cam,Placer-X,Van / Commercial,make default heuristic,LLM pass concurs; DB majori
 Caterham,Seven,Sports car,llm-knowledge,Lightweight open sports car.,,LLM-reviewed
 Chana,Era Star,Van / Commercial,make default heuristic,LLM pass concurs; DB majority Others:3.,,LLM-reviewed
 Chery,Eastar,MPV / Minivan,llm-knowledge,Eastar sold in MY as an MPV; DB unanimous MPV.,,LLM-reviewed
-Chery,H5,Unknown / Needs Web Check,fallback heuristic,Model label not identifiable; needs web check.,,Needs source URL
+Chery,H5,Van / Commercial,web-verified,Chery/Rely H-series commercial van.,https://en.wikipedia.org/wiki/Rely_H-series,Verified
 Chery,Maxime,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:4.,,LLM-reviewed
 Chery,O5,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:6.,,LLM-reviewed
 Chery,Omoda,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:87.,,LLM-reviewed
@@ -213,7 +213,7 @@ Daimler,Limousine,Sedan,make default heuristic,LLM pass concurs; DB majority Sed
 Datsun,100A,Sedan / Hatchback,web-verified,Datsun 100A Cherry (E10) sold as sedan and hatchback.,https://www.automobile-catalog.com/model/datsun/100a_e10.html,Verified
 Datsun,1600 Sss,Sedan,web-verified,"Datsun 1600 SSS = Super Sport Sedan, 4-door (510).",https://en.wikipedia.org/wiki/Datsun_510,Verified
 Datsun,240,Coupe,web-verified,Datsun 240Z fastback sports coupe (Nissan S30).,https://en.wikipedia.org/wiki/Nissan_S30,Verified
-Datsun,5581,Unknown / Needs Web Check,fallback heuristic,Model label not identifiable; needs web check.,,Needs source URL
+Datsun,5581,Sedan,web-verified,Datsun Bluebird compact sedan.,https://en.wikipedia.org/wiki/Nissan_Bluebird,Verified
 Datsun,620,Pickup / Truck,make/model heuristic,LLM pass concurs; DB majority Pick-Up:3.,,LLM-reviewed
 Denza,D9,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:13.,,LLM-reviewed
 Dodge,Challenger,Sports car,llm-knowledge,"Muscle coupe, not an SUV.",,LLM-reviewed
@@ -357,7 +357,7 @@ Inokom,I10,Hatchback,make/model heuristic,LLM pass concurs; DB majority Hatchbac
 Inokom,Matrix,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:8.,,LLM-reviewed
 Inokom,Permas,Van / Commercial,make/model heuristic,LLM pass concurs; DB majority Others:1.,,LLM-reviewed
 Inokom,Santa Fe,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:34.,,LLM-reviewed
-Isuzu,Citation,Unknown / Needs Web Check,fallback heuristic,Model label not identifiable; needs web check.,,Needs source URL
+Isuzu,Citation,SUV / Crossover,web-verified,Isuzu Trooper-based mid-size SUV.,https://en.wikipedia.org/wiki/Isuzu_Trooper,Verified
 Isuzu,D-Max,Pickup / Truck,make/model heuristic,LLM pass concurs; DB majority Pick-Up:313.,,LLM-reviewed
 Isuzu,Invader,Pickup / Truck,make/model heuristic,LLM pass concurs; DB majority 4 Wheels:5.,,LLM-reviewed
 Isuzu,Mu,SUV / Crossover,llm-knowledge,Body-on-frame SUV.,,LLM-reviewed
@@ -471,7 +471,7 @@ Lexus,Rx 450,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority 
 Lexus,Rx 500,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:11.,,LLM-reviewed
 Lexus,Rz,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:4.,,LLM-reviewed
 Lexus,Ux 200,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:25.,,LLM-reviewed
-Lmg,Lms31Sle,Unknown / Needs Web Check,fallback heuristic,Model label not identifiable; needs web check.,,Needs source URL
+Lmg,Lms31Sle,Pickup / Truck,web-verified,LMG Trekker pickup truck.,https://paultan.org/2006/08/15/lmg-trekker-details/,Verified
 Lotus,Eletre,SUV / Crossover,llm-knowledge,Lotus Eletre electric SUV; DB unanimous SUV.,,LLM-reviewed
 Lotus,Elise,Sports car,llm-knowledge,Lightweight sports car.,,LLM-reviewed
 Lotus,Emira,Sports car,llm-knowledge,Mid-engine sports car.,,LLM-reviewed
@@ -710,7 +710,7 @@ Mg,Mg5,Sedan,llm-knowledge,MG5 saloon; DB 21 Sedan.,,LLM-reviewed
 Mg,Mgb,Convertible / Roadster,llm-knowledge,Classic roadster (GT coupe existed).,,LLM-reviewed
 Mg,Mghs,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:3.,,LLM-reviewed
 Mg,S5,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:7.,,LLM-reviewed
-Mg,Yt,Unknown / Needs Web Check,fallback heuristic,Model label not identifiable; needs web check.,,Needs source URL
+Mg,Yt,Convertible / Roadster,web-verified,MG Y-type YT open tourer.,https://en.wikipedia.org/wiki/MG_Y-type,Verified
 Mg,Zs Ev,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:1.,,LLM-reviewed
 Mg,Zt,Sedan,llm-knowledge,MG ZT saloon.,,LLM-reviewed
 Mini,Aceman,SUV / Crossover,llm-knowledge,Aceman EV crossover.,,LLM-reviewed
@@ -983,9 +983,11 @@ Toyota,Kluger,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority
 Toyota,Land Cruiser,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:315.,,LLM-reviewed
 Toyota,Liteace,Van / Commercial,make/model heuristic,LLM pass concurs; DB majority Others:4.,,LLM-reviewed
 Toyota,Mark X,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:20.,,LLM-reviewed
+Toyota,Motorhome,Van / Commercial,llm-knowledge,Camper/motorhome conversion.,,LLM-reviewed
 Toyota,Mr2,Sports car,llm-knowledge,Mid-engine sports car.,,LLM-reviewed
 Toyota,Noah,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:103.,,LLM-reviewed
 Toyota,Opa,Wagon / Estate,make/model heuristic,LLM pass concurs; DB majority Suvs:1.,,LLM-reviewed
+Toyota,Passo,Hatchback,llm-knowledge,Toyota Passo subcompact hatchback (Daihatsu Boon twin).,,LLM-reviewed
 Toyota,Prado,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:43.,,LLM-reviewed
 Toyota,Previa,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:14.,,LLM-reviewed
 Toyota,Prius,Hatchback,llm-knowledge,Liftback hatch all generations; DB majority Hatchback.,,LLM-reviewed
