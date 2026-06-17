@@ -62,9 +62,13 @@ CATEGORY_IDS: Dict[str, int] = {
 # Per-category API filter parameter names. Cars use the bare `make_id`/
 # `model_id`; motorcycles use the prefixed `motorcycle_make_id`/`motorcycle_model_id`
 # (verified empirically — passing `make_id` to category=1040 returns 0 results).
+# `year` maps to the exact-year request param `manufactured_year` (verified
+# empirically for cars: partitions a model's listings losslessly — the per-year
+# counts sum to the model total). Used as a 3rd filter axis when a single model
+# still exceeds the 10k depth cap after the make→model split.
 _FILTER_PARAM_NAMES: Dict[str, Dict[str, str]] = {
-    "cars":        {"make_id": "make_id",            "model_id": "model_id"},
-    "motorcycles": {"make_id": "motorcycle_make_id", "model_id": "motorcycle_model_id"},
+    "cars":        {"make_id": "make_id",            "model_id": "model_id",            "year": "manufactured_year"},
+    "motorcycles": {"make_id": "motorcycle_make_id", "model_id": "motorcycle_model_id", "year": "manufactured_year"},
 }
 
 MAX_LIMIT = 200       # Server hard cap; >200 silently truncates to ~24
@@ -333,6 +337,7 @@ class EagleClient:
         limit: int = MAX_LIMIT,
         make_id: Optional[str] = None,
         model_id: Optional[str] = None,
+        year: Optional[int] = None,
     ) -> Tuple[List[Dict[str, Any]], Dict[str, Any]]:
         """Fetch one page of normalized ads.
 
@@ -373,6 +378,8 @@ class EagleClient:
             params[filter_keys["make_id"]] = make_id
         if model_id:
             params[filter_keys["model_id"]] = model_id
+        if year is not None:
+            params[filter_keys["year"]] = year
 
         resp = self._get(params)
 
@@ -407,6 +414,7 @@ class EagleClient:
         max_ads: Optional[int] = None,
         make_id: Optional[str] = None,
         model_id: Optional[str] = None,
+        year: Optional[int] = None,
     ) -> Iterator[List[Dict[str, Any]]]:
         """Yield pages of normalized ads until depth cap, empty batch, or max_ads.
 
@@ -444,7 +452,7 @@ class EagleClient:
 
             ads, meta = self.fetch_page(
                 category, offset=offset, limit=limit,
-                make_id=make_id, model_id=model_id,
+                make_id=make_id, model_id=model_id, year=year,
             )
             logging.info(
                 f"[{category}] offset={offset} got={len(ads)} "
