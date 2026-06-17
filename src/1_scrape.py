@@ -136,6 +136,7 @@ class HybridScraper:
         resume: bool = False,
         make_id: Optional[str] = None,
         model_id: Optional[str] = None,
+        year: Optional[int] = None,
         name_tag: Optional[str] = None,
     ) -> Path:
         """Execute Phase 1 (API collection); return final CSV path.
@@ -143,6 +144,8 @@ class HybridScraper:
         Args:
             make_id:  Optional Mudah make ID to filter results.
             model_id: Optional Mudah model ID to filter results.
+            year:     Optional manufactured_year to filter results (3rd axis for
+                      over-cap models).
             resume:   If True, skip Phase 1 and load the most recent phase1
                       checkpoint CSV in the output dir for this category.
             name_tag: Optional slug (e.g. make slug) embedded in the CSV
@@ -153,6 +156,8 @@ class HybridScraper:
             f", make_id={make_id}" if make_id else ""
         ) + (
             f", model_id={model_id}" if model_id else ""
+        ) + (
+            f", year={year}" if year else ""
         )
         logging.info(
             f"[{self.category}] Scraper starting "
@@ -185,7 +190,7 @@ class HybridScraper:
             try:
                 ads = self._phase1_collect(
                     max_ads, timestamp=timestamp,
-                    make_id=make_id, model_id=model_id,
+                    make_id=make_id, model_id=model_id, year=year,
                     name_tag=name_tag,
                 )
             except EagleAuthError:
@@ -226,6 +231,7 @@ class HybridScraper:
         timestamp: Optional[str] = None,
         make_id: Optional[str] = None,
         model_id: Optional[str] = None,
+        year: Optional[int] = None,
         name_tag: Optional[str] = None,
     ) -> List[Dict[str, Any]]:
         """Paginate EagleSearch and return flat list of normalized ad dicts.
@@ -237,7 +243,7 @@ class HybridScraper:
         all_ads: List[Dict[str, Any]] = []
         for page in self.eagle.fetch_all(
             self.category, max_ads=max_ads,
-            make_id=make_id, model_id=model_id,
+            make_id=make_id, model_id=model_id, year=year,
         ):
             all_ads.extend(page)
             if max_ads is not None and len(all_ads) >= max_ads:
@@ -601,6 +607,7 @@ def _preview_count(
     category: str,
     make_id: Optional[str],
     model_id: Optional[str],
+    year: Optional[int] = None,
 ) -> Optional[int]:
     """Probe EagleSearch with limit=1 to get total-results for the current filter.
 
@@ -609,7 +616,7 @@ def _preview_count(
     """
     try:
         _, meta = eagle.fetch_page(
-            category, offset=0, limit=1, make_id=make_id, model_id=model_id
+            category, offset=0, limit=1, make_id=make_id, model_id=model_id, year=year
         )
         total = meta.get("total-results")
         return int(total) if total is not None else None
@@ -618,31 +625,87 @@ def _preview_count(
         return None
 
 
+# Lower bound for the manufactured-year partition axis. Mudah car listings don't
+# predate this in practice; the upper bound is the current year + 1 (next-year
+# models appear early). Factored out so tests can stub the range.
+_MODEL_YEAR_MIN = 1980
+
+
+def _model_year_range() -> List[int]:
+    """Years to probe when partitioning a single over-cap model by manufactured year."""
+    return list(range(_MODEL_YEAR_MIN, datetime.now().year + 2))
+
+
+def _expand_model_by_year(
+    eagle: EagleClient,
+    category: str,
+    slug: str,
+    make_id: str,
+    name: str,
+    model: Dict[str, Any],
+    threshold: int,
+) -> List[Tuple[str, str, str, Optional[str], Optional[int]]]:
+    """Split a single over-cap model into per-(manufactured)year entries.
+
+    `manufactured_year` partitions a model's listings losslessly (verified: per-year
+    counts sum to the model total). Probes each year in `_model_year_range()`, keeps
+    only years with listings. A year that itself exceeds the cap can't be split
+    further with the wired axes — it's emitted anyway (best effort) with a warning.
+    """
+    base = (f"{slug}_{model['slug']}", make_id, f"{name} {model['name']}", model["id"], None)
+    entries: List[Tuple[str, str, str, Optional[str], Optional[int]]] = []
+    for year in _model_year_range():
+        yt = _preview_count(eagle, category, make_id, model["id"], year=year)
+        if yt is None:
+            logging.warning(
+                f"[{slug}_{model['slug']}] year={year} probe failed; skipping year"
+            )
+            continue
+        if yt <= 0:
+            continue
+        if yt > threshold:
+            logging.warning(
+                f"[{slug}_{model['slug']}] year={year} has {yt:,} listings > "
+                f"{threshold:,} cap and cannot be split further — will cap at ~10k"
+            )
+        entries.append((
+            f"{slug}_{model['slug']}_{year}",
+            make_id,
+            f"{name} {model['name']} {year}",
+            model["id"],
+            year,
+        ))
+    # If every year probe failed, fall back to a single model-level entry.
+    return entries or [base]
+
+
 def _expand_capped_makes(
     eagle: EagleClient,
     category: str,
-    makes_list: List[Tuple[str, str, str, Optional[str]]],
+    makes_list: List[Tuple[str, str, str, Optional[str], Optional[int]]],
     threshold: int = MODEL_SPLIT_THRESHOLD,
-) -> List[Tuple[str, str, str, Optional[str]]]:
-    """Probe each make's total-results; split over-cap makes into per-model entries.
+) -> List[Tuple[str, str, str, Optional[str], Optional[int]]]:
+    """Probe each make's total-results; split over-cap makes/models to stay under the cap.
 
-    Takes the standard makes_list of (slug, make_id, name, model_id) tuples and
-    returns a new list where any make whose total-results exceeds `threshold`
-    is replaced by one entry per model (so each downstream query stays under the
-    EagleSearch depth cap and captures the make's full inventory).
+    Takes the standard makes_list of (slug, make_id, name, model_id, year) tuples
+    and returns a new list where any make whose total-results exceeds `threshold`
+    is replaced by per-model entries; and any single model that *still* exceeds the
+    threshold is further split by `manufactured_year` (3rd filter axis). So every
+    downstream query stays under the EagleSearch depth cap and the make's full
+    inventory is captured.
 
-    Entries already carrying a model_id (user filtered by model explicitly) are
-    left untouched — they are already at model granularity. Makes under the
-    threshold pass through unchanged (still a single make-level query).
+    Entries already carrying a model_id (user filtered by model explicitly) are left
+    untouched — they're already at model granularity. Makes under the threshold pass
+    through unchanged (single make-level query).
 
-    Per-model entries use a composite name_tag (`<make>_<model>`) so the
-    per-make CSV files don't collide, and a display name of "<Make> <Model>".
+    Per-model entries use a composite name_tag (`<make>_<model>`, plus `_<year>` when
+    year-split) so per-make CSVs don't collide, and a display name "<Make> <Model> [<Year>]".
     """
     models_by_make = _load_models(category)
-    expanded: List[Tuple[str, str, str, Optional[str]]] = []
-    for slug, make_id, name, model_id in makes_list:
+    expanded: List[Tuple[str, str, str, Optional[str], Optional[int]]] = []
+    for slug, make_id, name, model_id, year in makes_list:
         if model_id is not None:
-            expanded.append((slug, make_id, name, model_id))
+            expanded.append((slug, make_id, name, model_id, year))
             continue
 
         total = _preview_count(eagle, category, make_id, None)
@@ -651,11 +714,11 @@ def _expand_capped_makes(
             logging.warning(
                 f"[{slug}] could not probe total-results; scraping make-level"
             )
-            expanded.append((slug, make_id, name, model_id))
+            expanded.append((slug, make_id, name, model_id, year))
             continue
 
         if total <= threshold:
-            expanded.append((slug, make_id, name, model_id))
+            expanded.append((slug, make_id, name, model_id, year))
             continue
 
         models = models_by_make.get(slug, [])
@@ -665,7 +728,7 @@ def _expand_capped_makes(
                 f"reference data — scraping make-level (will cap at ~10k). "
                 f"Run scrape_makes_models.py to refresh models."
             )
-            expanded.append((slug, make_id, name, model_id))
+            expanded.append((slug, make_id, name, model_id, year))
             continue
 
         logging.info(
@@ -677,12 +740,27 @@ def _expand_capped_makes(
             f"-> {len(models)} model-level queries"
         )
         for m in models:
-            expanded.append((
-                f"{slug}_{m['slug']}",
-                make_id,
-                f"{name} {m['name']}",
-                m["id"],
-            ))
+            mtotal = _preview_count(eagle, category, make_id, m["id"])
+            if mtotal is not None and mtotal > threshold:
+                logging.info(
+                    f"[{slug}_{m['slug']}] model total-results={mtotal:,} > "
+                    f"{threshold:,} cap — splitting by manufactured_year"
+                )
+                print(
+                    f"    [year-split] {name} {m['name']}: {mtotal:,} > {threshold:,} "
+                    f"-> per-year queries"
+                )
+                expanded.extend(
+                    _expand_model_by_year(eagle, category, slug, make_id, name, m, threshold)
+                )
+            else:
+                expanded.append((
+                    f"{slug}_{m['slug']}",
+                    make_id,
+                    f"{name} {m['name']}",
+                    m["id"],
+                    None,
+                ))
     return expanded
 
 
@@ -715,7 +793,7 @@ def _interactive_fill(args: argparse.Namespace, eagle: EagleClient) -> argparse.
             # Non-interactive all-makes: expand to per-make runs, no picker prompt.
             # max_ads stays as supplied (None = all available; no prompt).
             all_makes = _load_makes(args.category)
-            args.makes_list = [(m["slug"], m["id"], m["name"], None) for m in all_makes]
+            args.makes_list = [(m["slug"], m["id"], m["name"], None, None) for m in all_makes]
             if args.output_dir is None:
                 args.output_dir = str(DEFAULT_OUTPUT_DIR / args.category)
             return args
@@ -730,7 +808,7 @@ def _interactive_fill(args: argparse.Namespace, eagle: EagleClient) -> argparse.
             # Single make: allow model filter + count preview.
             make_slug, make_id, make_name = makes_list[0]
             model_id = _resolve_model(args.category, make_slug, args.model)
-            args.makes_list = [(make_slug, make_id, make_name, model_id)]
+            args.makes_list = [(make_slug, make_id, make_name, model_id, None)]
 
             if args.max_ads is None:
                 args.max_ads = _ask_max_ads_with_preview(eagle, args.category, make_id, model_id)
@@ -738,7 +816,7 @@ def _interactive_fill(args: argparse.Namespace, eagle: EagleClient) -> argparse.
         elif len(makes_list) == 0:
             # All makes — expand to per-make sequential runs (same as selecting each make).
             all_makes = _load_makes(args.category)
-            args.makes_list = [(m["slug"], m["id"], m["name"], None) for m in all_makes]
+            args.makes_list = [(m["slug"], m["id"], m["name"], None, None) for m in all_makes]
             if args.max_ads is None:
                 args.max_ads = _prompt_max_ads(
                     "Max ads per make [Enter / 'max' = all available, ~10k API cap]: "
@@ -746,7 +824,7 @@ def _interactive_fill(args: argparse.Namespace, eagle: EagleClient) -> argparse.
 
         else:
             # Multiple makes: no model filter, ask max_ads once (applied per make).
-            args.makes_list = [(slug, mid, name, None) for slug, mid, name in makes_list]
+            args.makes_list = [(slug, mid, name, None, None) for slug, mid, name in makes_list]
             if args.max_ads is None:
                 args.max_ads = _prompt_max_ads(
                     "Max ads per make [Enter / 'max' = all available, ~10k API cap]: "
@@ -837,7 +915,7 @@ def main() -> None:
         print(f"\nCategory: {args.category} | max_ads: {cap_display} {scope} | {n} make(s) | output: {args.output_dir}\n")
         scraped: List[Tuple[str, Path]] = []
         skipped_empty: List[str] = []
-        for i, (make_slug, make_id, make_name, model_id) in enumerate(args.makes_list, 1):
+        for i, (make_slug, make_id, make_name, model_id, year) in enumerate(args.makes_list, 1):
             print(f"[{i}/{n}] {make_name}")
             try:
                 final_path = scraper.run(
@@ -845,6 +923,7 @@ def main() -> None:
                     resume=args.resume,
                     make_id=make_id,
                     model_id=model_id,
+                    year=year,
                     name_tag=make_slug,
                 )
             except EagleAuthError:

@@ -51,10 +51,13 @@ python src/recheck.py --category motorcycles
 | `src/backfill_ad_expiry.py` | One-off backfill of `ad_expiry` for pre-v5 rows | Once after upgrade |
 | `src/dashboard_aggregate.py` | Generate `mockups/dashboard.html` from DB | On demand |
 | `src/scrape_makes_models.py` | Refresh make/model reference lists | Occasionally |
+| `src/scrape_carbase_specs.py` | Crawl carbase.my full catalog → `carbase_specs.db` car specs | Occasionally (quarterly) |
 | `src/eagle_client.py` | EagleSearch API wrapper | Library — do not run directly |
 | `src/mudah_client.py` | Shared HTTP client (used by `recheck.py`) | Library — do not run directly |
+| `src/carbase_client.py` | Throttled HTTP client for carbase.my (used by `scrape_carbase_specs.py`) | Library — do not run directly |
 | `src/db.py` | Database connection helper | Library — do not run directly |
-| `src/probe_eaglesearch.py` | Manual API connectivity check | Dev/debug only |
+| `src/probe_eaglesearch.py` | Manual EagleSearch API connectivity check | Dev/debug only |
+| `src/probe_carbase.py` | carbase.my recon spike (spec render + NVIC endpoints) | Dev/debug only |
 
 ---
 
@@ -115,6 +118,15 @@ scrape_makes_models.py
 data/reference/{cars,motorcycles}_{makes,models}.json
 ```
 
+### Car specifications (carbase.my)
+
+`scrape_carbase_specs.py` crawls [carbase.my](https://www.carbase.my) (paultan.org's Malaysian car buyer's guide) brand → model → variant and stores OEM-grade per-variant specs (engine cc, power, torque, dimensions, kerb weight, transmission, body type, region pricing, …) in a standalone `data/reference/carbase_specs.db` (`model_specs` table). It's an independent reference source, not part of the weekly Mudah pipeline — run quarterly. Covers Proton/Perodua, which external spec APIs handle poorly. Matching these specs onto Mudah listings is a separate (future) step.
+
+```bash
+python src/scrape_carbase_specs.py            # full catalog (skips already-stored variants)
+python src/scrape_carbase_specs.py --makes honda,toyota --limit 20   # subset / smoke test
+```
+
 ### Performance comparison
 
 | Scraper | Listings | Wall time | Per listing | HTTP requests |
@@ -145,13 +157,16 @@ CarData/
 │   ├── backfill_ad_expiry.py              # One-off: backfill ad_expiry for pre-v5 rows
 │   ├── dashboard_aggregate.py             # Generate mockups/dashboard.html from DB
 │   ├── scrape_makes_models.py             # Reference make/model list scraper (occasional)
+│   ├── scrape_carbase_specs.py            # carbase.my catalog spec scraper (occasional)
 │   ├── eagle_client.py                    # EagleSearch API wrapper (library)
 │   ├── mudah_client.py                    # Shared HTTP client — used by recheck.py (library)
+│   ├── carbase_client.py                  # carbase.my HTTP client (library)
 │   ├── db.py                              # Database connection helper (library)
-│   └── probe_eaglesearch.py               # Manual API connectivity check (dev)
+│   ├── probe_eaglesearch.py               # Manual API connectivity check (dev)
+│   └── probe_carbase.py                   # carbase.my recon spike (dev)
 │
 ├── migrations/                            # Schema migration runners
-│   └── run_migrations.py                  # v1 → v5: idempotent schema upgrade
+│   └── run_migrations.py                  # v1 → v8: idempotent schema upgrade
 │
 ├── docs/                                  # Documentation
 │   └── brands.md                          # List of available car/motorcycle brands
@@ -162,8 +177,11 @@ CarData/
 │   │   ├── cars_makes.json
 │   │   ├── cars_models.json
 │   │   ├── cars_variants.json             # Variant/trim vocabulary (985 models)
+│   │   ├── cars_model_types.csv           # Curated car body-type mapping
 │   │   ├── motorcycles_makes.json
-│   │   └── motorcycles_models.json
+│   │   ├── motorcycles_models.json
+│   │   ├── motorcycles_model_types.csv    # Curated motorcycle type mapping
+│   │   └── carbase_specs.db               # carbase.my car specs (model_specs table)
 │   └── master/                            # Production SQLite databases
 │       ├── cardata_cars.db
 │       └── cardata_motorcycles.db
@@ -177,9 +195,10 @@ CarData/
 │   ├── test_scraper.py                    # HybridScraper tests
 │   ├── test_eagle_client.py               # API wrapper tests
 │   ├── test_migrations.py                 # schema migration tests
+│   ├── test_carbase.py                    # carbase spec scraper tests
 │   └── test_clean.py
-├── schema_cars.sql                        # SQLite schema for cars (v5)
-├── schema_motorcycles.sql                 # SQLite schema for motorcycles (v5)
+├── schema_cars.sql                        # SQLite schema for cars (current)
+├── schema_motorcycles.sql                 # SQLite schema for motorcycles (current)
 ├── requirements.txt
 ├── README.md
 └── .gitignore
@@ -207,17 +226,19 @@ Flags:
 | `--model` | — | Model slug (e.g. `vios`). Requires `--make` |
 | `--max-ads` | *prompted* | Max ads to collect (API pagination cap) |
 | `--all-makes` | off | Scrape every reference make non-interactively (used by `run_pipeline.bat`) |
-| `--smart` | off | **Depth-cap evasion** — probe each make and split any make over ~9,500 listings into per-model queries (see below) |
+| `--smart` | off | **Depth-cap evasion** — split any make over ~9,500 listings into per-model queries, and any single model still over the cap into per-`manufactured_year` queries (see below) |
 | `--list-active-makes` | off | Probe every make, print those with >0 listings sorted by count (discovery only, no scrape) |
 | `--output-dir` | `data/raw/<category>/` | Where to save CSVs |
 
-CSV filename: `mudah_eagle_{category}_final_{timestamp}.csv` (per-make runs add a `{make}` tag; `--smart` model splits add a `{make}_{model}` tag).
+CSV filename: `mudah_eagle_{category}_final_{timestamp}.csv` (per-make runs add a `{make}` tag; `--smart` model splits add a `{make}_{model}` tag, year splits a `{make}_{model}_{year}` tag).
 
 ### Beating the 10,000-listing depth cap — `--smart`
 
 A single EagleSearch query paginates to **at most ~10,000 ads** (`from >= 10000` returns empty). Any make with more inventory loses the overflow — e.g. **Toyota cars ≈ 18,800 listings**, so a plain make-level scrape captures only ~53%.
 
 `--smart` fixes this: it probes each make's `total-results` (one cheap `limit=1` call) and, for any make over ~9,500, scrapes **one query per model** instead. Each model is well under the cap, so the make's full inventory is captured. Per-model totals sum exactly to the make total (Mudah forces sellers to pick a known model), so the split is lossless. Makes under the cap stay a single query.
+
+If a single **model** still exceeds the cap (rare), `--smart` adds a third axis: it partitions that model by **`manufactured_year`** — one query per year that has listings. Per-year counts also sum exactly to the model total, so this stays lossless. No model currently exceeds 10k (the largest, Perodua Myvi, ≈ 3,700), so this path is precautionary.
 
 ```bash
 # full, complete scrape of every make (auto-splits the big ones)
@@ -440,7 +461,7 @@ This fills ~83% of NULL variant rows using longest-match against the vocabulary.
 ### Suggested uses
 
 - **Validation** — `3_clean.py` could fuzzy-match scraped `make`/`model` strings against the canonical list to fix typos and casing variants.
-- **Coverage planning** — the model lists power `1_scrape.py --smart`, which splits over-cap makes into per-model queries to bypass Mudah's ~10,000-listing (250-page) depth cap. A single model still over the cap would need a further axis (year/region).
+- **Coverage planning** — the model lists power `1_scrape.py --smart`, which splits over-cap makes into per-model queries (and any single model still over the cap into per-`manufactured_year` queries) to bypass Mudah's ~10,000-listing (250-page) depth cap.
 - **URL construction** — slugs map directly to Mudah filter URLs (`/cars-for-sale/{make_slug}/{model_slug}`).
 
 ---

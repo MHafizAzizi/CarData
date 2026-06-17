@@ -325,6 +325,31 @@ class TestFetchPage:
                 pass  # offset=0 + empty raises; not what we test here
         assert captured["params"]["limit"] == MAX_LIMIT
 
+    def test_year_sets_manufactured_year_param_for_cars(self, client):
+        captured = {}
+        def fake_get(url, params=None, **kwargs):
+            captured["params"] = params
+            return _mock_response(200, {"data": [], "meta": {"total-results": 0}})
+        with patch.object(client.scraper, "get", side_effect=fake_get):
+            try:
+                client.fetch_page("cars", year=2020, make_id="35", model_id="100")
+            except EagleAPIError:
+                pass
+        assert captured["params"]["manufactured_year"] == 2020
+        assert captured["params"]["make_id"] == "35"
+
+    def test_no_year_omits_manufactured_year_param(self, client):
+        captured = {}
+        def fake_get(url, params=None, **kwargs):
+            captured["params"] = params
+            return _mock_response(200, {"data": [], "meta": {"total-results": 0}})
+        with patch.object(client.scraper, "get", side_effect=fake_get):
+            try:
+                client.fetch_page("cars")
+            except EagleAPIError:
+                pass
+        assert "manufactured_year" not in captured["params"]
+
     def test_skips_malformed_ads(self, client):
         body = {
             "data": [
