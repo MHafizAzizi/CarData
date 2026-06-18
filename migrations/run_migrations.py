@@ -79,7 +79,7 @@ from db import CATEGORIES, connect, schema_version, set_meta  # noqa: E402
 # Migration spec — v1 -> v2
 # ---------------------------------------------------------------------------
 
-TARGET_VERSION = 8
+TARGET_VERSION = 9
 
 # (column_name, sqlite_type) — applied to BOTH cars and motorcycles
 SHARED_NEW_COLS: List[Tuple[str, str]] = [
@@ -157,6 +157,27 @@ V7_MOTORCYCLE_COLS: List[Tuple[str, str]] = [
 V8_CAR_COLS: List[Tuple[str, str]] = [
     ("vehicle_type", "TEXT"),
     ("type_group",   "TEXT"),
+]
+
+# v8 -> v9: mcdParams spec columns (cars only; motorcycles version-bump no-op).
+# Filled by recheck.py --method html from __NEXT_DATA__ mcdParams on live listings.
+# These were dropped in v6 (0% fill — no source). Now re-added with a live source.
+V9_CAR_COLS: List[Tuple[str, str]] = [
+    ("engine_cc",      "INTEGER"),  # mcdParams id="cc"
+    ("peak_power_kw",  "INTEGER"),  # mcdParams id="kw"
+    ("peak_torque_nm", "INTEGER"),  # mcdParams id="torque"
+    ("kerb_weight_kg", "INTEGER"),  # mcdParams id="kerbwt"
+    ("fuel_tank_l",    "INTEGER"),  # mcdParams id="fueltk"
+    ("comp_ratio",     "TEXT"),     # mcdParams id="comp_ratio" (e.g. "10.5")
+    ("engine_type",    "TEXT"),     # mcdParams id="engine" (e.g. "MULTI POINT F/INJ")
+    ("body_style",     "TEXT"),     # mcdParams id="style" (e.g. "4D SEDAN")
+    ("seat_capacity",  "INTEGER"),  # mcdParams id="seat"
+    ("country_origin", "TEXT"),     # mcdParams id="country_origin"
+    ("series",         "TEXT"),     # mcdParams id="series" (e.g. "NCP150R ENHANCED")
+    ("length_mm",      "INTEGER"),  # mcdParams id="length"
+    ("width_mm",       "INTEGER"),  # mcdParams id="width"
+    ("height_mm",      "INTEGER"),  # mcdParams id="height"
+    ("wheelbase_mm",   "INTEGER"),  # mcdParams id="wheelbase"
 ]
 
 # ---------------------------------------------------------------------------
@@ -537,6 +558,42 @@ def _migrate_v7_to_v8(
     )
 
 
+def _migrate_v8_to_v9(
+    conn: sqlite3.Connection, category: str, *, dry_run: bool
+) -> None:
+    """Add mcdParams spec columns (cars only; motorcycles bump version)."""
+    cols = V9_CAR_COLS if category == "cars" else []
+    logging.info(
+        f"[{category}] step v8 -> v9 ({len(cols)} column(s) to evaluate)"
+    )
+
+    added = 0
+    with conn:
+        for col_name, col_type in cols:
+            if _safe_add_column(conn, "listings", col_name, col_type, dry_run=dry_run):
+                added += 1
+
+        if dry_run:
+            logging.info(
+                f"[{category}] DRY-RUN v8->v9: would add {added} column(s)"
+            )
+            return
+
+        conn.execute(
+            "INSERT INTO meta (key, value) VALUES ('schema_version', '9') "
+            "ON CONFLICT(key) DO UPDATE SET value = excluded.value"
+        )
+
+    logging.info(
+        f"[{category}] v8 -> v9 complete — added {added} column(s)"
+    )
+    set_meta(
+        conn,
+        "last_migration_v9_at",
+        __import__("datetime").datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+    )
+
+
 def migrate(category: str, *, dry_run: bool = False) -> None:
     """Run all pending migrations on the given category's DB."""
     if category not in CATEGORIES:
@@ -575,6 +632,8 @@ def migrate(category: str, *, dry_run: bool = False) -> None:
         _migrate_v6_to_v7(conn, category, dry_run=dry_run)
     if current < 8:
         _migrate_v7_to_v8(conn, category, dry_run=dry_run)
+    if current < 9:
+        _migrate_v8_to_v9(conn, category, dry_run=dry_run)
 
     logging.info(
         f"[{category}] migration complete; "

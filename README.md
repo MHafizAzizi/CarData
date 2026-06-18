@@ -58,6 +58,7 @@ python src/recheck.py --category motorcycles
 | `src/db.py` | Database connection helper | Library — do not run directly |
 | `src/probe_eaglesearch.py` | Manual EagleSearch API connectivity check | Dev/debug only |
 | `src/probe_carbase.py` | carbase.my recon spike (spec render + NVIC endpoints) | Dev/debug only |
+| `src/probe_listing_detail.py` | Dump `__NEXT_DATA__` + mcdParams for any listing URL | Dev/debug only |
 
 ---
 
@@ -163,7 +164,8 @@ CarData/
 │   ├── carbase_client.py                  # carbase.my HTTP client (library)
 │   ├── db.py                              # Database connection helper (library)
 │   ├── probe_eaglesearch.py               # Manual API connectivity check (dev)
-│   └── probe_carbase.py                   # carbase.my recon spike (dev)
+│   ├── probe_carbase.py                   # carbase.my recon spike (dev)
+│   └── probe_listing_detail.py            # dump __NEXT_DATA__ + mcdParams for any listing URL (dev)
 │
 ├── migrations/                            # Schema migration runners
 │   └── run_migrations.py                  # v1 → v8: idempotent schema upgrade
@@ -334,6 +336,30 @@ These columns are populated by the EagleSearch API.
 | `last_detail_fetched_at` | Legacy (Phase 2 removed) — NULL for all rows going forward |
 | `detail_fetch_status` | Legacy (Phase 2 removed) — NULL for all rows going forward |
 
+### OEM spec fields — cars only (schema v9+)
+
+Populated by `recheck.py --method html` from the listing detail page's `mcdParams` block (Mudah's structured spec sheet, embedded in `__NEXT_DATA__`). Only filled for listings where `detected=available` and the spec data is present. Coverage is ~87% on newest listings; older listings may be NULL (Mudah didn't populate specs historically).
+
+| Column | Description |
+|---|---|
+| `engine_cc` | Exact engine displacement (cc) — e.g. `1497` |
+| `peak_power_kw` | Peak power (kW) |
+| `peak_torque_nm` | Peak torque (Nm) |
+| `kerb_weight_kg` | Kerb weight (kg) |
+| `fuel_tank_l` | Fuel tank capacity (litres) |
+| `comp_ratio` | Compression ratio (text — e.g. `"10.5"`) |
+| `engine_type` | Engine type string (e.g. `"MULTI POINT F/INJ"`) |
+| `body_style` | Body style (e.g. `"4D SEDAN"`, `"4D HATCHBACK"`) |
+| `seat_capacity` | Number of seats |
+| `country_origin` | Country of manufacture (e.g. `"MALAYSIA"`) |
+| `series` | Variant series code (e.g. `"NCP150R ENHANCED"`) |
+| `length_mm` | Body length (mm) |
+| `width_mm` | Body width (mm) |
+| `height_mm` | Body height (mm) |
+| `wheelbase_mm` | Wheelbase (mm) |
+
+Run `recheck.py --method html --all` after each scrape to populate specs on new listings. Already-filled rows are skipped (resume-safe).
+
 ### Availability / sold tracking fields (schema v5+)
 
 These columns are written by `recheck.py` and `backfill_ad_expiry.py`.
@@ -357,8 +383,8 @@ To stay friendly with mudah.my and avoid 403 blocks, the clients pace themselves
 - **0.5–1s** between calls (lighter — JSON endpoint, not Cloudflare-protected)
 - Fixed-schedule retries: **2s → 3s → 5s**
 
-**HTML probes (`recheck.py`):**
-- **3–4 seconds** between requests, globally serialized via a shared lock
+**HTML probes (`recheck.py --method html`):**
+- **4–5 seconds** between requests, globally serialized via a shared lock (bumped from 3–4s; eliminates 429s on sustained runs)
 - **Retries:** 2s → 3s → 5s
 
 The two clients (`eagle_client.py` and `mudah_client.py`) own independent locks so the API throttle never blocks the HTML throttle (or vice versa) when running in the same process.
@@ -532,14 +558,17 @@ python src/3_clean.py --input data/master/MasterMudahCarData.xlsx --output clean
 `recheck.py` revisits previously scraped listings to track whether each URL is still live. It does **not** claim listings are "sold" — only that the URL is currently `available` or `unavailable`.
 
 ```bash
-# normal cadenced run on both DBs (recommended)
+# normal cadenced run on both DBs — API mode (default, ~300× faster)
 python src/recheck.py
+
+# HTML mode — per-listing detail fetch; slower but also extracts mcdParams specs
+python src/recheck.py --method html --category cars
+
+# fill specs on newest 1000 listings (resume-safe: skips already-filled rows)
+python src/recheck.py --method html --category cars --all --limit 1000
 
 # only motorcycles
 python src/recheck.py --category motorcycles
-
-# re-check every row regardless of policy, capped to 50 per category
-python src/recheck.py --all --limit 50
 
 # preview what would be checked, no HTTP requests
 python src/recheck.py --dry-run
@@ -549,9 +578,10 @@ python src/recheck.py --dry-run
 
 | Flag | Default | Description |
 |---|---|---|
-| `--category` | `both` | Which DB to re-check: `cars`, `motorcycles`, or `both` (sequential through one shared client) |
-| `--limit` | — | Max rows to probe this run (per category) |
-| `--all` | off | Skip cadence policy, probe every row that has a URL |
+| `--category` | `both` | Which DB to re-check: `cars`, `motorcycles`, or `both` |
+| `--method` | `api` | `api`: EagleSearch sweep (~300× faster, present/absent only). `html`: per-listing detail GET — slower but distinguishes removed/soft_404/blocked and extracts mcdParams specs (cars, schema v9+) |
+| `--limit` | — | Max rows to probe this run (per category). With `--all`, rows are ordered newest-first (`ads_id DESC`) |
+| `--all` | off | Skip cadence policy, probe every row that has a URL. With `--method html` + schema v9, automatically skips rows where `engine_cc IS NOT NULL` (resume-safe spec sweep) |
 | `--dry-run` | off | Compute the due set and log it; make no HTTP requests |
 
 ### Cadence policy
@@ -601,6 +631,13 @@ Every probe appends one row to the `availability_checks` table in the same DB:
 ## Changelog
 
 This section tracks every revision of this README. Add a new entry at the top whenever the document is updated.
+
+### 2026-06-18
+- **OEM spec extraction via `mcdParams` (schema v9).** Discovered that Mudah listing pages embed structured OEM spec data in `__NEXT_DATA__` → `props.initialState.adDetails.byID.{ads_id}.attributes.mcdParams`. Added 15 new car-only columns (`engine_cc`, `peak_power_kw`, `peak_torque_nm`, `kerb_weight_kg`, `fuel_tank_l`, `comp_ratio`, `engine_type`, `body_style`, `seat_capacity`, `country_origin`, `series`, `length_mm`, `width_mm`, `height_mm`, `wheelbase_mm`) via schema migration v8 → v9.
+- **`recheck.py` — HTML mode now populates spec cols.** Added `extract_mcd_specs()` that parses `mcdParams` from fetched HTML and writes spec fields to DB on `engine_cc IS NULL` rows. Conditional double-UPDATE pattern avoids overwriting already-filled specs on re-checks. Rate raised from 3–4s to **4–5s** (eliminates 429s on sustained runs).
+- **`probe_listing_detail.py` (new dev tool).** Standalone recon script: fetches any listing URL, dumps `__NEXT_DATA__` attributes and spec-candidate keys. `--dump-full` writes raw JSON to `data/raw/probe_next_data.json`.
+- **Resume built into spec sweep.** `recheck.py --all --method html` filters `engine_cc IS NULL`, ordering newest-first (`ORDER BY ads_id DESC`), so interrupted runs resume naturally.
+- **Coverage note.** ~87% of listings with ads_id ≥ 115M have `mcdParams`; older listings (~0%) were scraped before Mudah added this feature.
 
 ### 2026-06-13
 - **`--smart` depth-cap evasion.** New `1_scrape.py --smart` flag probes each make's `total-results` and splits any make over ~9,500 listings into per-model queries, capturing the full inventory past the ~10,000-listing EagleSearch depth cap (e.g. Toyota cars ≈ 18,800 — a plain make-level scrape captured only ~53%). The split is lossless (per-model totals sum to the make total). `run_pipeline.bat` scrape step now passes `--all-makes --smart`. Added a "Beating the 10,000-listing depth cap" subsection, expanded the scraper flags table (`--make`, `--model`, `--all-makes`, `--smart`, `--list-active-makes`), and updated the all-makes example. 6 new tests (`TestExpandCappedMakes`), 218 passing.
