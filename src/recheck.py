@@ -39,6 +39,27 @@ from typing import Iterable, List, Optional, Set, Tuple
 from db import connect, db_path_for, CATEGORIES
 from mudah_client import MudahClient
 
+# mcdParams field id → (db_column, coerce_fn).
+# Covers the analytically useful numeric specs + key text fields.
+# Brakes/suspension/tyres/steering omitted — rarely queried, add when needed.
+_MCD_FIELD_MAP = {
+    "cc":             ("engine_cc",      int),
+    "kw":             ("peak_power_kw",  int),
+    "torque":         ("peak_torque_nm", int),
+    "kerbwt":         ("kerb_weight_kg", int),
+    "fueltk":         ("fuel_tank_l",    int),
+    "comp_ratio":     ("comp_ratio",     str),
+    "engine":         ("engine_type",    str),
+    "style":          ("body_style",     str),
+    "seat":           ("seat_capacity",  int),
+    "country_origin": ("country_origin", str),
+    "series":         ("series",         str),
+    "length":         ("length_mm",      int),
+    "width":          ("width_mm",       int),
+    "height":         ("height_mm",      int),
+    "wheelbase":      ("wheelbase_mm",   int),
+}
+
 # DB column holding the make name, per category (set by clean.py title-casing).
 MAKE_COL = {
     "cars": "make",
@@ -133,6 +154,43 @@ def classify_response(status_code: Optional[int], body: Optional[str], ads_no: s
         return 'soft_404'
 
 
+def extract_mcd_specs(body: str, ads_no: str) -> dict:
+    """Parse mcdParams from __NEXT_DATA__ body → {db_col: value}.
+
+    Returns {} on any failure — never raises.
+    """
+    try:
+        match = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', body, re.S)
+        if not match:
+            return {}
+        data = json.loads(match.group(1))
+        attrs = (
+            data.get("props", {})
+                .get("initialState", {})
+                .get("adDetails", {})
+                .get("byID", {})
+                .get(ads_no, {})
+                .get("attributes", {})
+        )
+        specs: dict = {}
+        for section in attrs.get("mcdParams", []):
+            for param in section.get("params", []):
+                field_id = param.get("id")
+                if field_id not in _MCD_FIELD_MAP:
+                    continue
+                col, coerce = _MCD_FIELD_MAP[field_id]
+                val = param.get("realValue")
+                if val is None:
+                    continue
+                try:
+                    specs[col] = coerce(val)
+                except (ValueError, TypeError):
+                    specs[col] = val if coerce is str else None
+        return specs
+    except Exception:
+        return {}
+
+
 def status_from_detected(detected: str, previous: Optional[str]) -> str:
     """Collapse detected_status into the public availability_status.
 
@@ -206,6 +264,7 @@ def select_due_rows(
     *,
     force_all: bool,
     limit: Optional[int],
+    skip_specs_filled: bool = False,
 ) -> List[sqlite3.Row]:
     """Read all rows with a URL, then apply the cadence filter in Python.
 
@@ -223,10 +282,13 @@ def select_due_rows(
         if _has_column(conn, "listings", mc):
             extra += f", {mc}"
             break
+    where = "WHERE url IS NOT NULL AND url != ''"
+    if skip_specs_filled and _has_column(conn, "listings", "engine_cc"):
+        where += " AND engine_cc IS NULL"
     rows = conn.execute(
         f"SELECT ads_id, url, first_seen_at, last_seen_at, last_checked_at, "
         f"availability_status{extra} "
-        "FROM listings WHERE url IS NOT NULL AND url != ''"
+        f"FROM listings {where} ORDER BY ads_id DESC"
     ).fetchall()
     now = datetime.now()
     due = rows if force_all else [r for r in rows if should_recheck(r, now)]
@@ -406,7 +468,15 @@ def recheck_category(
 
     conn = connect(category)
     total = conn.execute("SELECT COUNT(*) FROM listings").fetchone()[0]
-    due = select_due_rows(conn, force_all=force_all, limit=limit)
+    has_mcd_specs = _has_column(conn, "listings", "engine_cc")  # proxy for v9
+    # When force_all + spec cols exist, skip already-filled rows so a crashed
+    # spec sweep resumes from where it left off (no redundant HTTP requests).
+    due = select_due_rows(
+        conn,
+        force_all=force_all,
+        limit=limit,
+        skip_specs_filled=(force_all and has_mcd_specs),
+    )
     logging.info(f"[{category}] DB rows: {total}. Due for re-check: {len(due)}.")
 
     if dry_run:
@@ -427,12 +497,28 @@ def recheck_category(
         new_status = status_from_detected(detected, previous_status)
         ts = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
+        specs: dict = {}
         with conn:
             if detected == 'available':
-                conn.execute(
-                    "UPDATE listings SET last_seen_at=?, last_checked_at=?, availability_status=? WHERE ads_id=?",
-                    (ts, ts, new_status, ads_id),
-                )
+                specs = extract_mcd_specs(body, ads_no) if (has_mcd_specs and body) else {}
+                if specs:
+                    set_clause = ", ".join(f"{k}=?" for k in specs)
+                    conn.execute(
+                        f"UPDATE listings SET last_seen_at=?, last_checked_at=?, availability_status=?, "
+                        f"{set_clause} WHERE ads_id=? AND engine_cc IS NULL",
+                        (ts, ts, new_status, *specs.values(), ads_id),
+                    )
+                    # Always refresh availability cols even if specs already populated
+                    conn.execute(
+                        "UPDATE listings SET last_seen_at=?, last_checked_at=?, availability_status=? "
+                        "WHERE ads_id=? AND engine_cc IS NOT NULL",
+                        (ts, ts, new_status, ads_id),
+                    )
+                else:
+                    conn.execute(
+                        "UPDATE listings SET last_seen_at=?, last_checked_at=?, availability_status=? WHERE ads_id=?",
+                        (ts, ts, new_status, ads_id),
+                    )
             elif detected in ('removed', 'soft_404'):
                 # Listing is gone — infer whether it sold or expired
                 if has_sold_inference_col:
@@ -463,9 +549,12 @@ def recheck_category(
         sold_inf_label = ""
         if detected in ('removed', 'soft_404') and has_sold_inference_col:
             sold_inf_label = f" sold_inference={sold_inf}"
+        specs_label = ""
+        if detected == 'available' and has_mcd_specs:
+            specs_label = f" specs={len(specs)}"
         logging.info(
             f"[{category}] [{n}/{len(due)}] {ads_id} -> http={status_code} "
-            f"detected={detected} status={new_status}{sold_inf_label}"
+            f"detected={detected} status={new_status}{sold_inf_label}{specs_label}"
         )
 
     logging.info(f"[{category}] re-check complete.")
@@ -510,7 +599,7 @@ def main() -> None:
         for cat in targets:
             recheck_category_api(cat, client=client, limit=args.limit, force_all=args.all, dry_run=args.dry_run)
     else:
-        client = MudahClient()  # ONE client across categories so the throttle is shared
+        client = MudahClient(request_interval=(4.0, 5.0))  # ONE client across categories so the throttle is shared
         for cat in targets:
             recheck_category(cat, client=client, limit=args.limit, force_all=args.all, dry_run=args.dry_run)
 
