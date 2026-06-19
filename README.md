@@ -10,20 +10,34 @@ Car listing data scraped from [Mudah.my](https://www.mudah.my), Malaysia's large
 
 ### Weekly scrape (refresh listings + ad_expiry)
 
-```bash
-# 1. Scrape new listings → data/raw/<category>/
-python src/1_scrape.py --category motorcycles
+`run_pipeline.bat` runs the full **scrape → migrate → clean** pipeline in one
+shot (scrape uses `--all-makes --smart`; clean uses `--enrich-types`, and
+`--enrich-variants` for cars). Double-click it, or from a terminal:
 
-# 2. Load CSVs into SQLite
-python src/2_migrate.py --category motorcycles
-
-# 3. Normalize the DB (strip noise, dedup)
-python src/3_clean.py --category motorcycles
+```bat
+run_pipeline.bat              REM prompts: 1 cars / 2 motorcycles / 3 both
+run_pipeline.bat cars         REM cars only
+run_pipeline.bat motorcycles  REM motorcycles only
+run_pipeline.bat both         REM both categories
 ```
 
-Swap `--category motorcycles` → `--category cars` for the cars DB.
+> First run only — bring the schema to v9: `python migrations\run_migrations.py --category both`.
+> The clean step prints any unmapped `(make, model)` pairs (new models) that
+> need a row added to the category's `*_model_types.csv` — see Data Cleaning.
+
+Prefer the manual steps? They're equivalent to what the .bat calls:
+
+```bash
+python src/1_scrape.py --category motorcycles --all-makes --smart   # scrape → data/raw/<category>/
+python src/2_migrate.py --category motorcycles                      # load CSVs → SQLite
+python src/3_clean.py --category motorcycles --enrich-types         # normalize + fill type cols
+```
+
+Swap `--category motorcycles` → `--category cars` (add `--enrich-variants` for cars).
 
 ### Daily recheck (detect sold listings)
+
+`recheck.py` is a separate daily cadence — **not** run by `run_pipeline.bat`.
 
 ```bash
 # Probe existing listings; sets availability_status + sold_inference
@@ -44,6 +58,7 @@ python src/recheck.py --category motorcycles
 
 | Script | Role | Run it? |
 |---|---|---|
+| `run_pipeline.bat` | **One-shot weekly pipeline** — scrape → migrate → clean (wraps the three below) | Yes — weekly (easiest) |
 | `src/1_scrape.py` | **Primary scraper** — EagleSearch API (Phase 1 only) | Yes — weekly |
 | `src/2_migrate.py` | Load scraped CSVs into SQLite | Yes — after each scrape |
 | `src/3_clean.py` | Normalize / dedup the DB | Yes — after each migrate |
@@ -168,7 +183,7 @@ CarData/
 │   └── probe_listing_detail.py            # dump __NEXT_DATA__ + mcdParams for any listing URL (dev)
 │
 ├── migrations/                            # Schema migration runners
-│   └── run_migrations.py                  # v1 → v8: idempotent schema upgrade
+│   └── run_migrations.py                  # v1 → v9: idempotent schema upgrade
 │
 ├── docs/                                  # Documentation
 │   └── brands.md                          # List of available car/motorcycle brands
@@ -447,7 +462,7 @@ python src/scrape_makes_models.py
 | `cars_makes.json` | List of `{id, name, slug, founding_country, icon_png, icon_svg}` | 128 entries (Alfa Romeo, Alpine, ...) |
 | `cars_models.json` | `{make_slug: [{id, name, slug}, ...]}` | Toyota: 99 models, total 1,540 |
 | `motorcycles_makes.json` | List of `{id, name, slug}` (no `founding_country`) | 96 entries (Adiva, Aprilia, ...) |
-| `motorcycles_models.json` | `{make_slug: [{id, name, slug}, ...]}` | total 1,434 |
+| `motorcycles_models.json` | `{make_slug: [{id, name, slug}, ...]}` | total 1,439 |
 | `cars_variants.json` | `{model_slug: {make, model, by_cc: {cc: [tokens]}, _all: [tokens]}}` | 985 models, 9,723 variant tokens |
 
 ### How it works
@@ -508,6 +523,9 @@ python src/3_clean.py --category cars
 
 # clean + fill NULL variant rows from cars_variants.json vocabulary
 python src/3_clean.py --category cars --enrich-variants
+
+# clean + fill NULL type columns from the curated *_model_types.csv mapping
+python src/3_clean.py --category motorcycles --enrich-types
 ```
 
 ### What it cleans
@@ -542,6 +560,42 @@ python src/3_clean.py --category cars --enrich-variants
 - Updates listing rows in place (preserves `first_seen_at`, `last_seen_at`, `last_checked_at`, `availability_status`, `url`)
 - Deletes rows removed by dedup/drop logic (cascades to `availability_checks`)
 - Stamps `meta.last_cleaned_at` with the run timestamp
+
+### Vehicle / motorcycle type enrichment — `--enrich-types`
+
+Fills the `type` columns for rows where they are NULL, using a curated
+hand-maintained mapping (the API doesn't give a clean type for every model):
+
+- **Motorcycles** — `data/reference/motorcycles_model_types.csv` maps
+  `(motorcycle_make, motorcycle_model)` → `motorcycle_type`. The coarse
+  `type_group` is *derived* from `motorcycle_type` (via `TYPE_TO_GROUP` in
+  `reference.py`), never stored, so the two can't desync.
+- **Cars** — `vehicle_type` is filled first from the API `car_type`
+  (`API_CAR_TYPE_TO_VEHICLE`), then any remaining NULLs fall back to
+  `data/reference/cars_model_types.csv`. `type_group` is derived via
+  `CAR_TYPE_TO_GROUP`.
+
+```bash
+python src/3_clean.py --category motorcycles --enrich-types
+python src/3_clean.py --category cars --enrich-types
+```
+
+**Spotting new models that need a type.** Any `(make, model)` with NULL type
+that isn't in the mapping CSV is reported as an **unmapped pair** with its
+listing count — these are new models from recent scrapes that need
+classifying:
+
+```
+Type hints: 500 candidates, 480 filled, 2 unmapped pair(s)
+Unmapped (make, model) pairs — add to data/reference/motorcycles_model_types.csv:
+    Yamaha | YZF-R15 V4 (12 listing(s))
+    Honda | ADV 350 (5 listing(s))
+```
+
+Workflow for new models: run `--enrich-types --dry-run` to list unmapped
+pairs without writing → add the rows to the relevant `*_model_types.csv` with
+the correct type → re-run without `--dry-run` to fill them. A type not present
+in `TYPE_TO_GROUP` / `CAR_TYPE_TO_GROUP` fails loudly (catches CSV typos).
 
 ### Legacy xlsx mode
 
@@ -631,6 +685,11 @@ Every probe appends one row to the `availability_checks` table in the same DB:
 ## Changelog
 
 This section tracks every revision of this README. Add a new entry at the top whenever the document is updated.
+
+### 2026-06-19
+- **Quick Start now leads with `run_pipeline.bat`.** Weekly section documents the one-shot scrape → migrate → clean batch file (category prompt + `cars`/`motorcycles`/`both` arg) with the manual python steps kept as an equivalent fallback. Added `run_pipeline.bat` to the script-reference table. Fixed the bat's stale `v8` schema note → `v9`.
+- **Documented `3_clean.py --enrich-types`.** New "Vehicle / motorcycle type enrichment" subsection under Data Cleaning: explains the curated `*_model_types.csv` mappings, derived `type_group`, and the **unmapped-pair workflow** for surfacing/classifying new models from recent scrapes (`--dry-run` → add CSV rows → re-run).
+- **Stale-fact fixes.** `run_migrations.py` project-structure note `v1 → v8` → `v1 → v9` (schema is v9). Motorcycle model count 1,434 → 1,439 (matches live `motorcycles_models.json`).
 
 ### 2026-06-18
 - **OEM spec extraction via `mcdParams` (schema v9).** Discovered that Mudah listing pages embed structured OEM spec data in `__NEXT_DATA__` → `props.initialState.adDetails.byID.{ads_id}.attributes.mcdParams`. Added 15 new car-only columns (`engine_cc`, `peak_power_kw`, `peak_torque_nm`, `kerb_weight_kg`, `fuel_tank_l`, `comp_ratio`, `engine_type`, `body_style`, `seat_capacity`, `country_origin`, `series`, `length_mm`, `width_mm`, `height_mm`, `wheelbase_mm`) via schema migration v8 → v9.
