@@ -9,7 +9,7 @@ REM     run_pipeline.bat motorcycles
 REM     run_pipeline.bat both
 REM
 REM Recheck (recheck.py) is a separate daily cadence and is NOT run here.
-REM Schema must be v8 first: python migrations\run_migrations.py --category both
+REM Schema must be v9 first: python migrations\run_migrations.py --category both
 REM Both categories clean with --enrich-types: unmapped (make, model) pairs
 REM print at the end and need a row added to the category's mapping CSV
 REM (data\reference\motorcycles_model_types.csv / cars_model_types.csv).
