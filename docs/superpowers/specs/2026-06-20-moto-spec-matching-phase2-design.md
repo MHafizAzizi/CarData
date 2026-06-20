@@ -99,10 +99,13 @@ fuel_consumption_kmpl (20% fill), tyres, suspension.
 
 1. ✅ DONE 2026-06-20 — Migration v10 (+ the 3 tax spots) run `--category both`; both DBs at v10, 14 cols on motos, full suite 264 pass.
 2. ✅ DONE 2026-06-20 — Alias file finalized → `moto_spec_aliases.json`.
-3. TODO — `src/enrich_specs.py` moto path: cross-DB read specs / write listings; tiered match;
-   type coercion (source values may be TEXT → REAL/INT); idempotent `engine_cc IS NULL` guard.
-4. Tests: matcher tiers, alias loading, idempotency, type coercion.
-5. Run enrich, record coverage in CONTEXT.
+3. ✅ DONE 2026-06-21 — `src/enrich_specs.py` moto path (TDD). Idempotency guard refined
+   to `spec_match IS NULL` (records every tier; protects future motomalaysia fills;
+   `--force` reprocesses). Source values already cleanly typed → coercion passthrough,
+   only `compression_ratio`→`comp_ratio` rename.
+4. ✅ DONE 2026-06-21 — `tests/test_enrich_specs.py` (17 tests: norm, match tiers, enrich,
+   idempotency, alias loading).
+5. ✅ DONE 2026-06-21 — ran: 21,325/29,077 matched (73.3%); idempotent re-run = 0 rows.
 
 ## Parked
 
