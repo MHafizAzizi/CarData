@@ -69,6 +69,11 @@ Thumbs.db
 # Claude Code session metadata
 .claude/
 
+# Local agent/skill tooling artifacts (not for the repo)
+.agents/
+.understand-anything/
+skills-lock.json
+
 # Local project context (living document — not for the repo)
 CONTEXT.md
 CONTEXT.original.md

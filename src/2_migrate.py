@@ -85,8 +85,16 @@ MOTORCYCLE_ONLY_COLUMNS: List[str] = ["motorcycle_make", "motorcycle_model"]
 # CATEGORY_COLUMNS so a re-scrape upsert can never clobber them.
 ENRICHMENT_ONLY_COLUMNS: Dict[str, Set[str]] = {
     # vehicle_type/type_group (schema v8) come from API car_type
-    # normalisation + data/reference/cars_model_types.csv via --enrich-types
-    "cars": {"vehicle_type", "type_group"},
+    # normalisation + data/reference/cars_model_types.csv via --enrich-types.
+    # mcdParams OEM spec cols (schema v9) come from the recheck step, never
+    # scraped from listings — exclude them so upserts can't clobber them.
+    "cars": {
+        "vehicle_type", "type_group",
+        "engine_cc", "peak_power_kw", "peak_torque_nm", "kerb_weight_kg",
+        "fuel_tank_l", "comp_ratio", "engine_type", "body_style",
+        "seat_capacity", "country_origin", "series", "length_mm",
+        "width_mm", "height_mm", "wheelbase_mm",
+    },
     # motorcycle_type/type_group (schema v7) come from
     # data/reference/motorcycles_model_types.csv via --enrich-types
     "motorcycles": {"motorcycle_type", "type_group"},
