@@ -64,7 +64,6 @@ python src/recheck.py --category motorcycles
 | `src/3_clean.py` | Normalize / dedup the DB | Yes — after each migrate |
 | `src/recheck.py` | Re-check availability + infer sold/expired | Yes — daily |
 | `src/backfill_ad_expiry.py` | One-off backfill of `ad_expiry` for pre-v5 rows | Once after upgrade |
-| `src/dashboard_aggregate.py` | Generate `mockups/dashboard.html` from DB | On demand |
 | `src/scrape_makes_models.py` | Refresh make/model reference lists | Occasionally |
 | `src/scrape_carbase_specs.py` | Crawl carbase.my full catalog → `carbase_specs.db` car specs | Occasionally (quarterly) |
 | `src/eagle_client.py` | EagleSearch API wrapper | Library — do not run directly |
@@ -171,7 +170,6 @@ CarData/
 │   ├── 3_clean.py                         # Data normalization + dedup
 │   ├── recheck.py                         # Availability re-checker + sold inference
 │   ├── backfill_ad_expiry.py              # One-off: backfill ad_expiry for pre-v5 rows
-│   ├── dashboard_aggregate.py             # Generate mockups/dashboard.html from DB
 │   ├── scrape_makes_models.py             # Reference make/model list scraper (occasional)
 │   ├── scrape_carbase_specs.py            # carbase.my catalog spec scraper (occasional)
 │   ├── eagle_client.py                    # EagleSearch API wrapper (library)

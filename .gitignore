@@ -29,10 +29,6 @@ data/master/
 data/models/
 notebooks/
 
-# Dashboard generated output (rebuilt by dashboard_aggregate.py)
-mockups/dashboard.html
-mockups/aggregates.json
-
 # SQLite databases (live data — never tracked)
 *.db
 *.db-wal

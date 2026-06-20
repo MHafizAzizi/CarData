@@ -74,17 +74,6 @@ def clean_price(series: pd.Series) -> pd.Series:
     return pd.to_numeric(cleaned, errors="coerce").astype("Int64")
 
 
-def clean_mileage(series: pd.Series) -> pd.Series:
-    """Strip 'km', commas, and whitespace; convert to nullable integer."""
-    cleaned = (
-        series.astype(str)
-        .str.replace(r"[Kk][Mm]", "", regex=True)
-        .str.replace(",", "", regex=False)
-        .str.strip()
-    )
-    return pd.to_numeric(cleaned, errors="coerce").astype("Int64")
-
-
 def clean_engine_capacity(series: pd.Series) -> pd.Series:
     """Strip 'cc'/'CC' suffix; convert to nullable integer."""
     cleaned = (
@@ -104,21 +93,9 @@ def clean_manufactured_date(series: pd.Series) -> pd.Series:
     return pd.to_numeric(extracted, errors="coerce").astype("Int64")
 
 
-def clean_year(series: pd.Series) -> pd.Series:
-    """Extract 4-digit year and convert to nullable integer."""
-    extracted = series.astype(str).str.extract(r"(\d{4})")[0]
-    return pd.to_numeric(extracted, errors="coerce").astype("Int64")
-
-
 def clean_text(series: pd.Series) -> pd.Series:
     """Title-case and strip whitespace from free-text fields."""
     return series.astype(str).str.strip().str.title().replace("Nan", pd.NA)
-
-
-def clean_numeric(series: pd.Series) -> pd.Series:
-    """Strip any non-numeric characters (except dot) and convert to float."""
-    cleaned = series.astype(str).str.replace(r"[^\d.]", "", regex=True).str.strip()
-    return pd.to_numeric(cleaned, errors="coerce")
 
 
 def clean_company_ad(series: pd.Series) -> pd.Series:
@@ -211,9 +188,6 @@ CATEGORY_MAKE_COL: Dict[str, str] = {
     "cars":        "make",
     "motorcycles": "motorcycle_make",
 }
-
-# Backward-compat alias used by old xlsx callers
-CLEANERS = _CARS_CLEANERS
 
 
 # ---------------------------------------------------------------------------
@@ -582,26 +556,11 @@ def clean_db(category: str, *, dry_run: bool = False) -> dict:
         # Update cleaned columns for surviving rows
         set_clause = ", ".join(f"{c} = ?" for c in update_cols)
         for _, row in df_clean.iterrows():
-            vals = [
-                None if pd.isna(row[c]) else (
-                    int(row[c]) if isinstance(row[c], pd.NA.__class__) else row[c]
-                )
-                for c in update_cols
-            ]
-            # Safely convert pandas NA / numpy int64
-            safe_vals = []
-            for v in vals:
-                try:
-                    if pd.isna(v):
-                        safe_vals.append(None)
-                        continue
-                except (TypeError, ValueError):
-                    pass
-                safe_vals.append(v)
-            safe_vals.append(int(row["ads_id"]))
+            vals = [None if pd.isna(row[c]) else row[c] for c in update_cols]
+            vals.append(int(row["ads_id"]))
             conn.execute(
                 f"UPDATE listings SET {set_clause} WHERE ads_id = ?",
-                safe_vals,
+                vals,
             )
 
     set_meta(conn, "last_cleaned_at", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))

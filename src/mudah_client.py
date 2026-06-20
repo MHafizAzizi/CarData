@@ -5,7 +5,7 @@ Provides a single class, MudahClient, that owns:
 - a global rate-limit lock so all requests are spaced 3-4s apart,
 - a fixed-schedule retry backoff (2s -> 3s -> 5s).
 
-Both the scraper (script.py) and the availability re-checker (recheck.py) should
+Both the scraper (1_scrape.py) and the availability re-checker (recheck.py) should
 use this client so they share the same throttle and never hammer Mudah even when
 run concurrently within the same process.
 """

@@ -26,7 +26,7 @@ Filters:
 
 API auth fallback:
     If EagleSearch returns 401/403, the scraper logs a warning and raises
-    EagleAuthError. Use src/script.py for HTML-only scraping as a fallback.
+    EagleAuthError and aborts.
 
 Available makes — Cars (128):
     alfa-romeo, alpine, ariel, asia-motors, aston-martin, audi, austin,
@@ -194,10 +194,7 @@ class HybridScraper:
                     name_tag=name_tag,
                 )
             except EagleAuthError:
-                logging.warning(
-                    "EagleSearch returned auth error. Aborting. "
-                    "Use src/script.py for HTML-only scraping."
-                )
+                logging.warning("EagleSearch returned auth error. Aborting.")
                 raise
 
             if not ads:
@@ -543,14 +540,6 @@ def parse_args() -> argparse.Namespace:
         default=None,
         help="Output dir for CSVs (default: data/raw/<category>/)",
     )
-    # Compat flags from script.py — accepted but unused in API mode.
-    # They exist so existing shell scripts can be redirected here without breaking.
-    p.add_argument("--state", default=None, help="(compat) ignored when API works")
-    p.add_argument("--brand", default=None, help="(compat) ignored when API works")
-    p.add_argument("--start", type=int, default=None, help="(compat) ignored")
-    p.add_argument("--end", type=int, default=None, help="(compat) ignored")
-    p.add_argument("--pages", type=int, default=None, help="(compat) ignored")
-    p.add_argument("--workers", type=int, default=1, help="(compat) ignored")
     return p.parse_args()
 
 
@@ -878,23 +867,6 @@ def main() -> None:
             )
         print(f"\n[smart] probing {len(args.makes_list)} make(s) for depth-cap splits...")
         args.makes_list = _expand_capped_makes(eagle, args.category, args.makes_list)
-
-    # Compat flag warnings
-    deprecated_set = [
-        flag for flag, val in (
-            ("--state", args.state),
-            ("--brand", args.brand),
-            ("--start", args.start),
-            ("--end", args.end),
-            ("--pages", args.pages),
-        )
-        if val is not None
-    ]
-    if deprecated_set:
-        logging.info(
-            f"Ignoring deprecated flags ({', '.join(deprecated_set)}) — "
-            f"EagleSearch API does not use them."
-        )
 
     scraper = HybridScraper(
         category=args.category,

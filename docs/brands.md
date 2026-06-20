@@ -2,7 +2,7 @@
 
 ## Motorcycles
 
-Available motorcycle brands on Mudah.my. Use with `--category motorcycles --brand <brand>`.
+Available motorcycle brands on Mudah.my. Use the slug with `--category motorcycles --make <slug>`.
 
 ### Popular Brands
 - `royal-enfield` — Royal Enfield
@@ -74,7 +74,7 @@ Z, ZEEHO, ZERO ENGINEERING, ZESPARII, ZONTES
 
 ## Cars
 
-Available car brands on Mudah.my. Use with `--category cars --brand <brand>` (default category).
+Available car brands on Mudah.my. Use the slug with `--category cars --make <slug>` (default category).
 
 **Note:** For an exhaustive list of car brands, visit:
 https://www.mudah.my/malaysia/cars-for-sale
@@ -96,17 +96,17 @@ https://www.mudah.my/malaysia/cars-for-sale
 
 ### Examples
 
-Scrape all Toyota cars in Selangor:
+Scrape all Toyota cars:
 ```bash
-python script.py --category cars --state selangor --brand toyota --start 1 --end 50
+python src/1_scrape.py --category cars --make toyota
 ```
 
-Scrape all Royal Enfield motorcycles nationwide:
+Scrape all Royal Enfield motorcycles:
 ```bash
-python script.py --category motorcycles --brand royal-enfield --start 1 --end 20
+python src/1_scrape.py --category motorcycles --make royal-enfield
 ```
 
-Scrape all brands in Johor (cars):
+Scrape several car makes:
 ```bash
-python script.py --state johor --start 1 --end 100
+python src/1_scrape.py --category cars --make toyota,honda,perodua
 ```
