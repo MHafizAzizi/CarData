@@ -107,7 +107,16 @@ fuel_consumption_kmpl (20% fill), tyres, suspension.
    idempotency, alias loading).
 5. ✅ DONE 2026-06-21 — ran: 21,325/29,077 matched (73.3%); idempotent re-run = 0 rows.
 
-## Parked
+## Phase-2b — motomalaysia cross-fill (✅ DONE 2026-06-21)
+
+Built `src/scrape_motomalaysia_specs.py` — curated, displacement-verified crawl of 9
+motomalaysia spec pages into `model_specs` (new `source` column). `enrich_specs`
+reads `spec_source` from the matched row. Coverage 73.3% → **78.0%** (+1,357 rows).
+The 5 displacement traps (Vario 150, Adv 150, Dash 110, Wave 100, Kriss MR3) are NOT
+in the curated list → stay NULL by design. Same deterministic exact/prefix discipline
+(no fuzzy). Full suite 289 pass. Details in CONTEXT session log 2026-06-21.
+
+Original parked notes (for reference):
 
 **motomalaysia.com Phase-2b cross-fill** — covers the 25.5% NULL discontinued bikes
 (EX5, 125ZR, PCX, Z250/800, MT-07 confirmed present; richer fields than zigwheels incl.

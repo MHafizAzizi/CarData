@@ -160,8 +160,11 @@ def enrich(moto_conn, specs_conn, make_alias, model_alias, *,
                                index, make_alias, model_alias)
             stats[tier] += 1
             if srow is not None:
+                # spec_source comes from the matched row when model_specs carries
+                # a `source` column (zigwheels vs motomalaysia); else the default.
+                row_source = srow["source"] if "source" in srow.keys() and srow["source"] else source
                 vals = [srow[src] for src, _ in SPEC_FIELD_MAP]
-                vals += [tier, source, r["ads_id"]]
+                vals += [tier, row_source, r["ads_id"]]
                 moto_conn.execute(update_matched, vals)
             else:
                 moto_conn.execute(update_unmatched, (tier, r["ads_id"]))

@@ -175,6 +175,15 @@ class TestEnrich:
         assert row["spec_match"] == "exact"
         assert row["spec_source"] == "zigwheels"
 
+    def test_spec_source_from_row_source_column(self, tmp_path, aliases):
+        specs = _make_specs_db(tmp_path)
+        specs.execute("ALTER TABLE model_specs ADD COLUMN source TEXT")
+        specs.execute("UPDATE model_specs SET source='motomalaysia' WHERE model='nvx'")
+        moto = _make_moto_db(tmp_path, [(1, "Yamaha", "Nvx")])
+        es.enrich(moto, specs, *aliases)
+        row = moto.execute("SELECT spec_source FROM listings WHERE ads_id=1").fetchone()
+        assert row["spec_source"] == "motomalaysia"
+
     def test_maps_compression_ratio_to_comp_ratio(self, tmp_path, aliases):
         specs = _make_specs_db(tmp_path)
         moto = _make_moto_db(tmp_path, [(1, "Yamaha", "Nvx")])
