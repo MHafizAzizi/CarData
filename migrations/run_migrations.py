@@ -43,6 +43,13 @@ API). Values are filled by 3_clean.py --enrich-types from the curated
 mapping at data/reference/motorcycles_model_types.csv; the API has no
 bike-type field for category=1040.
 
+v9 -> v10: Adds 14 OEM-spec columns to the MOTORCYCLES listings table (cars
+are a version-bump no-op). Filled by src/enrich_specs.py from
+data/reference/motobike_specs.db (zigwheels.my catalog) via a deterministic
+(make, model) match. spec_match records the match tier (exact/prefix/alias);
+spec_source the catalog. See
+docs/superpowers/specs/2026-06-20-moto-spec-matching-phase2-design.md.
+
 Usage:
     python migrations/run_migrations.py                       # interactive prompt
     python migrations/run_migrations.py --category cars
@@ -79,7 +86,7 @@ from db import CATEGORIES, connect, schema_version, set_meta  # noqa: E402
 # Migration spec — v1 -> v2
 # ---------------------------------------------------------------------------
 
-TARGET_VERSION = 9
+TARGET_VERSION = 10
 
 # (column_name, sqlite_type) — applied to BOTH cars and motorcycles
 SHARED_NEW_COLS: List[Tuple[str, str]] = [
@@ -178,6 +185,32 @@ V9_CAR_COLS: List[Tuple[str, str]] = [
     ("width_mm",       "INTEGER"),  # mcdParams id="width"
     ("height_mm",      "INTEGER"),  # mcdParams id="height"
     ("wheelbase_mm",   "INTEGER"),  # mcdParams id="wheelbase"
+]
+
+# v9 -> v10: motorcycle OEM-spec columns (motorcycles only; cars version-bump
+# no-op). Filled by src/enrich_specs.py from data/reference/motobike_specs.db
+# (zigwheels.my) via deterministic (make, model) match. Column set chosen by
+# fill-rate + analytical value; see the Phase 2 design doc. spec_match /
+# spec_source are set by the enricher, not from the spec catalog.
+V10_MOTORCYCLE_COLS: List[Tuple[str, str]] = [
+    # performance core
+    ("engine_cc",      "REAL"),     # decimals in source (e.g. 124.3)
+    ("power_hp",       "REAL"),     # hp, NOT kW — stored as sourced
+    ("torque_nm",      "REAL"),
+    ("kerb_weight_kg", "REAL"),
+    ("fuel_tank_l",    "REAL"),
+    # categorical / segmentation
+    ("engine_type",    "TEXT"),
+    ("transmission",   "TEXT"),     # CVT vs manual → scooter vs bike
+    ("fuel_type",      "TEXT"),     # flags EVs
+    ("cooling",        "TEXT"),     # air vs liquid
+    # moto-relevant geometry
+    ("seat_height_mm", "INTEGER"),
+    ("wheelbase_mm",   "INTEGER"),
+    ("comp_ratio",     "TEXT"),     # parity with cars v9
+    # provenance (set by enricher)
+    ("spec_match",     "TEXT"),     # exact / prefix / alias
+    ("spec_source",    "TEXT"),     # "zigwheels" now; motomalaysia later
 ]
 
 # ---------------------------------------------------------------------------
@@ -594,6 +627,42 @@ def _migrate_v8_to_v9(
     )
 
 
+def _migrate_v9_to_v10(
+    conn: sqlite3.Connection, category: str, *, dry_run: bool
+) -> None:
+    """Add OEM-spec columns (motorcycles only; cars bump version)."""
+    cols = V10_MOTORCYCLE_COLS if category == "motorcycles" else []
+    logging.info(
+        f"[{category}] step v9 -> v10 ({len(cols)} column(s) to evaluate)"
+    )
+
+    added = 0
+    with conn:
+        for col_name, col_type in cols:
+            if _safe_add_column(conn, "listings", col_name, col_type, dry_run=dry_run):
+                added += 1
+
+        if dry_run:
+            logging.info(
+                f"[{category}] DRY-RUN v9->v10: would add {added} column(s)"
+            )
+            return
+
+        conn.execute(
+            "INSERT INTO meta (key, value) VALUES ('schema_version', '10') "
+            "ON CONFLICT(key) DO UPDATE SET value = excluded.value"
+        )
+
+    logging.info(
+        f"[{category}] v9 -> v10 complete — added {added} column(s)"
+    )
+    set_meta(
+        conn,
+        "last_migration_v10_at",
+        __import__("datetime").datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+    )
+
+
 def migrate(category: str, *, dry_run: bool = False) -> None:
     """Run all pending migrations on the given category's DB."""
     if category not in CATEGORIES:
@@ -634,6 +703,8 @@ def migrate(category: str, *, dry_run: bool = False) -> None:
         _migrate_v7_to_v8(conn, category, dry_run=dry_run)
     if current < 9:
         _migrate_v8_to_v9(conn, category, dry_run=dry_run)
+    if current < 10:
+        _migrate_v9_to_v10(conn, category, dry_run=dry_run)
 
     logging.info(
         f"[{category}] migration complete; "
