@@ -1,0 +1,1583 @@
+{
+  "_README": "Hand-review each entry. Set 'decision' to a spec_model slug (must exist in motobike_specs.db model_specs for spec_make) to alias, or 'NULL' if the bike has no spec (discontinued). 'suggested' is a best-guess only — verify. Numeric token overlaps (150/250/6) are often WRONG (e.g. Z250 != ninja-250).",
+  "_make_alias": {
+    "mbp morbidelli": "morbidelli",
+    "sm sport": "sm-sport",
+    "mbp": "morbidelli"
+  },
+  "aliases": {
+    "Yamaha|R25": {
+      "count": 290,
+      "spec_make": "yamaha",
+      "candidates": [
+        {
+          "spec_model": "yzf-r25",
+          "score": 0.97,
+          "shared": [
+            "25",
+            "r"
+          ]
+        },
+        {
+          "spec_model": "mt-25",
+          "score": 0.87,
+          "shared": [
+            "25"
+          ]
+        },
+        {
+          "spec_model": "r15m",
+          "score": 0.57,
+          "shared": [
+            "r"
+          ]
+        }
+      ],
+      "suggested": "yzf-r25",
+      "decision": "yzf-r25"
+    },
+    "Sym|Husky Adv 150": {
+      "count": 228,
+      "spec_make": "sym",
+      "candidates": [
+        {
+          "spec_model": "husky-150",
+          "score": 1.44,
+          "shared": [
+            "150",
+            "husky"
+          ]
+        },
+        {
+          "spec_model": "husky-300",
+          "score": 0.93,
+          "shared": [
+            "husky"
+          ]
+        },
+        {
+          "spec_model": "husky-200",
+          "score": 0.93,
+          "shared": [
+            "husky"
+          ]
+        }
+      ],
+      "suggested": "husky-150",
+      "decision": "husky-150"
+    },
+    "Honda|Ex5 Dream": {
+      "count": 217,
+      "spec_make": "honda",
+      "candidates": [],
+      "suggested": null,
+      "decision": "NULL"
+    },
+    "Honda|Vario 150": {
+      "count": 182,
+      "spec_make": "honda",
+      "candidates": [
+        {
+          "spec_model": "vario-160",
+          "score": 1.18,
+          "shared": [
+            "vario"
+          ]
+        },
+        {
+          "spec_model": "vario-125",
+          "score": 1.18,
+          "shared": [
+            "vario"
+          ]
+        },
+        {
+          "spec_model": "vario-125-street",
+          "score": 0.94,
+          "shared": [
+            "vario"
+          ]
+        },
+        {
+          "spec_model": "rs150r",
+          "score": 0.87,
+          "shared": [
+            "150"
+          ]
+        }
+      ],
+      "suggested": "vario-160",
+      "decision": "NULL"
+    },
+    "Honda|Ex5": {
+      "count": 182,
+      "spec_make": "honda",
+      "candidates": [
+        {
+          "spec_model": "nx500",
+          "score": 0.5,
+          "shared": []
+        }
+      ],
+      "suggested": null,
+      "decision": "NULL"
+    },
+    "Yamaha|125Zr": {
+      "count": 175,
+      "spec_make": "yamaha",
+      "candidates": [
+        {
+          "spec_model": "y15zr",
+          "score": 0.8,
+          "shared": [
+            "zr"
+          ]
+        },
+        {
+          "spec_model": "y16zr",
+          "score": 0.6,
+          "shared": [
+            "zr"
+          ]
+        }
+      ],
+      "suggested": "y15zr",
+      "decision": "NULL"
+    },
+    "Modenas|Kriss Mr3": {
+      "count": 149,
+      "spec_make": "modenas",
+      "candidates": [
+        {
+          "spec_model": "kriss-mr2",
+          "score": 1.18,
+          "shared": [
+            "kriss",
+            "mr"
+          ]
+        },
+        {
+          "spec_model": "kriss-110",
+          "score": 0.93,
+          "shared": [
+            "kriss"
+          ]
+        },
+        {
+          "spec_model": "kriss-125-fi",
+          "score": 0.86,
+          "shared": [
+            "kriss"
+          ]
+        },
+        {
+          "spec_model": "karisma-125s",
+          "score": 0.53,
+          "shared": []
+        }
+      ],
+      "suggested": "kriss-mr2",
+      "decision": "NULL"
+    },
+    "Yamaha|Yzf-R15": {
+      "count": 140,
+      "spec_make": "yamaha",
+      "candidates": [
+        {
+          "spec_model": "yzf-r25",
+          "score": 1.13,
+          "shared": [
+            "r",
+            "yzf"
+          ]
+        },
+        {
+          "spec_model": "r15m",
+          "score": 0.9,
+          "shared": [
+            "15",
+            "r"
+          ]
+        },
+        {
+          "spec_model": "y15zr",
+          "score": 0.85,
+          "shared": [
+            "15"
+          ]
+        },
+        {
+          "spec_model": "mt-15",
+          "score": 0.7,
+          "shared": [
+            "15"
+          ]
+        }
+      ],
+      "suggested": "yzf-r25",
+      "decision": "r15m"
+    },
+    "Honda|C70": {
+      "count": 133,
+      "spec_make": "honda",
+      "candidates": [
+        {
+          "spec_model": "cb750",
+          "score": 0.75,
+          "shared": []
+        }
+      ],
+      "suggested": "cb750",
+      "decision": "NULL"
+    },
+    "Yamaha|Fz150I": {
+      "count": 123,
+      "spec_make": "yamaha",
+      "candidates": [
+        {
+          "spec_model": "ez115",
+          "score": 0.55,
+          "shared": []
+        }
+      ],
+      "suggested": null,
+      "decision": "NULL"
+    },
+    "Kawasaki|Z 250": {
+      "count": 123,
+      "spec_make": "kawasaki",
+      "candidates": [
+        {
+          "spec_model": "kx-250",
+          "score": 0.97,
+          "shared": [
+            "250"
+          ]
+        },
+        {
+          "spec_model": "kx-250x",
+          "score": 0.9,
+          "shared": [
+            "250"
+          ]
+        },
+        {
+          "spec_model": "ninja-250",
+          "score": 0.8,
+          "shared": [
+            "250"
+          ]
+        },
+        {
+          "spec_model": "versys-x250",
+          "score": 0.73,
+          "shared": [
+            "250"
+          ]
+        }
+      ],
+      "suggested": "kx-250",
+      "decision": "NULL"
+    },
+    "Sm Sport|110E": {
+      "count": 121,
+      "spec_make": "sm-sport",
+      "candidates": [
+        {
+          "spec_model": "e110",
+          "score": 1.05,
+          "shared": [
+            "110",
+            "e"
+          ]
+        },
+        {
+          "spec_model": "110-r",
+          "score": 1.05,
+          "shared": [
+            "110"
+          ]
+        }
+      ],
+      "suggested": "e110",
+      "decision": "e110"
+    },
+    "Honda|Forza 250": {
+      "count": 106,
+      "spec_make": "honda",
+      "candidates": [
+        {
+          "spec_model": "crf250",
+          "score": 0.87,
+          "shared": [
+            "250"
+          ]
+        },
+        {
+          "spec_model": "cbr250rr",
+          "score": 0.8,
+          "shared": [
+            "250"
+          ]
+        },
+        {
+          "spec_model": "nss250",
+          "score": 0.73,
+          "shared": [
+            "250"
+          ]
+        },
+        {
+          "spec_model": "cb250r",
+          "score": 0.73,
+          "shared": [
+            "250"
+          ]
+        }
+      ],
+      "suggested": "crf250",
+      "decision": "nss250"
+    },
+    "Kawasaki|Z 800": {
+      "count": 97,
+      "spec_make": "kawasaki",
+      "candidates": [
+        {
+          "spec_model": "z900",
+          "score": 0.75,
+          "shared": [
+            "z"
+          ]
+        },
+        {
+          "spec_model": "z900rs",
+          "score": 0.6,
+          "shared": [
+            "z"
+          ]
+        },
+        {
+          "spec_model": "z900-se",
+          "score": 0.6,
+          "shared": [
+            "z"
+          ]
+        },
+        {
+          "spec_model": "z900-rs-se",
+          "score": 0.5,
+          "shared": [
+            "z"
+          ]
+        }
+      ],
+      "suggested": "z900",
+      "decision": "NULL"
+    },
+    "Yamaha|115Z": {
+      "count": 95,
+      "spec_make": "yamaha",
+      "candidates": [
+        {
+          "spec_model": "ez115",
+          "score": 0.97,
+          "shared": [
+            "115"
+          ]
+        },
+        {
+          "spec_model": "lagenda-115z",
+          "score": 0.83,
+          "shared": [
+            "115",
+            "z"
+          ]
+        },
+        {
+          "spec_model": "y15zr",
+          "score": 0.67,
+          "shared": []
+        },
+        {
+          "spec_model": "r15m",
+          "score": 0.5,
+          "shared": []
+        }
+      ],
+      "suggested": "ez115",
+      "decision": "NULL"
+    },
+    "Kawasaki|Er-6N": {
+      "count": 92,
+      "spec_make": "kawasaki",
+      "candidates": [
+        {
+          "spec_model": "ninja-zx-6r",
+          "score": 0.45,
+          "shared": [
+            "6"
+          ]
+        }
+      ],
+      "suggested": null,
+      "decision": "NULL"
+    },
+    "Honda|Adv 150": {
+      "count": 91,
+      "spec_make": "honda",
+      "candidates": [
+        {
+          "spec_model": "adv350",
+          "score": 1.13,
+          "shared": [
+            "adv"
+          ]
+        },
+        {
+          "spec_model": "adv160",
+          "score": 1.13,
+          "shared": [
+            "adv"
+          ]
+        },
+        {
+          "spec_model": "x-adv",
+          "score": 0.9,
+          "shared": [
+            "adv"
+          ]
+        },
+        {
+          "spec_model": "rs150r",
+          "score": 0.8,
+          "shared": [
+            "150"
+          ]
+        }
+      ],
+      "suggested": "adv350",
+      "decision": "NULL"
+    },
+    "Honda|Dash 110": {
+      "count": 90,
+      "spec_make": "honda",
+      "candidates": [
+        {
+          "spec_model": "dash-125",
+          "score": 1.01,
+          "shared": [
+            "dash"
+          ]
+        }
+      ],
+      "suggested": "dash-125",
+      "decision": "NULL"
+    },
+    "Sym|Naga 150": {
+      "count": 86,
+      "spec_make": "sym",
+      "candidates": [
+        {
+          "spec_model": "husky-150",
+          "score": 0.7,
+          "shared": [
+            "150"
+          ]
+        }
+      ],
+      "suggested": "husky-150",
+      "decision": "NULL"
+    },
+    "Yamaha|115Zr": {
+      "count": 85,
+      "spec_make": "yamaha",
+      "candidates": [
+        {
+          "spec_model": "ez115",
+          "score": 0.9,
+          "shared": [
+            "115"
+          ]
+        },
+        {
+          "spec_model": "y15zr",
+          "score": 0.8,
+          "shared": [
+            "zr"
+          ]
+        },
+        {
+          "spec_model": "lagenda-115z",
+          "score": 0.8,
+          "shared": [
+            "115"
+          ]
+        },
+        {
+          "spec_model": "y16zr",
+          "score": 0.6,
+          "shared": [
+            "zr"
+          ]
+        }
+      ],
+      "suggested": "ez115",
+      "decision": "NULL"
+    },
+    "Honda|Wave 125I": {
+      "count": 84,
+      "spec_make": "honda",
+      "candidates": [
+        {
+          "spec_model": "dash-125",
+          "score": 0.83,
+          "shared": [
+            "125"
+          ]
+        },
+        {
+          "spec_model": "vario-125",
+          "score": 0.8,
+          "shared": [
+            "125"
+          ]
+        },
+        {
+          "spec_model": "wave-alpha",
+          "score": 0.77,
+          "shared": [
+            "wave"
+          ]
+        },
+        {
+          "spec_model": "vario-125-street",
+          "score": 0.66,
+          "shared": [
+            "125"
+          ]
+        }
+      ],
+      "suggested": "dash-125",
+      "decision": "NULL"
+    },
+    "Ktm|200 Duke": {
+      "count": 82,
+      "spec_make": "ktm",
+      "candidates": [
+        {
+          "spec_model": "duke-200",
+          "score": 1.17,
+          "shared": [
+            "200",
+            "duke"
+          ]
+        },
+        {
+          "spec_model": "250-duke",
+          "score": 1.16,
+          "shared": [
+            "duke"
+          ]
+        },
+        {
+          "spec_model": "990-duke",
+          "score": 1.01,
+          "shared": [
+            "duke"
+          ]
+        },
+        {
+          "spec_model": "390-duke",
+          "score": 1.01,
+          "shared": [
+            "duke"
+          ]
+        }
+      ],
+      "suggested": "duke-200",
+      "decision": "duke-200"
+    },
+    "Yamaha|Rxz": {
+      "count": 79,
+      "spec_make": "yamaha",
+      "candidates": [],
+      "suggested": null,
+      "decision": "NULL"
+    },
+    "Yamaha|Ego S": {
+      "count": 77,
+      "spec_make": "yamaha",
+      "candidates": [
+        {
+          "spec_model": "ego-gear",
+          "score": 0.85,
+          "shared": [
+            "ego"
+          ]
+        },
+        {
+          "spec_model": "ego-gear-pro",
+          "score": 0.73,
+          "shared": [
+            "ego"
+          ]
+        },
+        {
+          "spec_model": "ego-avantiz",
+          "score": 0.73,
+          "shared": [
+            "ego"
+          ]
+        }
+      ],
+      "suggested": "ego-gear",
+      "decision": "NULL"
+    },
+    "Suzuki|V-Strom Sx 250": {
+      "count": 77,
+      "spec_make": "suzuki",
+      "candidates": [
+        {
+          "spec_model": "v-strom-250-sx",
+          "score": 1.42,
+          "shared": [
+            "250",
+            "strom",
+            "sx",
+            "v"
+          ]
+        },
+        {
+          "spec_model": "v-strom-650",
+          "score": 1.1,
+          "shared": [
+            "strom",
+            "v"
+          ]
+        },
+        {
+          "spec_model": "v-strom-1050",
+          "score": 1.06,
+          "shared": [
+            "strom",
+            "v"
+          ]
+        },
+        {
+          "spec_model": "v-strom-1050xt",
+          "score": 1.0,
+          "shared": [
+            "strom",
+            "v"
+          ]
+        }
+      ],
+      "suggested": "v-strom-250-sx",
+      "decision": "v-strom-250-sx"
+    },
+    "Honda|Wave 110": {
+      "count": 77,
+      "spec_make": "honda",
+      "candidates": [
+        {
+          "spec_model": "wave-alpha",
+          "score": 0.8,
+          "shared": [
+            "wave"
+          ]
+        },
+        {
+          "spec_model": "adv160",
+          "score": 0.62,
+          "shared": []
+        }
+      ],
+      "suggested": "wave-alpha",
+      "decision": "wave-alpha"
+    },
+    "Aveta|Nova 200": {
+      "count": 75,
+      "spec_make": "aveta",
+      "candidates": [
+        {
+          "spec_model": "nova-250",
+          "score": 1.16,
+          "shared": [
+            "nova"
+          ]
+        },
+        {
+          "spec_model": "nova-160",
+          "score": 1.01,
+          "shared": [
+            "nova"
+          ]
+        },
+        {
+          "spec_model": "nova-125",
+          "score": 1.01,
+          "shared": [
+            "nova"
+          ]
+        }
+      ],
+      "suggested": "nova-250",
+      "decision": "NULL"
+    },
+    "Voge|Formica Rossa 150": {
+      "count": 74,
+      "spec_make": "voge",
+      "candidates": [],
+      "suggested": null,
+      "decision": "NULL"
+    },
+    "Wmoto|Cruiser Amt 125": {
+      "count": 70,
+      "spec_make": "wmoto",
+      "candidates": [
+        {
+          "spec_model": "sm125i",
+          "score": 0.83,
+          "shared": [
+            "125"
+          ]
+        },
+        {
+          "spec_model": "gemma-125",
+          "score": 0.78,
+          "shared": [
+            "125"
+          ]
+        },
+        {
+          "spec_model": "es125",
+          "score": 0.74,
+          "shared": [
+            "125"
+          ]
+        },
+        {
+          "spec_model": "ez125i",
+          "score": 0.72,
+          "shared": [
+            "125"
+          ]
+        }
+      ],
+      "suggested": "sm125i",
+      "decision": "NULL"
+    },
+    "Yamaha|Nouvo Lc": {
+      "count": 63,
+      "spec_make": "yamaha",
+      "candidates": [],
+      "suggested": null,
+      "decision": "NULL"
+    },
+    "Cfmoto|700Mt": {
+      "count": 62,
+      "spec_make": "cfmoto",
+      "candidates": [
+        {
+          "spec_model": "800-mt",
+          "score": 0.8,
+          "shared": [
+            "mt"
+          ]
+        },
+        {
+          "spec_model": "700cl-x-sport",
+          "score": 0.8,
+          "shared": [
+            "700"
+          ]
+        },
+        {
+          "spec_model": "800mt-x",
+          "score": 0.73,
+          "shared": [
+            "mt"
+          ]
+        },
+        {
+          "spec_model": "700cl-x-adv",
+          "score": 0.73,
+          "shared": [
+            "700"
+          ]
+        }
+      ],
+      "suggested": "800-mt",
+      "decision": "NULL"
+    },
+    "Yamaha|Ego Lc": {
+      "count": 59,
+      "spec_make": "yamaha",
+      "candidates": [
+        {
+          "spec_model": "ego-gear",
+          "score": 0.8,
+          "shared": [
+            "ego"
+          ]
+        },
+        {
+          "spec_model": "ego-gear-pro",
+          "score": 0.7,
+          "shared": [
+            "ego"
+          ]
+        },
+        {
+          "spec_model": "ego-avantiz",
+          "score": 0.7,
+          "shared": [
+            "ego"
+          ]
+        }
+      ],
+      "suggested": "ego-gear",
+      "decision": "NULL"
+    },
+    "Honda|Wave 100": {
+      "count": 56,
+      "spec_make": "honda",
+      "candidates": [
+        {
+          "spec_model": "wave-alpha",
+          "score": 0.8,
+          "shared": [
+            "wave"
+          ]
+        },
+        {
+          "spec_model": "adv160",
+          "score": 0.62,
+          "shared": []
+        }
+      ],
+      "suggested": "wave-alpha",
+      "decision": "NULL"
+    },
+    "Sym|Cruisym 400I": {
+      "count": 55,
+      "spec_make": "sym",
+      "candidates": [
+        {
+          "spec_model": "adxtg-400",
+          "score": 0.62,
+          "shared": [
+            "400"
+          ]
+        },
+        {
+          "spec_model": "husky-300",
+          "score": 0.53,
+          "shared": []
+        },
+        {
+          "spec_model": "husky-200",
+          "score": 0.53,
+          "shared": []
+        }
+      ],
+      "suggested": null,
+      "decision": "NULL"
+    },
+    "Honda|Wave 125": {
+      "count": 55,
+      "spec_make": "honda",
+      "candidates": [
+        {
+          "spec_model": "dash-125",
+          "score": 0.87,
+          "shared": [
+            "125"
+          ]
+        },
+        {
+          "spec_model": "vario-125",
+          "score": 0.83,
+          "shared": [
+            "125"
+          ]
+        },
+        {
+          "spec_model": "wave-alpha",
+          "score": 0.8,
+          "shared": [
+            "wave"
+          ]
+        },
+        {
+          "spec_model": "vario-125-street",
+          "score": 0.68,
+          "shared": [
+            "125"
+          ]
+        }
+      ],
+      "suggested": "dash-125",
+      "decision": "NULL"
+    },
+    "Modenas|Dinamik": {
+      "count": 54,
+      "spec_make": "modenas",
+      "candidates": [],
+      "suggested": null,
+      "decision": "NULL"
+    },
+    "Honda|Wave Dash": {
+      "count": 53,
+      "spec_make": "honda",
+      "candidates": [
+        {
+          "spec_model": "wave-alpha",
+          "score": 1.01,
+          "shared": [
+            "wave"
+          ]
+        },
+        {
+          "spec_model": "dash-125",
+          "score": 0.83,
+          "shared": [
+            "dash"
+          ]
+        }
+      ],
+      "suggested": "wave-alpha",
+      "decision": "NULL"
+    },
+    "Honda|Future 125": {
+      "count": 52,
+      "spec_make": "honda",
+      "candidates": [
+        {
+          "spec_model": "vario-125",
+          "score": 0.77,
+          "shared": [
+            "125"
+          ]
+        },
+        {
+          "spec_model": "dash-125",
+          "score": 0.68,
+          "shared": [
+            "125"
+          ]
+        },
+        {
+          "spec_model": "vario-125-street",
+          "score": 0.65,
+          "shared": [
+            "125"
+          ]
+        }
+      ],
+      "suggested": "vario-125",
+      "decision": "NULL"
+    },
+    "Benda|Lfc 700 Pro": {
+      "count": 51,
+      "spec_make": "benda",
+      "candidates": [],
+      "suggested": null,
+      "decision": "NULL"
+    },
+    "Modenas|Dominar D400": {
+      "count": 49,
+      "spec_make": "modenas",
+      "candidates": [
+        {
+          "spec_model": "dominar-400",
+          "score": 1.55,
+          "shared": [
+            "400",
+            "dominar"
+          ]
+        }
+      ],
+      "suggested": "dominar-400",
+      "decision": "dominar-400"
+    },
+    "Honda|Cbr1000Rr": {
+      "count": 49,
+      "spec_make": "honda",
+      "candidates": [
+        {
+          "spec_model": "cbr150r",
+          "score": 1.05,
+          "shared": [
+            "cbr"
+          ]
+        },
+        {
+          "spec_model": "cbr250rr",
+          "score": 1.01,
+          "shared": [
+            "cbr",
+            "rr"
+          ]
+        },
+        {
+          "spec_model": "cb1000-sp",
+          "score": 1.01,
+          "shared": [
+            "1000"
+          ]
+        },
+        {
+          "spec_model": "cbr650r",
+          "score": 0.93,
+          "shared": [
+            "cbr"
+          ]
+        }
+      ],
+      "suggested": "cbr150r",
+      "decision": "NULL"
+    },
+    "Honda|Ex5 Fi": {
+      "count": 47,
+      "spec_make": "honda",
+      "candidates": [],
+      "suggested": null,
+      "decision": "NULL"
+    },
+    "Yamaha|Ego Solariz": {
+      "count": 45,
+      "spec_make": "yamaha",
+      "candidates": [
+        {
+          "spec_model": "ego-avantiz",
+          "score": 0.9,
+          "shared": [
+            "ego"
+          ]
+        },
+        {
+          "spec_model": "ego-gear",
+          "score": 0.89,
+          "shared": [
+            "ego"
+          ]
+        },
+        {
+          "spec_model": "ego-gear-pro",
+          "score": 0.8,
+          "shared": [
+            "ego"
+          ]
+        }
+      ],
+      "suggested": "ego-avantiz",
+      "decision": "NULL"
+    },
+    "Kawasaki|Er-6F": {
+      "count": 45,
+      "spec_make": "kawasaki",
+      "candidates": [
+        {
+          "spec_model": "ninja-zx-6r",
+          "score": 0.45,
+          "shared": [
+            "6"
+          ]
+        }
+      ],
+      "suggested": null,
+      "decision": "NULL"
+    },
+    "Yadea|Rs20": {
+      "count": 43,
+      "spec_make": "yadea",
+      "candidates": [
+        {
+          "spec_model": "gt20",
+          "score": 0.8,
+          "shared": [
+            "20"
+          ]
+        }
+      ],
+      "suggested": "gt20",
+      "decision": "NULL"
+    },
+    "Yamaha|Mt-07": {
+      "count": 42,
+      "spec_make": "yamaha",
+      "candidates": [
+        {
+          "spec_model": "mt-09",
+          "score": 0.75,
+          "shared": [
+            "mt"
+          ]
+        },
+        {
+          "spec_model": "mt-25",
+          "score": 0.5,
+          "shared": [
+            "mt"
+          ]
+        },
+        {
+          "spec_model": "mt-15",
+          "score": 0.5,
+          "shared": [
+            "mt"
+          ]
+        }
+      ],
+      "suggested": "mt-09",
+      "decision": "NULL"
+    },
+    "Qj Motor|Ax200 Abs": {
+      "count": 42,
+      "spec_make": "qj-motor",
+      "candidates": [
+        {
+          "spec_model": "ax200s",
+          "score": 1.16,
+          "shared": [
+            "200",
+            "ax"
+          ]
+        }
+      ],
+      "suggested": "ax200s",
+      "decision": "ax200s"
+    },
+    "Honda|C100": {
+      "count": 42,
+      "spec_make": "honda",
+      "candidates": [
+        {
+          "spec_model": "cb1000-sp",
+          "score": 0.67,
+          "shared": []
+        },
+        {
+          "spec_model": "cbr150r",
+          "score": 0.55,
+          "shared": []
+        }
+      ],
+      "suggested": null,
+      "decision": "NULL"
+    },
+    "Benda|Dark Flag 500": {
+      "count": 41,
+      "spec_make": "benda",
+      "candidates": [
+        {
+          "spec_model": "napoleon-bob-500",
+          "score": 0.7,
+          "shared": [
+            "500"
+          ]
+        }
+      ],
+      "suggested": "napoleon-bob-500",
+      "decision": "NULL"
+    },
+    "Honda|Cb500X": {
+      "count": 40,
+      "spec_make": "honda",
+      "candidates": [
+        {
+          "spec_model": "nx500",
+          "score": 0.85,
+          "shared": [
+            "500"
+          ]
+        },
+        {
+          "spec_model": "cb750",
+          "score": 0.73,
+          "shared": [
+            "cb"
+          ]
+        },
+        {
+          "spec_model": "cb650r",
+          "score": 0.67,
+          "shared": [
+            "cb"
+          ]
+        },
+        {
+          "spec_model": "cb250r",
+          "score": 0.67,
+          "shared": [
+            "cb"
+          ]
+        }
+      ],
+      "suggested": "nx500",
+      "decision": "nx500"
+    },
+    "Sym|Vts 200": {
+      "count": 39,
+      "spec_make": "sym",
+      "candidates": [
+        {
+          "spec_model": "jet14-200",
+          "score": 0.87,
+          "shared": [
+            "200"
+          ]
+        },
+        {
+          "spec_model": "husky-200",
+          "score": 0.87,
+          "shared": [
+            "200"
+          ]
+        },
+        {
+          "spec_model": "maxsym-2020",
+          "score": 0.5,
+          "shared": []
+        }
+      ],
+      "suggested": "jet14-200",
+      "decision": "NULL"
+    },
+    "Honda|Pcx 150": {
+      "count": 39,
+      "spec_make": "honda",
+      "candidates": [
+        {
+          "spec_model": "cbr150r",
+          "score": 0.92,
+          "shared": [
+            "150"
+          ]
+        },
+        {
+          "spec_model": "rs150r",
+          "score": 0.8,
+          "shared": [
+            "150"
+          ]
+        },
+        {
+          "spec_model": "nx500",
+          "score": 0.55,
+          "shared": []
+        },
+        {
+          "spec_model": "cb750",
+          "score": 0.55,
+          "shared": []
+        }
+      ],
+      "suggested": "cbr150r",
+      "decision": "NULL"
+    },
+    "Qj Motor|Atx250X": {
+      "count": 38,
+      "spec_make": "qj-motor",
+      "candidates": [
+        {
+          "spec_model": "srv250",
+          "score": 0.76,
+          "shared": [
+            "250"
+          ]
+        },
+        {
+          "spec_model": "srk250",
+          "score": 0.76,
+          "shared": [
+            "250"
+          ]
+        },
+        {
+          "spec_model": "srk250s",
+          "score": 0.73,
+          "shared": [
+            "250"
+          ]
+        },
+        {
+          "spec_model": "srk250r",
+          "score": 0.73,
+          "shared": [
+            "250"
+          ]
+        }
+      ],
+      "suggested": "srv250",
+      "decision": "NULL"
+    },
+    "Aveta|Dy 115": {
+      "count": 38,
+      "spec_make": "aveta",
+      "candidates": [
+        {
+          "spec_model": "vadv-150",
+          "score": 0.5,
+          "shared": []
+        }
+      ],
+      "suggested": null,
+      "decision": "NULL"
+    },
+    "Yamaha|125Z": {
+      "count": 37,
+      "spec_make": "yamaha",
+      "candidates": [
+        {
+          "spec_model": "y15zr",
+          "score": 0.67,
+          "shared": []
+        },
+        {
+          "spec_model": "r15m",
+          "score": 0.5,
+          "shared": []
+        },
+        {
+          "spec_model": "mt-25",
+          "score": 0.5,
+          "shared": []
+        },
+        {
+          "spec_model": "mt-15",
+          "score": 0.5,
+          "shared": []
+        }
+      ],
+      "suggested": null,
+      "decision": "NULL"
+    },
+    "Kawasaki|Krr 150": {
+      "count": 37,
+      "spec_make": "kawasaki",
+      "candidates": [
+        {
+          "spec_model": "kx-250",
+          "score": 0.55,
+          "shared": []
+        },
+        {
+          "spec_model": "kx-250x",
+          "score": 0.5,
+          "shared": []
+        }
+      ],
+      "suggested": null,
+      "decision": "NULL"
+    },
+    "Yamaha|Lagenda 110Z": {
+      "count": 36,
+      "spec_make": "yamaha",
+      "candidates": [
+        {
+          "spec_model": "lagenda-115z",
+          "score": 1.21,
+          "shared": [
+            "lagenda",
+            "z"
+          ]
+        }
+      ],
+      "suggested": "lagenda-115z",
+      "decision": "NULL"
+    },
+    "Kawasaki|Klx 250": {
+      "count": 35,
+      "spec_make": "kawasaki",
+      "candidates": [
+        {
+          "spec_model": "kx-250",
+          "score": 1.21,
+          "shared": [
+            "250"
+          ]
+        },
+        {
+          "spec_model": "kx-250x",
+          "score": 1.13,
+          "shared": [
+            "250"
+          ]
+        },
+        {
+          "spec_model": "klx230",
+          "score": 1.13,
+          "shared": [
+            "klx"
+          ]
+        },
+        {
+          "spec_model": "klx-140r",
+          "score": 0.92,
+          "shared": [
+            "klx"
+          ]
+        }
+      ],
+      "suggested": "kx-250",
+      "decision": "NULL"
+    },
+    "Honda|Spacy": {
+      "count": 35,
+      "spec_make": "honda",
+      "candidates": [],
+      "suggested": null,
+      "decision": "NULL"
+    },
+    "Brixton|Classic 150I": {
+      "count": 35,
+      "spec_make": "brixton",
+      "candidates": [
+        {
+          "spec_model": "crossfire-150-xs",
+          "score": 0.86,
+          "shared": [
+            "150"
+          ]
+        },
+        {
+          "spec_model": "felsberg-150xc",
+          "score": 0.72,
+          "shared": [
+            "150"
+          ]
+        },
+        {
+          "spec_model": "rayburn-150",
+          "score": 0.68,
+          "shared": [
+            "150"
+          ]
+        },
+        {
+          "spec_model": "bx-150",
+          "score": 0.68,
+          "shared": [
+            "150"
+          ]
+        }
+      ],
+      "suggested": "crossfire-150-xs",
+      "decision": "NULL"
+    },
+    "Suzuki|Raider R150 Fi": {
+      "count": 29,
+      "spec_make": "suzuki",
+      "candidates": [
+        {
+          "spec_model": "raider-150-fi",
+          "score": null,
+          "shared": []
+        }
+      ],
+      "suggested": "raider-150-fi",
+      "decision": "raider-150-fi",
+      "note": "same bike"
+    },
+    "Sym|Maxsym Tl500": {
+      "count": 29,
+      "spec_make": "sym",
+      "candidates": [
+        {
+          "spec_model": "maxsym-tl-508",
+          "score": null,
+          "shared": []
+        }
+      ],
+      "suggested": "maxsym-tl-508",
+      "decision": "maxsym-tl-508",
+      "note": "TL500=TL508 update, same 465cc"
+    },
+    "Sym|Husky Adv 300": {
+      "count": 27,
+      "spec_make": "sym",
+      "candidates": [
+        {
+          "spec_model": "husky-300",
+          "score": null,
+          "shared": []
+        }
+      ],
+      "suggested": "husky-300",
+      "decision": "husky-300",
+      "note": "same"
+    },
+    "Harley-Davidson|Heritage Softail Classic": {
+      "count": 15,
+      "spec_make": "harley-davidson",
+      "candidates": [
+        {
+          "spec_model": "heritage-classic",
+          "score": null,
+          "shared": []
+        }
+      ],
+      "suggested": "heritage-classic",
+      "decision": "heritage-classic",
+      "note": "same model"
+    },
+    "Honda|Transalp": {
+      "count": 20,
+      "spec_make": "honda",
+      "candidates": [
+        {
+          "spec_model": "xl-750-transalp",
+          "score": null,
+          "shared": []
+        }
+      ],
+      "suggested": "xl-750-transalp",
+      "decision": "xl-750-transalp",
+      "note": "Transalp=XL750"
+    },
+    "Sym|Vf3I 185 Se": {
+      "count": 31,
+      "spec_make": "sym",
+      "candidates": [
+        {
+          "spec_model": "vf3i-185-pro",
+          "score": null,
+          "shared": []
+        }
+      ],
+      "suggested": "vf3i-185-pro",
+      "decision": "vf3i-185-pro",
+      "note": "SE trim, same engine"
+    },
+    "Kawasaki|Z1000Sx": {
+      "count": 17,
+      "spec_make": "kawasaki",
+      "candidates": [
+        {
+          "spec_model": "ninja-1000sx",
+          "score": null,
+          "shared": []
+        }
+      ],
+      "suggested": "ninja-1000sx",
+      "decision": "ninja-1000sx",
+      "note": "Z1000SX=Ninja 1000SX"
+    },
+    "Honda|Gl1800 Gold Wing": {
+      "count": 31,
+      "spec_make": "honda",
+      "candidates": [
+        {
+          "spec_model": "goldwing-tour",
+          "score": null,
+          "shared": []
+        }
+      ],
+      "suggested": "goldwing-tour",
+      "decision": "goldwing-tour",
+      "note": "GL1800=Goldwing"
+    }
+  }
+}

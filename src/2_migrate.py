@@ -96,8 +96,17 @@ ENRICHMENT_ONLY_COLUMNS: Dict[str, Set[str]] = {
         "width_mm", "height_mm", "wheelbase_mm",
     },
     # motorcycle_type/type_group (schema v7) come from
-    # data/reference/motorcycles_model_types.csv via --enrich-types
-    "motorcycles": {"motorcycle_type", "type_group"},
+    # data/reference/motorcycles_model_types.csv via --enrich-types.
+    # OEM spec cols (schema v10) come from src/enrich_specs.py
+    # (data/reference/motobike_specs.db match), never scraped — exclude so
+    # upserts can't clobber them.
+    "motorcycles": {
+        "motorcycle_type", "type_group",
+        "engine_cc", "power_hp", "torque_nm", "kerb_weight_kg", "fuel_tank_l",
+        "engine_type", "transmission", "fuel_type", "cooling",
+        "seat_height_mm", "wheelbase_mm", "comp_ratio",
+        "spec_match", "spec_source",
+    },
 }
 
 CATEGORY_COLUMNS: Dict[str, Set[str]] = {
