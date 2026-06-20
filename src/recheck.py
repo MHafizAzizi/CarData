@@ -71,7 +71,7 @@ _ROOT = Path(__file__).resolve().parent.parent
 _LOGS_DIR = _ROOT / "logs"
 
 # -----------------------------------------------------------------------------
-# Logging — same UTF-8 setup as script.py
+# Logging — same UTF-8 setup as 1_scrape.py
 # -----------------------------------------------------------------------------
 
 try:

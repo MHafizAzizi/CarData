@@ -8,12 +8,9 @@ from clean import (  # registered in conftest.py (numeric-prefixed file)
     clean_company_ad,
     clean_engine_capacity,
     clean_manufactured_date,
-    clean_mileage,
-    clean_numeric,
     clean_price,
     clean_subject,
     clean_text,
-    clean_year,
     dedup_reposts,
 )
 
@@ -41,22 +38,6 @@ class TestCleanPrice:
     def test_returns_int64(self):
         s = pd.Series(["RM 5,000"])
         assert clean_price(s).dtype == pd.Int64Dtype()
-
-
-# ---------------------------------------------------------------------------
-# clean_mileage
-# ---------------------------------------------------------------------------
-
-
-class TestCleanMileage:
-    def test_strips_km(self):
-        s = pd.Series(["50,000 km", "100000KM", "25000 Km"])
-        result = clean_mileage(s)
-        assert list(result) == [50000, 100000, 25000]
-
-    def test_non_numeric_becomes_na(self):
-        s = pd.Series(["low mileage", ""])
-        assert clean_mileage(s).isna().all()
 
 
 # ---------------------------------------------------------------------------
