@@ -88,12 +88,15 @@ ENRICHMENT_ONLY_COLUMNS: Dict[str, Set[str]] = {
     # normalisation + data/reference/cars_model_types.csv via --enrich-types.
     # mcdParams OEM spec cols (schema v9) come from the recheck step, never
     # scraped from listings — exclude them so upserts can't clobber them.
+    # spec_match/spec_source (schema v11) are set by src/enrich_cars_specs.py
+    # (carbase match) — same protection.
     "cars": {
         "vehicle_type", "type_group",
         "engine_cc", "peak_power_kw", "peak_torque_nm", "kerb_weight_kg",
         "fuel_tank_l", "comp_ratio", "engine_type", "body_style",
         "seat_capacity", "country_origin", "series", "length_mm",
         "width_mm", "height_mm", "wheelbase_mm",
+        "spec_match", "spec_source",
     },
     # motorcycle_type/type_group (schema v7) come from
     # data/reference/motorcycles_model_types.csv via --enrich-types.

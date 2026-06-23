@@ -99,12 +99,24 @@ fuel_consumption_kmpl (20% fill), tyres, suspension.
 
 1. ✅ DONE 2026-06-20 — Migration v10 (+ the 3 tax spots) run `--category both`; both DBs at v10, 14 cols on motos, full suite 264 pass.
 2. ✅ DONE 2026-06-20 — Alias file finalized → `moto_spec_aliases.json`.
-3. TODO — `src/enrich_specs.py` moto path: cross-DB read specs / write listings; tiered match;
-   type coercion (source values may be TEXT → REAL/INT); idempotent `engine_cc IS NULL` guard.
-4. Tests: matcher tiers, alias loading, idempotency, type coercion.
-5. Run enrich, record coverage in CONTEXT.
+3. ✅ DONE 2026-06-21 — `src/enrich_specs.py` moto path (TDD). Idempotency guard refined
+   to `spec_match IS NULL` (records every tier; protects future motomalaysia fills;
+   `--force` reprocesses). Source values already cleanly typed → coercion passthrough,
+   only `compression_ratio`→`comp_ratio` rename.
+4. ✅ DONE 2026-06-21 — `tests/test_enrich_specs.py` (17 tests: norm, match tiers, enrich,
+   idempotency, alias loading).
+5. ✅ DONE 2026-06-21 — ran: 21,325/29,077 matched (73.3%); idempotent re-run = 0 rows.
 
-## Parked
+## Phase-2b — motomalaysia cross-fill (✅ DONE 2026-06-21)
+
+Built `src/scrape_motomalaysia_specs.py` — curated, displacement-verified crawl of 9
+motomalaysia spec pages into `model_specs` (new `source` column). `enrich_specs`
+reads `spec_source` from the matched row. Coverage 73.3% → **78.0%** (+1,357 rows).
+The 5 displacement traps (Vario 150, Adv 150, Dash 110, Wave 100, Kriss MR3) are NOT
+in the curated list → stay NULL by design. Same deterministic exact/prefix discipline
+(no fuzzy). Full suite 289 pass. Details in CONTEXT session log 2026-06-21.
+
+Original parked notes (for reference):
 
 **motomalaysia.com Phase-2b cross-fill** — covers the 25.5% NULL discontinued bikes
 (EX5, 125ZR, PCX, Z250/800, MT-07 confirmed present; richer fields than zigwheels incl.

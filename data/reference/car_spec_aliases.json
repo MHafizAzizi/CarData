@@ -1,0 +1,12 @@
+{
+  "_comment": "Curated make/model aliases for src/enrich_cars_specs.py. _make_alias maps a lowercased listing make to a carbase make slug. aliases maps 'Make|Model' (listing values, verbatim) to a carbase model slug; decision 'NULL' means deliberately unmatched (do not guess). Add entries only after verifying the carbase model is the same vehicle.",
+  "_make_alias": {},
+  "aliases": {
+    "Toyota|Altis": {"decision": "corolla-altis"},
+    "Lexus|Rx 300": {"decision": "rx"},
+    "Lexus|Rx 350": {"decision": "rx"},
+    "Lexus|Nx 250": {"decision": "nx"},
+    "Lexus|Is 300": {"decision": "is"},
+    "Mini|Cooper S": {"decision": "cooper"}
+  }
+}

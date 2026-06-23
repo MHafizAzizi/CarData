@@ -95,6 +95,25 @@ def extract_variant_links(html, make):
     return [h for h in _hrefs(html) if pat.match(h)]
 
 
+_GEN_NOISE = {"exterior", "interior", "owner-reviews", "review", "userimages",
+              "generations", "colors"}
+
+
+def extract_generation_links(html, make, model):
+    """Generation hrefs (/<make>/<model>/<gen>) from a generations page.
+
+    Excludes noise sub-pages (exterior, interior, etc.) that share the same
+    depth.
+    """
+    pat = re.compile(rf"^/{re.escape(make)}/{re.escape(model)}/([^/]+)/?$")
+    out = []
+    for h in _hrefs(html):
+        m = pat.match(h)
+        if m and m.group(1) not in _GEN_NOISE:
+            out.append(h)
+    return out
+
+
 def parse_url_parts(url):
     """Split a variant URL into identity fields.
 
@@ -339,6 +358,30 @@ def crawl(client, conn, makes, limit=None, refresh=False):
     summary = {"makes": 0, "models": 0, "variants_seen": 0,
                "upserted": 0, "skipped_existing": 0, "errors": 0}
 
+    def _process_variant(vlink):
+        """Fetch + upsert one variant page. Returns True if limit reached."""
+        summary["variants_seen"] += 1
+        url = f"{_BASE_HOST}{vlink}"
+        if url in done:
+            summary["skipped_existing"] += 1
+            return False
+        status, vhtml = client.get_status(vlink)
+        if status != 200 or not vhtml:
+            logging.warning(f"    {vlink} status={status}; skipping")
+            summary["errors"] += 1
+            return False
+        try:
+            row = parse_variant_page(vhtml, url)
+            upsert_spec(conn, row)
+            done.add(url)
+            summary["upserted"] += 1
+            logging.info(f"    + {row['make']} {row['model']} "
+                         f"{row['variant']} {row['year']}")
+        except Exception as e:  # noqa: BLE001 -- one bad page must not abort
+            logging.error(f"    parse/store failed for {vlink}: {e}")
+            summary["errors"] += 1
+        return limit is not None and summary["upserted"] >= limit
+
     for make in makes:
         status, html = client.get_status(f"/{make}")
         summary["makes"] += 1
@@ -348,6 +391,7 @@ def crawl(client, conn, makes, limit=None, refresh=False):
             continue
 
         for model_link in extract_model_links(html, make):
+            model_slug = model_link.strip("/").split("/")[-1]
             status, mhtml = client.get_status(model_link)
             summary["models"] += 1
             if status != 200 or not mhtml:
@@ -355,29 +399,21 @@ def crawl(client, conn, makes, limit=None, refresh=False):
                 summary["errors"] += 1
                 continue
 
-            for vlink in extract_variant_links(mhtml, make):
-                summary["variants_seen"] += 1
-                url = f"{_BASE_HOST}{vlink}"
-                if url in done:
-                    summary["skipped_existing"] += 1
-                    continue
-                status, vhtml = client.get_status(vlink)
-                if status != 200 or not vhtml:
-                    logging.warning(f"    {vlink} status={status}; skipping")
-                    summary["errors"] += 1
-                    continue
-                try:
-                    row = parse_variant_page(vhtml, url)
-                    upsert_spec(conn, row)
-                    done.add(url)
-                    summary["upserted"] += 1
-                    logging.info(f"    + {row['make']} {row['model']} "
-                                 f"{row['variant']} {row['year']}")
-                except Exception as e:  # noqa: BLE001 -- one bad page must not abort
-                    logging.error(f"    parse/store failed for {vlink}: {e}")
-                    summary["errors"] += 1
+            # Collect variant links from model page (latest gen)
+            all_vlinks = set(extract_variant_links(mhtml, make))
 
-                if limit is not None and summary["upserted"] >= limit:
+            # Also crawl generation sub-pages for older variants
+            gen_status, gen_html = client.get_status(
+                f"/{make}/{model_slug}/generations")
+            if gen_status == 200 and gen_html:
+                for gen_link in extract_generation_links(
+                        gen_html, make, model_slug):
+                    gs, ghtml = client.get_status(gen_link)
+                    if gs == 200 and ghtml:
+                        all_vlinks.update(extract_variant_links(ghtml, make))
+
+            for vlink in sorted(all_vlinks):
+                if _process_variant(vlink):
                     logging.info(f"--limit {limit} reached; stopping")
                     return summary
     return summary

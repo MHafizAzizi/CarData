@@ -1,0 +1,17 @@
+# Normalize all text files to LF in the repo; Git decides text vs binary.
+# Stops CRLF/LF churn in `git status` across machines regardless of core.autocrlf.
+* text=auto eol=lf
+
+# Windows-only scripts must keep CRLF to run correctly under cmd.exe.
+*.bat text eol=crlf
+
+# Shell scripts must stay LF (they run under Git Bash / WSL).
+*.sh text eol=lf
+
+# Explicit binaries — never touch line endings, never diff as text.
+*.db binary
+*.xlsx binary
+*.png binary
+*.jpg binary
+*.svg binary
+*.ico binary
