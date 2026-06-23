@@ -21,7 +21,7 @@ run_pipeline.bat motorcycles  REM motorcycles only
 run_pipeline.bat both         REM both categories
 ```
 
-> First run only — bring the schema to v9: `python migrations\run_migrations.py --category both`.
+> First run only — bring the schema to v11: `python migrations\run_migrations.py --category both`.
 > The clean step prints any unmapped `(make, model)` pairs (new models) that
 > need a row added to the category's `*_model_types.csv` — see Data Cleaning.
 
@@ -65,7 +65,8 @@ python src/recheck.py --category motorcycles
 | `src/recheck.py` | Re-check availability + infer sold/expired | Yes — daily |
 | `src/backfill_ad_expiry.py` | One-off backfill of `ad_expiry` for pre-v5 rows | Once after upgrade |
 | `src/scrape_makes_models.py` | Refresh make/model reference lists | Occasionally |
-| `src/scrape_carbase_specs.py` | Crawl carbase.my full catalog → `carbase_specs.db` car specs | Occasionally (quarterly) |
+| `src/scrape_carbase_specs.py` | Crawl carbase.my full catalog (all generations) → `carbase_specs.db` car specs | Occasionally (quarterly) |
+| `src/enrich_cars_specs.py` | Fill OLD-era car listings (`ads_id<115M`) with carbase specs via make+model+cc match | After a carbase crawl |
 | `src/eagle_client.py` | EagleSearch API wrapper | Library — do not run directly |
 | `src/mudah_client.py` | Shared HTTP client (used by `recheck.py`) | Library — do not run directly |
 | `src/carbase_client.py` | Throttled HTTP client for carbase.my (used by `scrape_carbase_specs.py`) | Library — do not run directly |
@@ -135,12 +136,38 @@ data/reference/{cars,motorcycles}_{makes,models}.json
 
 ### Car specifications (carbase.my)
 
-`scrape_carbase_specs.py` crawls [carbase.my](https://www.carbase.my) (paultan.org's Malaysian car buyer's guide) brand → model → variant and stores OEM-grade per-variant specs (engine cc, power, torque, dimensions, kerb weight, transmission, body type, region pricing, …) in a standalone `data/reference/carbase_specs.db` (`model_specs` table). It's an independent reference source, not part of the weekly Mudah pipeline — run quarterly. Covers Proton/Perodua, which external spec APIs handle poorly. Matching these specs onto Mudah listings is a separate (future) step.
+`scrape_carbase_specs.py` crawls [carbase.my](https://www.carbase.my) (paultan.org's Malaysian car buyer's guide) brand → model → **all generations** → variant and stores OEM-grade per-variant specs (engine cc, power, torque, dimensions, kerb weight, transmission, body type, region pricing, …) in a standalone `data/reference/carbase_specs.db` (`model_specs` table, ~3,700 rows / 57 makes / 2010-2026). It's an independent reference source, not part of the weekly Mudah pipeline — run quarterly. Model pages link only the latest generation, so the crawl also fetches each model's `/generations` sub-pages to capture historical variants.
 
 ```bash
 python src/scrape_carbase_specs.py            # full catalog (skips already-stored variants)
 python src/scrape_carbase_specs.py --makes honda,toyota --limit 20   # subset / smoke test
+bash run_carbase_crawl.sh                      # self-healing per-make batches (10min timeout each)
 ```
+
+**Matching specs onto listings — `enrich_cars_specs.py`.** Old-era car
+listings (`ads_id < 115M`) predate Mudah's `mcdParams` spec sheets, so their
+v9 spec columns are NULL. This enricher fills them from `carbase_specs.db` via
+a **deterministic** `(make, model, engine_capacity)` match — the listing's own
+cc (already captured) narrows the carbase variant pool to one engine, so no
+fuzzy variant-string guessing. Tiers recorded in `spec_match`:
+
+| Tier | Meaning | Filled |
+|---|---|---|
+| `cc_full` | model+cc matched, power unambiguous | power/torque **and** dims/weight |
+| `cc_dims` | model+cc matched, power ambiguous (e.g. German detuned engines) | dims/weight/body only — power/torque left NULL |
+| `null` | model matched but no cc within ±50 | nothing |
+| `no_model` | make in catalog, model not (discontinued) | nothing |
+| `no_make_catalog` | make absent from catalog | nothing |
+
+```bash
+python src/enrich_cars_specs.py            # fill old-era cars (idempotent)
+python src/enrich_cars_specs.py --dry-run  # report tiers, write nothing
+python src/enrich_cars_specs.py --force    # reprocess all old-era rows
+```
+
+Only old-era rows are touched (mcdParams fills are never overwritten);
+`spec_source='carbase'` distinguishes these from mcdParams fills. Curated
+naming aliases live in `data/reference/car_spec_aliases.json`.
 
 ### Performance comparison
 
@@ -172,6 +199,7 @@ CarData/
 │   ├── backfill_ad_expiry.py              # One-off: backfill ad_expiry for pre-v5 rows
 │   ├── scrape_makes_models.py             # Reference make/model list scraper (occasional)
 │   ├── scrape_carbase_specs.py            # carbase.my catalog spec scraper (occasional)
+│   ├── enrich_cars_specs.py               # fill old-era cars from carbase_specs.db
 │   ├── eagle_client.py                    # EagleSearch API wrapper (library)
 │   ├── mudah_client.py                    # Shared HTTP client — used by recheck.py (library)
 │   ├── carbase_client.py                  # carbase.my HTTP client (library)
@@ -181,7 +209,7 @@ CarData/
 │   └── probe_listing_detail.py            # dump __NEXT_DATA__ + mcdParams for any listing URL (dev)
 │
 ├── migrations/                            # Schema migration runners
-│   └── run_migrations.py                  # v1 → v9: idempotent schema upgrade
+│   └── run_migrations.py                  # v1 → v11: idempotent schema upgrade
 │
 ├── docs/                                  # Documentation
 │   └── brands.md                          # List of available car/motorcycle brands
@@ -196,6 +224,7 @@ CarData/
 │   │   ├── motorcycles_makes.json
 │   │   ├── motorcycles_models.json
 │   │   ├── motorcycles_model_types.csv    # Curated motorcycle type mapping
+│   │   ├── car_spec_aliases.json          # Make/model aliases for enrich_cars_specs.py
 │   │   └── carbase_specs.db               # carbase.my car specs (model_specs table)
 │   └── master/                            # Production SQLite databases
 │       ├── cardata_cars.db
@@ -371,7 +400,14 @@ Populated by `recheck.py --method html` from the listing detail page's `mcdParam
 | `height_mm` | Body height (mm) |
 | `wheelbase_mm` | Wheelbase (mm) |
 
-Run `recheck.py --method html --all` after each scrape to populate specs on new listings. Already-filled rows are skipped (resume-safe).
+Run `recheck.py --method html --all` after each scrape to populate specs on new listings. Already-filled rows are skipped (resume-safe). Use `--specs-only` to restrict the sweep to mcdParams-era rows that can actually yield specs (`ads_id >= 115M`, available/unknown, `engine_cc IS NULL`) — ~18× less fetching than `--all`.
+
+**Old-era listings** (`ads_id < 115M`) carry no mcdParams. These same columns
+are filled instead from the carbase.my catalog by `enrich_cars_specs.py` (see
+[Car specifications](#car-specifications-carbasemy) above); `spec_source`
+records which source filled a row (`carbase` vs mcdParams). For carbase fills,
+`peak_power_kw` is converted from the catalog's hp figure, and power/torque are
+left NULL when the engine has multiple power tunes the cc can't disambiguate.
 
 ### Availability / sold tracking fields (schema v5+)
 
@@ -683,6 +719,11 @@ Every probe appends one row to the `availability_checks` table in the same DB:
 ## Changelog
 
 This section tracks every revision of this README. Add a new entry at the top whenever the document is updated.
+
+### 2026-06-23
+- **Old-era car spec enrichment (schema v11) — `enrich_cars_specs.py`.** Listings before Mudah's `mcdParams` era (`ads_id < 115M`) had NULL spec columns. New enricher fills them from `carbase_specs.db` via a deterministic `(make, model, engine_capacity)` match — the listing's own cc narrows the carbase variant pool, so no fuzzy variant-string guessing. Tiers (`cc_full` / `cc_dims` / `null` / `no_model` / `no_make_catalog`) recorded in `spec_match`; `spec_source='carbase'` distinguishes from mcdParams fills. German detuned engines (one cc, many power tunes) get dims/weight only — power/torque left NULL rather than guessed. Ran on live DB: **61.3% of old-era rows filled, 42.1% with power/torque**. Schema migration v10 → v11 adds `spec_match` + `spec_source` to cars. 22 enricher tests + 3 migration tests; suite at **316 passing**.
+- **carbase catalog expanded 1,368 → ~3,700 rows.** `scrape_carbase_specs.py` now crawls each model's `/generations` sub-pages (model pages link only the latest generation), capturing historical variants back to 2010. Added `run_carbase_crawl.sh` (self-healing per-make batches with a 10-min timeout per make).
+- **`recheck.py --specs-only`.** Restricts the HTML spec sweep to mcdParams-era rows that can actually yield specs (`ads_id >= 115M`, available/unknown, `engine_cc IS NULL`) — ~18× less fetching than `--all`. Added `run_specs_loop.sh` (self-healing batch loop). Documented under the OEM spec fields section.
 
 ### 2026-06-19
 - **Quick Start now leads with `run_pipeline.bat`.** Weekly section documents the one-shot scrape → migrate → clean batch file (category prompt + `cars`/`motorcycles`/`both` arg) with the manual python steps kept as an equivalent fallback. Added `run_pipeline.bat` to the script-reference table. Fixed the bat's stale `v8` schema note → `v9`.

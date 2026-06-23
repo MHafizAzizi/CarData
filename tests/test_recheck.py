@@ -199,6 +199,22 @@ class TestSelectDueRows:
         assert row["make"] == "Perodua"
         assert row["ad_expiry"] == "2026-07-01 00:00:00"
 
+    def test_specs_era_only_skips_old_era_and_dead_rows(self, cars_db):
+        from recheck import MCD_SPECS_MIN_ADS_ID
+        new = MCD_SPECS_MIN_ADS_ID + 100
+        old = MCD_SPECS_MIN_ADS_ID - 100
+        _seed(cars_db, new, status="available")        # keep
+        _seed(cars_db, new + 1, status="unknown")      # keep
+        _seed(cars_db, new + 2, status="unavailable")  # drop: known-gone
+        _seed(cars_db, old, status="available")        # drop: old era, no mcdParams
+        due = select_due_rows(cars_db, force_all=True, limit=None, specs_era_only=True)
+        assert sorted(r["ads_id"] for r in due) == [new, new + 1]
+
+    def test_specs_era_only_off_keeps_everything(self, cars_db):
+        from recheck import MCD_SPECS_MIN_ADS_ID
+        _seed(cars_db, MCD_SPECS_MIN_ADS_ID - 100, status="unavailable")
+        assert len(select_due_rows(cars_db, force_all=True, limit=None)) == 1
+
 
 class TestRecheckCategoryApiSplit:
     """Present → available; absent+completed → unavailable (+inference);

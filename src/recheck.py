@@ -39,6 +39,11 @@ from typing import Iterable, List, Optional, Set, Tuple
 from db import connect, db_path_for, CATEGORIES
 from mudah_client import MudahClient
 
+# Mudah only embeds mcdParams (OEM specs) on recent listings. Below this ads_id
+# the hit rate is ~0.01% (11/93,579), so a spec sweep there is wasted fetches.
+# ponytail: hard-coded era cutoff; re-measure if Mudah backfills old specs.
+MCD_SPECS_MIN_ADS_ID = 115_000_000
+
 # mcdParams field id → (db_column, coerce_fn).
 # Covers the analytically useful numeric specs + key text fields.
 # Brakes/suspension/tyres/steering omitted — rarely queried, add when needed.
@@ -265,6 +270,7 @@ def select_due_rows(
     force_all: bool,
     limit: Optional[int],
     skip_specs_filled: bool = False,
+    specs_era_only: bool = False,
 ) -> List[sqlite3.Row]:
     """Read all rows with a URL, then apply the cadence filter in Python.
 
@@ -285,6 +291,13 @@ def select_due_rows(
     where = "WHERE url IS NOT NULL AND url != ''"
     if skip_specs_filled and _has_column(conn, "listings", "engine_cc"):
         where += " AND engine_cc IS NULL"
+    if specs_era_only:
+        # Restrict a spec sweep to rows that can actually yield mcdParams:
+        # recent era + not already known-gone (skip 'unavailable'/'removed').
+        where += (
+            f" AND ads_id >= {MCD_SPECS_MIN_ADS_ID} "
+            "AND availability_status IN ('available', 'unknown')"
+        )
     rows = conn.execute(
         f"SELECT ads_id, url, first_seen_at, last_seen_at, last_checked_at, "
         f"availability_status{extra} "
@@ -460,6 +473,7 @@ def recheck_category(
     limit: Optional[int],
     force_all: bool,
     dry_run: bool,
+    specs_only: bool = False,
 ) -> None:
     db_file = db_path_for(category)
     if not os.path.exists(db_file):
@@ -469,6 +483,9 @@ def recheck_category(
     conn = connect(category)
     total = conn.execute("SELECT COUNT(*) FROM listings").fetchone()[0]
     has_mcd_specs = _has_column(conn, "listings", "engine_cc")  # proxy for v9
+    # --specs-only: sweep just the rows that can yield mcdParams (recent era,
+    # not known-gone, unfilled). Implies force_all so cadence doesn't skip them.
+    force_all = force_all or specs_only
     # When force_all + spec cols exist, skip already-filled rows so a crashed
     # spec sweep resumes from where it left off (no redundant HTTP requests).
     due = select_due_rows(
@@ -476,6 +493,7 @@ def recheck_category(
         force_all=force_all,
         limit=limit,
         skip_specs_filled=(force_all and has_mcd_specs),
+        specs_era_only=(specs_only and has_mcd_specs),
     )
     logging.info(f"[{category}] DB rows: {total}. Due for re-check: {len(due)}.")
 
@@ -574,6 +592,13 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--limit", type=int, default=None, help="Max number of rows to check (per category)")
     parser.add_argument("--all", action="store_true", help="Ignore cadence and re-check every row that has a URL")
+    parser.add_argument(
+        "--specs-only",
+        action="store_true",
+        help="html mode: sweep only rows that can yield OEM specs (recent era, "
+             "still available/unknown, engine_cc still NULL). ~17x less fetching "
+             "than --all. Implies --all over that targeted set.",
+    )
     parser.add_argument("--dry-run", action="store_true", help="Compute the due set and log it; make no HTTP requests")
     parser.add_argument(
         "--method",
@@ -591,6 +616,9 @@ def main() -> None:
 
     targets: Iterable[str] = CATEGORIES if args.category == "both" else (args.category,)
 
+    if args.specs_only and args.method != "html":
+        logging.warning("--specs-only only applies to --method html (specs come from listing HTML); ignoring.")
+
     if args.method == "api":
         from eagle_client import EagleClient
         # Politer pacing than the scraper default — same config the backfill
@@ -601,7 +629,8 @@ def main() -> None:
     else:
         client = MudahClient(request_interval=(4.0, 5.0))  # ONE client across categories so the throttle is shared
         for cat in targets:
-            recheck_category(cat, client=client, limit=args.limit, force_all=args.all, dry_run=args.dry_run)
+            recheck_category(cat, client=client, limit=args.limit, force_all=args.all,
+                             dry_run=args.dry_run, specs_only=args.specs_only)
 
 
 if __name__ == "__main__":

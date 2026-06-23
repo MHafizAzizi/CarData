@@ -1,8 +1,20 @@
 # carbase.my Spec Matching — Phase 2 Design
 
 **Date:** 2026-06-18
-**Status:** Approved, ready for implementation plan
+**Status:** ❌ SUPERSEDED / KILLED 2026-06-21 — never implemented. Do not build.
 **Depends on:** Phase 1 (PR #33) — `data/reference/carbase_specs.db` populated (1,368 variant rows).
+
+> **Why killed (2026-06-21):** mcdParams extraction (schema v9, wired into
+> `recheck.py` HTML mode) supersedes this. mcdParams fills 15 car spec cols
+> (incl. `peak_power_kw`, `peak_torque_nm`, `kerb_weight_kg`) from live listing
+> HTML per-row — no catalog join, no fuzzy match. carbase_specs.db (current
+> new-car catalog) skews to the same recent mainstream cars mcdParams already
+> covers, so the incremental gap is thin. The design's `difflib` variant fuzz is
+> also the exact silent-mismatch trap rejected for the moto enricher (Z250↔
+> ninja-250). Schema v9 slot was taken by mcdParams; this doc's column plan
+> collides (`kerb_weight_kg`) or duplicates by unit (power/torque). If a carbase
+> gap-fill is ever wanted, build a narrow deterministic exact-match into the
+> existing v9 cols (no new fuzzy, no new power/torque cols) — not this.
 
 ## Goal
 

@@ -86,7 +86,7 @@ from db import CATEGORIES, connect, schema_version, set_meta  # noqa: E402
 # Migration spec — v1 -> v2
 # ---------------------------------------------------------------------------
 
-TARGET_VERSION = 10
+TARGET_VERSION = 11
 
 # (column_name, sqlite_type) — applied to BOTH cars and motorcycles
 SHARED_NEW_COLS: List[Tuple[str, str]] = [
@@ -211,6 +211,17 @@ V10_MOTORCYCLE_COLS: List[Tuple[str, str]] = [
     # provenance (set by enricher)
     ("spec_match",     "TEXT"),     # exact / prefix / alias
     ("spec_source",    "TEXT"),     # "zigwheels" now; motomalaysia later
+]
+
+# v10 -> v11: car spec-provenance columns (cars only; motorcycles version-bump
+# no-op — they already have spec_match/spec_source from v10). Set by
+# src/enrich_cars_specs.py from data/reference/carbase_specs.db via a
+# (make, model, engine_capacity) match. The spec DATA lands in the existing v9
+# mcdParams columns (peak_power_kw, dimensions, etc.); these two only record the
+# match tier + source so carbase fills are distinguishable from mcdParams fills.
+V11_CAR_COLS: List[Tuple[str, str]] = [
+    ("spec_match",  "TEXT"),  # cc_full / cc_dims / null / no_model / no_make_catalog
+    ("spec_source", "TEXT"),  # "carbase"
 ]
 
 # ---------------------------------------------------------------------------
@@ -663,6 +674,42 @@ def _migrate_v9_to_v10(
     )
 
 
+def _migrate_v10_to_v11(
+    conn: sqlite3.Connection, category: str, *, dry_run: bool
+) -> None:
+    """Add spec_match / spec_source (cars only; motorcycles bump version)."""
+    cols = V11_CAR_COLS if category == "cars" else []
+    logging.info(
+        f"[{category}] step v10 -> v11 ({len(cols)} column(s) to evaluate)"
+    )
+
+    added = 0
+    with conn:
+        for col_name, col_type in cols:
+            if _safe_add_column(conn, "listings", col_name, col_type, dry_run=dry_run):
+                added += 1
+
+        if dry_run:
+            logging.info(
+                f"[{category}] DRY-RUN v10->v11: would add {added} column(s)"
+            )
+            return
+
+        conn.execute(
+            "INSERT INTO meta (key, value) VALUES ('schema_version', '11') "
+            "ON CONFLICT(key) DO UPDATE SET value = excluded.value"
+        )
+
+    logging.info(
+        f"[{category}] v10 -> v11 complete — added {added} column(s)"
+    )
+    set_meta(
+        conn,
+        "last_migration_v11_at",
+        __import__("datetime").datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+    )
+
+
 def migrate(category: str, *, dry_run: bool = False) -> None:
     """Run all pending migrations on the given category's DB."""
     if category not in CATEGORIES:
@@ -705,6 +752,8 @@ def migrate(category: str, *, dry_run: bool = False) -> None:
         _migrate_v8_to_v9(conn, category, dry_run=dry_run)
     if current < 10:
         _migrate_v9_to_v10(conn, category, dry_run=dry_run)
+    if current < 11:
+        _migrate_v10_to_v11(conn, category, dry_run=dry_run)
 
     logging.info(
         f"[{category}] migration complete; "
