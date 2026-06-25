@@ -420,7 +420,8 @@
         }
       ],
       "suggested": null,
-      "decision": "NULL"
+      "_note": "ER-6n shares the ER-6f 649cc parallel-twin platform (same engine/power/torque), differs only in fairing. Engine-core fill correct.",
+      "decision": "er-6f"
     },
     "Honda|Adv 150": {
       "count": 91,
