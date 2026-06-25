@@ -153,6 +153,15 @@ per-model source — it returns authoritative spec pages and clean numbers.
   Bonneville/Scrambler/Speed Twin, Vespa Super 150 (generation/displacement
   ambiguous). +152 rows.
 
+- **Batch 8 / final** (→85.3%): MBP Morbidelli T252X/T502X, SYM Bonus 110 SR,
+  Kawasaki Ninja 1100SX SE, Vespa LX 150, GPX Gentleman 200, Honda CBR650F,
+  Kawasaki Vulcan 900, SYM Jet Power 125, Voge CU525, Kymco AK550 (manual);
+  BMW 310GS→g-310-gs, SYM Sport Bonus 110 SR→bonus-110-sr (aliases). +258 rows.
+
+**Final: 78.0% → 85.3%** over Phase-2c + manual loader + 8 transcription batches.
+Stop here — the remaining null tail is vintage 2-strokes/cubs, EVs (no cc), the
+5 displacement traps, and bare ambiguous names spanning multiple generations.
+
 **Recurring gotcha:** the alias file already holds auto-suggested entries for
 many listings with `decision: "NULL"`. A NEW key prepended to `aliases` is a
 JSON duplicate — the LATER (NULL) one wins on parse, so the alias silently

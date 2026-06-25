@@ -249,6 +249,86 @@
       "fuel_tank_l": 13.5, "engine_type": "Single Cylinder, SOHC, liquid-cooled, EFI",
       "transmission": "CVT", "fuel_type": "Petrol", "cooling": "Liquid Cooled",
       "source_url": "https://paultan.org/2025/05/08/kymco-dtx-250-dilancarkan-di-malaysia-rm22500/"
+    },
+    {
+      "make": "morbidelli", "model": "t252x",
+      "engine_cc": 249.5, "power_hp": 33.5, "torque_nm": 20,
+      "kerb_weight_kg": 180, "fuel_tank_l": 18,
+      "engine_type": "Parallel Twin, DOHC, liquid-cooled", "transmission": "6-speed Manual",
+      "fuel_type": "Petrol", "cooling": "Liquid Cooled", "seat_height_mm": 820,
+      "source_url": "https://paultan.org/2026/04/16/2026-morbidelli-t502x-and-t252x-adventure-tourers-enter-malaysia-market-rm28888-and-rm16888/"
+    },
+    {
+      "make": "morbidelli", "model": "t502x",
+      "engine_cc": 486, "power_hp": 46.9, "torque_nm": 45,
+      "kerb_weight_kg": 210, "fuel_tank_l": 18,
+      "engine_type": "Parallel Twin, liquid-cooled", "transmission": "6-speed Manual",
+      "fuel_type": "Petrol", "cooling": "Liquid Cooled", "seat_height_mm": 830,
+      "source_url": "https://paultan.org/2025/11/17/morbidelli-t502x-dilancarkan-untuk-pasaran-malaysia-enjin-dua-silinder-selari-486-cc-tft-tpms-rm28888/"
+    },
+    {
+      "make": "sym", "model": "bonus-110-sr",
+      "engine_cc": 108, "power_hp": 7.1, "torque_nm": 7.45,
+      "engine_type": "Single Cylinder, air-cooled, SOHC", "transmission": "4-speed",
+      "fuel_type": "Petrol", "cooling": "Air Cooled",
+      "source_url": "https://www.zigwheels.my/new-motorcycles/sym/bonus-110-sr/standard"
+    },
+    {
+      "make": "kawasaki", "model": "ninja-1100-sx-se",
+      "engine_cc": 1099, "power_hp": 134, "torque_nm": 113,
+      "engine_type": "Inline-4, DOHC, liquid-cooled", "fuel_type": "Petrol",
+      "cooling": "Liquid Cooled",
+      "source_url": "https://www.autoevolution.com/moto/kawasaki-ninja-1100sx-se-abs-2025.html"
+    },
+    {
+      "make": "vespa", "model": "lx-150",
+      "engine_cc": 150, "power_hp": 11, "torque_nm": 11,
+      "engine_type": "Single Cylinder, air-cooled, 4-stroke", "transmission": "CVT",
+      "fuel_type": "Petrol", "cooling": "Air Cooled",
+      "source_url": "https://www.autoevolution.com/moto/vespa-lx-150-2008.html"
+    },
+    {
+      "make": "gpx", "model": "gentleman-200",
+      "engine_cc": 197, "power_hp": 20, "torque_nm": 18,
+      "fuel_tank_l": 12, "engine_type": "Single Cylinder, SOHC, air/oil-cooled",
+      "transmission": "6-speed Manual", "fuel_type": "Petrol",
+      "source_url": "https://www.zigwheels.my/new-motorcycles/gpx/gentleman-200/specifications"
+    },
+    {
+      "make": "honda", "model": "cbr650f",
+      "engine_cc": 649, "power_hp": 86, "torque_nm": 63,
+      "kerb_weight_kg": 211, "engine_type": "Inline-4, DOHC, liquid-cooled",
+      "transmission": "6-speed Manual", "fuel_type": "Petrol", "cooling": "Liquid Cooled",
+      "source_url": "https://www.motorcyclespecs.com/honda-cbr650f/"
+    },
+    {
+      "make": "kawasaki", "model": "vulcan-900",
+      "engine_cc": 903, "power_hp": 50, "torque_nm": 78.9,
+      "kerb_weight_kg": 281, "engine_type": "V-twin, liquid-cooled",
+      "fuel_type": "Petrol", "cooling": "Liquid Cooled",
+      "source_url": "https://www.autoevolution.com/moto/kawasaki-vulcan-900-classic-2014.html"
+    },
+    {
+      "make": "sym", "model": "jet-power-125",
+      "engine_cc": 124.6, "power_hp": 8.4, "torque_nm": 8.6,
+      "engine_type": "Single Cylinder, SOHC, 4-stroke", "transmission": "CVT",
+      "fuel_type": "Petrol", "cooling": "Air Cooled",
+      "source_url": "https://www.zigwheels.my/new-motorcycles/sym/jet-power-125/specifications"
+    },
+    {
+      "make": "voge", "model": "cu525",
+      "engine_cc": 494, "power_hp": 53, "torque_nm": 50.5,
+      "engine_type": "Parallel Twin, DOHC, liquid-cooled", "transmission": "6-speed Manual",
+      "fuel_type": "Petrol", "cooling": "Liquid Cooled", "seat_height_mm": 710,
+      "wheelbase_mm": 1480,
+      "source_url": "https://paultan.org/2025/01/14/voge-cu525-masuk-pasaran-malaysia-cruiser-rm30k/"
+    },
+    {
+      "make": "kymco", "model": "ak-550",
+      "engine_cc": 550.4, "power_hp": 51, "torque_nm": 51.5,
+      "kerb_weight_kg": 226, "engine_type": "Inline Twin, liquid-cooled",
+      "transmission": "CVT", "fuel_type": "Petrol", "cooling": "Liquid Cooled",
+      "source_url": "https://en.wikipedia.org/wiki/Kymco_AK550"
     }
   ]
 }

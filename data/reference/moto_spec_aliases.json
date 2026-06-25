@@ -6,6 +6,16 @@
     "mbp": "morbidelli"
   },
   "aliases": {
+    "Bmw|310 Gs": {
+      "spec_make": "bmw",
+      "_note": "BMW 310 GS = G 310 GS (313cc); catalog g-310-gs.",
+      "decision": "g-310-gs"
+    },
+    "Sym|Sport Bonus 110 Sr": {
+      "spec_make": "sym",
+      "_note": "Same 108cc engine as the SYM Bonus 110 SR (manual row).",
+      "decision": "bonus-110-sr"
+    },
     "Kawasaki|Ninja 1000": {
       "spec_make": "kawasaki",
       "_note": "Ninja 1000 / 1000SX = 1043cc; catalog ninja-1000sx.",
