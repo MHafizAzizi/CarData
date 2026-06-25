@@ -16,6 +16,30 @@
       "transmission": "CVT", "fuel_type": "Petrol",
       "seat_height_mm": 780, "wheelbase_mm": 1525, "compression_ratio": "11:1",
       "source_url": "https://www.voge.my/product/SR3/"
+    },
+    {
+      "make": "aveta", "model": "nova-200",
+      "engine_cc": 183.3, "power_hp": 18.1, "torque_nm": 17.6,
+      "kerb_weight_kg": 112, "fuel_tank_l": 10,
+      "engine_type": "Liquid-Cooled, Single Cylinder, 4-Stroke, SOHC, 4 Valve",
+      "transmission": "Automatic CVT", "fuel_type": "Petrol",
+      "cooling": "Liquid Cooled", "seat_height_mm": 778,
+      "wheelbase_mm": 1370, "compression_ratio": "10.4:1",
+      "source_url": "https://www.aveta.com.my/wp-content/uploads/2026/04/Nova200_Brochure_FAOL.pdf"
+    },
+    {
+      "make": "cfmoto", "model": "700mt",
+      "engine_cc": 693, "power_hp": 74, "torque_nm": 68,
+      "engine_type": "Parallel Twin, 4-valve, DOHC", "fuel_type": "Petrol",
+      "cooling": "Liquid Cooled",
+      "source_url": "https://paultan.org/?p=cfmoto-700mt-masuk-malaysia-bulan-ini-rm34k"
+    },
+    {
+      "make": "benda", "model": "lfc-700-pro",
+      "engine_cc": 676, "torque_nm": 63, "kerb_weight_kg": 287,
+      "engine_type": "V-twin, liquid-cooled", "fuel_type": "Petrol",
+      "cooling": "Liquid Cooled",
+      "source_url": "https://paultan.org/?p=2025-benda-lcf700-pro-cruiser-in-malaysia-rm48888"
     }
   ]
 }
