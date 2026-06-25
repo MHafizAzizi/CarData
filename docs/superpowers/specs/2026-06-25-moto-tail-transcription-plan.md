@@ -124,6 +124,29 @@ everywhere (RXZ, C70, Nouvo, KRR), the 5 deliberate displacement traps, bare
 ambiguous names, and EVs (if out of scope). Realistic reachable ceiling with
 full transcription ≈ **85-87%**.
 
+## Execution log
+
+WebSearch (not paultan fuzzy search or bikez URL-guessing) is the reliable
+per-model source — it returns authoritative spec pages and clean numbers.
+
+- **Batch 1** (→80.8%): Er-6N alias, Aveta Nova 200, CFMoto 700MT, Benda LFC700.
+- **Batch 2** (→81.3%): SYM Cruisym 400i, WMoto Cruiser 125, Honda CBR500R.
+- **Batch 3** (→81.4%): Ducati Scrambler.
+- **Batch 4** (→82.4%): Aveta DY115, Benda Dark Flag 500, Benelli TNT600S,
+  Benelli RFS150i, Brixton Classic 150I (alias→bx-150), Kawasaki KLX250,
+  Kawasaki 1400GTR, CFMoto 800MT Explorer. +319 rows.
+
+**Recurring gotcha:** the alias file already holds auto-suggested entries for
+many listings with `decision: "NULL"`. A NEW key prepended to `aliases` is a
+JSON duplicate — the LATER (NULL) one wins on parse, so the alias silently
+no-ops. Always edit the EXISTING entry's `decision` in place (hit on Er-6N and
+Brixton Classic 150I).
+
+**Catalog collision:** a manual row whose `source_url` equals an existing
+catalog row's violates `UNIQUE(source_url)` and rolls back the whole load. If a
+model is already in the catalog under a different slug (Brixton bx-150), alias
+to it instead of adding a manual row.
+
 ## Risks
 
 - **Wrong-displacement fill** is the cardinal sin (the trap this whole design

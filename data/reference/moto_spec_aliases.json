@@ -1466,7 +1466,8 @@
         }
       ],
       "suggested": "crossfire-150-xs",
-      "decision": "NULL"
+      "_note": "Brixton BX150 sold in Classic/X/R styles, all the same 149cc engine. Listing 'Classic 150I' -> catalog bx-150.",
+      "decision": "bx-150"
     },
     "Suzuki|Raider R150 Fi": {
       "count": 29,
