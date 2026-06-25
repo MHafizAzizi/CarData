@@ -1,4 +1,4 @@
-"""Phase-2b: cross-fill discontinued-bike specs from motomalaysia.com.
+"""Phase-2b/2c: cross-fill discontinued-bike specs from motomalaysia.com.
 
 zigwheels.my (motobike_specs.db, source='zigwheels') is a current-catalog only —
 discontinued bikes are absent, so many Mudah moto listings match nothing.
@@ -47,6 +47,17 @@ CURATED = [
     ("kawasaki", "ninja-zx-25r", "https://www.motomalaysia.com/kawasaki-ninja-zx-25r-se-2023-price-malaysia/"),
     ("honda", "wave-125i", "https://www.motomalaysia.com/honda-wave-125i-price-specs-malaysia/"),
     ("honda", "wave-dash", "https://www.motomalaysia.com/honda-wave-dash-price-specs-malaysia/"),
+    # Phase-2c (2026-06-25): high-volume current/discontinued models present on
+    # motomalaysia at the CORRECT displacement, verified before listing. Slugs
+    # chosen so norm(listing model) hits enrich at exact/prefix.
+    ("kawasaki", "er-6f", "https://www.motomalaysia.com/kawasaki-er-6f-2014-price-specs-malaysia/"),       # 649cc
+    ("honda", "cbr1000rr", "https://www.motomalaysia.com/honda-cbr1000rr-2017-price-specs-malaysia/"),     # 999.8cc
+    ("modenas", "dinamik", "https://www.motomalaysia.com/modenas-dinamik-2011-price-specs-malaysia/"),     # 118cc
+    ("yamaha", "115z", "https://www.motomalaysia.com/yamaha-lagenda-115z-price-specs-malaysia/"),          # 113.7cc (also catches 115zr via prefix)
+    ("honda", "pcx-150", "https://www.motomalaysia.com/honda-pcx-price-specs-malaysia/"),                  # 149cc
+    ("honda", "future-125", "https://www.motomalaysia.com/honda-future-fi-price-specs-malaysia/"),         # 124.9cc
+    # Deliberately NOT listed: Kawasaki Er-6N (absent from motomalaysia),
+    # Kawasaki Versys (bare listing is ambiguous X-250 / 650 / 1000 — no guess).
 ]
 
 
