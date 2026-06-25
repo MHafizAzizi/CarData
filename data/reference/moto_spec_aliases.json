@@ -6,6 +6,11 @@
     "mbp": "morbidelli"
   },
   "aliases": {
+    "Vespa|Gts 300": {
+      "spec_make": "vespa",
+      "_note": "Vespa GTS 300 -> catalog gts-classic-300 (278cc HPE, same engine across GTS 300 variants).",
+      "decision": "gts-classic-300"
+    },
     "Gpx|Gr200-Rr": {
       "spec_make": "gpx",
       "_note": "GPX Demon GR200R/RR — catalog slug demon-gr200r (198cc), same platform.",

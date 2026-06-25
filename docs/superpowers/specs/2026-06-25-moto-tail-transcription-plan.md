@@ -140,6 +140,12 @@ per-model source — it returns authoritative spec pages and clean numbers.
   WMoto Hawk 200i, SYM SM Sport 110, Yamaha XJ6; GPX GR200-RR (alias→
   demon-gr200r). Skipped Ducati Diavel (bare name spans 1198/1262/1158cc gens).
 
+- **Batch 6** (→84.0%): Benda Chinchilla 500, Modenas ZX-25R SE (Kawasaki
+  rebadge), Harley Forty-Eight, SYM VFE185i, Kawasaki Z500, BMW F800GS, Aveta
+  Serra 125; Vespa GTS 300 (alias→gts-classic-300). Source_url collisions
+  bit twice (a manual URL equal to a catalog row's, and two manual rows sharing
+  a `?s=` URL) — keep every manual `source_url` unique.
+
 **Recurring gotcha:** the alias file already holds auto-suggested entries for
 many listings with `decision: "NULL"`. A NEW key prepended to `aliases` is a
 JSON duplicate — the LATER (NULL) one wins on parse, so the alias silently
