@@ -40,6 +40,27 @@
       "engine_type": "V-twin, liquid-cooled", "fuel_type": "Petrol",
       "cooling": "Liquid Cooled",
       "source_url": "https://paultan.org/?p=2025-benda-lcf700-pro-cruiser-in-malaysia-rm48888"
+    },
+    {
+      "make": "sym", "model": "cruisym-400i",
+      "engine_cc": 399, "power_hp": 33.5, "torque_nm": 37,
+      "engine_type": "Single Cylinder, 4-valve, SOHC, liquid-cooled",
+      "transmission": "CVT", "fuel_type": "Petrol", "cooling": "Liquid Cooled",
+      "source_url": "https://paultan.org/?s=sym+cruisym+400i+malaysia"
+    },
+    {
+      "make": "wmoto", "model": "cruiser-amt-125",
+      "engine_cc": 124, "power_hp": 7.8, "torque_nm": 8.8,
+      "engine_type": "Single Cylinder, 4-stroke", "fuel_type": "Petrol",
+      "source_url": "https://paultan.org/?s=wmoto+cruiser+amt+125+malaysia"
+    },
+    {
+      "make": "honda", "model": "cbr500r",
+      "engine_cc": 471, "power_hp": 47, "torque_nm": 43,
+      "engine_type": "Parallel Twin, 8-valve, DOHC, liquid-cooled",
+      "transmission": "6-speed Manual", "fuel_type": "Petrol",
+      "cooling": "Liquid Cooled",
+      "source_url": "https://en.wikipedia.org/wiki/Honda_CBR500R"
     }
   ]
 }
