@@ -1,0 +1,21 @@
+{
+  "_comment": "Hand-verified moto specs for models absent from zigwheels + motomalaysia (mostly newer Chinese/Taiwanese brands with JS-rendered or offline OEM sites). Each row is transcribed from the cited source_url and loaded into motobike_specs.db model_specs with source='manual' by src/load_manual_moto_specs.py. 'model' is the slug chosen so norm(listing model) hits enrich at exact/prefix. Only fields confirmed on the source are filled; ambiguous ones (e.g. unlabelled power units) are left null rather than guessed. power_hp is in HP (convert kW x 1.34102 before entering).",
+  "specs": [
+    {
+      "make": "voge", "model": "formica-rossa-150",
+      "engine_cc": 149.6, "power_hp": 15.4, "torque_nm": 13.5,
+      "fuel_tank_l": 5.8, "engine_type": "DOHC", "transmission": "6-speed Manual",
+      "fuel_type": "Petrol", "cooling": "Liquid Cooled",
+      "seat_height_mm": 795, "wheelbase_mm": 1290, "compression_ratio": "11.3:1",
+      "source_url": "https://www.voge.my/product/FORMICAROSSA150/"
+    },
+    {
+      "make": "voge", "model": "sr3",
+      "engine_cc": 244, "torque_nm": 23, "kerb_weight_kg": 156,
+      "fuel_tank_l": 14, "engine_type": "Single-cylinder, 4-valve, SOHC",
+      "transmission": "CVT", "fuel_type": "Petrol",
+      "seat_height_mm": 780, "wheelbase_mm": 1525, "compression_ratio": "11:1",
+      "source_url": "https://www.voge.my/product/SR3/"
+    }
+  ]
+}
