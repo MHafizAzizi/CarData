@@ -80,14 +80,14 @@
     "slug": "cfmoto"
   },
   {
-    "name": "Comel",
-    "slug": "comel",
-    "id": "51"
-  },
-  {
     "id": "28",
     "name": "CMC",
     "slug": "cmc"
+  },
+  {
+    "id": "51",
+    "name": "Comel",
+    "slug": "comel"
   },
   {
     "id": "96",
@@ -95,9 +95,9 @@
     "slug": "cyclone"
   },
   {
-    "slug": "daelim",
     "id": "4",
-    "name": "Daelim"
+    "name": "Daelim",
+    "slug": "daelim"
   },
   {
     "id": "5",
@@ -155,9 +155,9 @@
     "slug": "honda"
   },
   {
+    "id": "66",
     "name": "Husaberg",
-    "slug": "husaberg",
-    "id": "66"
+    "slug": "husaberg"
   },
   {
     "id": "23",
@@ -165,9 +165,9 @@
     "slug": "husqvarna"
   },
   {
-    "slug": "hyosung",
     "id": "50",
-    "name": "Hyosung"
+    "name": "Hyosung",
+    "slug": "hyosung"
   },
   {
     "id": "52",
@@ -175,9 +175,9 @@
     "slug": "indian"
   },
   {
+    "id": "65",
     "name": "Italjet",
-    "slug": "italjet",
-    "id": "65"
+    "slug": "italjet"
   },
   {
     "id": "43",
@@ -200,9 +200,9 @@
     "slug": "kayo"
   },
   {
-    "slug": "keeway",
     "id": "11",
-    "name": "Keeway"
+    "name": "Keeway",
+    "slug": "keeway"
   },
   {
     "id": "89",
@@ -225,9 +225,9 @@
     "slug": "kymco"
   },
   {
+    "id": "60",
     "name": "Lambretta",
-    "slug": "lambretta",
-    "id": "60"
+    "slug": "lambretta"
   },
   {
     "id": "54",
@@ -250,9 +250,9 @@
     "slug": "mbp"
   },
   {
+    "id": "84",
     "name": "MBP Morbidelli",
-    "slug": "mbp-morbidelli",
-    "id": "84"
+    "slug": "mbp-morbidelli"
   },
   {
     "id": "57",
@@ -260,9 +260,9 @@
     "slug": "mle"
   },
   {
-    "slug": "moda",
     "id": "85",
-    "name": "Moda"
+    "name": "Moda",
+    "slug": "moda"
   },
   {
     "id": "14",
@@ -295,9 +295,9 @@
     "slug": "mz"
   },
   {
-    "slug": "naza",
     "id": "21",
-    "name": "Naza"
+    "name": "Naza",
+    "slug": "naza"
   },
   {
     "id": "30",
@@ -315,9 +315,9 @@
     "slug": "norton"
   },
   {
+    "id": "61",
     "name": "Ottimo",
-    "slug": "ottimo",
-    "id": "61"
+    "slug": "ottimo"
   },
   {
     "id": "58",
@@ -330,19 +330,9 @@
     "slug": "peugeot"
   },
   {
-    "slug": "piaggio",
     "id": "15",
-    "name": "Piaggio"
-  },
-  {
-    "slug": "royal-alloy",
-    "id": "64",
-    "name": "Royal Alloy"
-  },
-  {
-    "id": "31",
-    "name": "Royal Enfield",
-    "slug": "royal-enfield"
+    "name": "Piaggio",
+    "slug": "piaggio"
   },
   {
     "id": "71",
@@ -350,9 +340,19 @@
     "slug": "qj-motor"
   },
   {
+    "id": "64",
+    "name": "Royal Alloy",
+    "slug": "royal-alloy"
+  },
+  {
+    "id": "31",
+    "name": "Royal Enfield",
+    "slug": "royal-enfield"
+  },
+  {
+    "id": "25",
     "name": "Scomadi",
-    "slug": "scomadi",
-    "id": "25"
+    "slug": "scomadi"
   },
   {
     "id": "36",
@@ -365,9 +365,9 @@
     "slug": "skyteam"
   },
   {
-    "slug": "sm-sport",
     "id": "49",
-    "name": "SM Sport"
+    "name": "SM Sport",
+    "slug": "sm-sport"
   },
   {
     "id": "67",
@@ -380,14 +380,14 @@
     "slug": "superlux"
   },
   {
-    "slug": "suzuki",
     "id": "16",
-    "name": "Suzuki"
+    "name": "Suzuki",
+    "slug": "suzuki"
   },
   {
+    "id": "17",
     "name": "Sym",
-    "slug": "sym",
-    "id": "17"
+    "slug": "sym"
   },
   {
     "id": "93",
@@ -410,9 +410,9 @@
     "slug": "triumph"
   },
   {
+    "id": "37",
     "name": "TVS",
-    "slug": "tvs",
-    "id": "37"
+    "slug": "tvs"
   },
   {
     "id": "19",
@@ -420,9 +420,9 @@
     "slug": "vespa"
   },
   {
+    "id": "39",
     "name": "Victory",
-    "slug": "victory",
-    "id": "39"
+    "slug": "victory"
   },
   {
     "id": "78",
@@ -445,14 +445,14 @@
     "slug": "x-wedge"
   },
   {
-    "id": "20",
-    "name": "Yamaha",
-    "slug": "yamaha"
-  },
-  {
     "id": "75",
     "name": "Yadea",
     "slug": "yadea"
+  },
+  {
+    "id": "20",
+    "name": "Yamaha",
+    "slug": "yamaha"
   },
   {
     "id": "80",

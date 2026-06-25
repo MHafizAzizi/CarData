@@ -1,19 +1,19 @@
 [
   {
-    "slug": "alfa-romeo",
     "founding_country": "Italy",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-alfa-romeo-sm-2x-v1.png",
     "icon_svg": "",
     "id": "1",
-    "name": "Alfa Romeo"
+    "name": "Alfa Romeo",
+    "slug": "alfa-romeo"
   },
   {
-    "id": "117",
-    "name": "Alpine",
-    "slug": "alpine",
     "founding_country": "France",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-alpine-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "117",
+    "name": "Alpine",
+    "slug": "alpine"
   },
   {
     "founding_country": "United Kingdom",
@@ -24,12 +24,12 @@
     "slug": "ariel"
   },
   {
-    "id": "105",
-    "name": "Asia Motors",
-    "slug": "asia-motors",
     "founding_country": "South Korea",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-asia-motors-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "105",
+    "name": "Asia Motors",
+    "slug": "asia-motors"
   },
   {
     "founding_country": "United Kingdom",
@@ -40,76 +40,76 @@
     "slug": "aston-martin"
   },
   {
+    "founding_country": "Germany",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-audi-sm-2x-v1.png",
     "icon_svg": "",
     "id": "2",
     "name": "Audi",
-    "slug": "audi",
-    "founding_country": "Germany"
+    "slug": "audi"
   },
   {
+    "founding_country": "United Kingdom",
+    "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-noicon-sm-2x-v1.png",
     "icon_svg": "",
     "id": "42",
     "name": "Austin",
-    "slug": "austin",
-    "founding_country": "United Kingdom",
-    "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-noicon-sm-2x-v1.png"
+    "slug": "austin"
   },
   {
+    "founding_country": "China",
+    "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-baic-sm-2x-v1.png",
     "icon_svg": "",
     "id": "128",
     "name": "BAIC",
-    "slug": "baic",
-    "founding_country": "China",
-    "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-baic-sm-2x-v1.png"
+    "slug": "baic"
   },
   {
-    "name": "BAW",
-    "slug": "baw",
     "founding_country": "China",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-baw-sm-2x-v1.png",
     "icon_svg": "",
-    "id": "104"
+    "id": "104",
+    "name": "BAW",
+    "slug": "baw"
   },
   {
-    "id": "48",
-    "name": "Bentley",
-    "slug": "bentley",
     "founding_country": "United Kingdom",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-bentley-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "48",
+    "name": "Bentley",
+    "slug": "bentley"
   },
   {
+    "founding_country": "China",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-bison-sm-2x-v1.png",
     "icon_svg": "",
     "id": "97",
     "name": "Bison",
-    "slug": "bison",
-    "founding_country": "China"
+    "slug": "bison"
   },
   {
-    "name": "BMW",
-    "slug": "bmw",
     "founding_country": "Germany",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-bmw-sm-2x-v1.png",
     "icon_svg": "",
-    "id": "3"
+    "id": "3",
+    "name": "BMW",
+    "slug": "bmw"
   },
   {
-    "slug": "boon-koon",
     "founding_country": "Malaysia",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-noicon-sm-2x-v1.png",
     "icon_svg": "",
     "id": "107",
-    "name": "Boon Koon"
+    "name": "Boon Koon",
+    "slug": "boon-koon"
   },
   {
-    "id": "100",
-    "name": "Borgward",
-    "slug": "borgward",
     "founding_country": "Germany",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-borgward-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "100",
+    "name": "Borgward",
+    "slug": "borgward"
   },
   {
     "founding_country": "Germany",
@@ -120,92 +120,92 @@
     "slug": "brabus"
   },
   {
-    "id": "4",
-    "name": "Bufori",
-    "slug": "bufori",
     "founding_country": "Malaysia",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-bufori-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "4",
+    "name": "Bufori",
+    "slug": "bufori"
   },
   {
+    "founding_country": "United States",
+    "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-buick-sm-2x-v1.png",
+    "icon_svg": "",
+    "id": "60",
+    "name": "Buick",
+    "slug": "buick"
+  },
+  {
+    "founding_country": "China",
+    "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-byd-sm-2x-v1.png",
     "icon_svg": "",
     "id": "121",
     "name": "BYD",
-    "slug": "byd",
-    "founding_country": "China",
-    "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-byd-sm-2x-v1.png"
+    "slug": "byd"
   },
   {
-    "id": "60",
-    "name": "Buick",
-    "slug": "buick",
     "founding_country": "United States",
-    "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-buick-sm-2x-v1.png",
-    "icon_svg": ""
-  },
-  {
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-cadillac-sm-2x-v1.png",
     "icon_svg": "",
     "id": "61",
     "name": "Cadillac",
-    "slug": "cadillac",
-    "founding_country": "United States"
+    "slug": "cadillac"
   },
   {
-    "name": "CAM",
-    "slug": "cam",
     "founding_country": "China",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-noicon-sm-2x-v1.png",
     "icon_svg": "",
-    "id": "106"
+    "id": "106",
+    "name": "CAM",
+    "slug": "cam"
   },
   {
+    "founding_country": "United Kingdom",
+    "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-caterham-sm-2x-v1.png",
     "icon_svg": "",
     "id": "120",
     "name": "Caterham",
-    "slug": "caterham",
-    "founding_country": "United Kingdom",
-    "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-caterham-sm-2x-v1.png"
+    "slug": "caterham"
   },
   {
+    "founding_country": "China",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-chana-sm-2x-v1.png",
     "icon_svg": "",
     "id": "49",
     "name": "Chana",
-    "slug": "chana",
-    "founding_country": "China"
+    "slug": "chana"
   },
   {
-    "id": "5",
-    "name": "Changan",
-    "slug": "changan",
     "founding_country": "China",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-changan-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "5",
+    "name": "Changan",
+    "slug": "changan"
   },
   {
-    "id": "6",
-    "name": "Chery",
-    "slug": "chery",
     "founding_country": "China",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-chery-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "6",
+    "name": "Chery",
+    "slug": "chery"
   },
   {
-    "id": "7",
-    "name": "Chevrolet",
-    "slug": "chevrolet",
     "founding_country": "United States",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-chevrolet-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "7",
+    "name": "Chevrolet",
+    "slug": "chevrolet"
   },
   {
-    "id": "50",
-    "name": "Chrysler",
-    "slug": "chrysler",
     "founding_country": "United States",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-chrysler-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "50",
+    "name": "Chrysler",
+    "slug": "chrysler"
   },
   {
     "founding_country": "France",
@@ -216,28 +216,28 @@
     "slug": "citroen"
   },
   {
-    "slug": "daihatsu",
     "founding_country": "Japan",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-daihatsu-sm-2x-v1.png",
     "icon_svg": "",
     "id": "41",
-    "name": "Daihatsu"
+    "name": "Daihatsu",
+    "slug": "daihatsu"
   },
   {
-    "id": "103",
-    "name": "Daimler",
-    "slug": "daimler",
     "founding_country": "Germany",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-daimler-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "103",
+    "name": "Daimler",
+    "slug": "daimler"
   },
   {
+    "founding_country": "Japan",
+    "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-datsun-sm-2x-v1.png",
     "icon_svg": "",
     "id": "43",
     "name": "Datsun",
-    "slug": "datsun",
-    "founding_country": "Japan",
-    "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-datsun-sm-2x-v1.png"
+    "slug": "datsun"
   },
   {
     "founding_country": "China",
@@ -248,36 +248,36 @@
     "slug": "denza"
   },
   {
-    "slug": "dodge",
     "founding_country": "United States",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-dodge-sm-2x-v1.png",
     "icon_svg": "",
     "id": "70",
-    "name": "Dodge"
+    "name": "Dodge",
+    "slug": "dodge"
   },
   {
-    "id": "112",
-    "name": "Dongfeng",
-    "slug": "dongfeng",
     "founding_country": "China",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-dongfeng-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "112",
+    "name": "Dongfeng",
+    "slug": "dongfeng"
   },
   {
+    "founding_country": "France",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-ds-automobiles-sm-2x-v1.png",
     "icon_svg": "",
     "id": "94",
     "name": "DS Automobiles",
-    "slug": "ds-automobiles",
-    "founding_country": "France"
+    "slug": "ds-automobiles"
   },
   {
-    "id": "114",
-    "name": "Excalibur",
-    "slug": "excalibur",
     "founding_country": "United States",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-excalibur-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "114",
+    "name": "Excalibur",
+    "slug": "excalibur"
   },
   {
     "founding_country": "Malaysia",
@@ -288,172 +288,172 @@
     "slug": "farid"
   },
   {
-    "slug": "ferrari",
     "founding_country": "Italy",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-ferrari-sm-2x-v1.png",
     "icon_svg": "",
     "id": "51",
-    "name": "Ferrari"
+    "name": "Ferrari",
+    "slug": "ferrari"
   },
   {
-    "id": "39",
-    "name": "Fiat",
-    "slug": "fiat",
     "founding_country": "Italy",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-fiat-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "39",
+    "name": "Fiat",
+    "slug": "fiat"
   },
   {
-    "id": "9",
-    "name": "Ford",
-    "slug": "ford",
     "founding_country": "United States",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-ford-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "9",
+    "name": "Ford",
+    "slug": "ford"
   },
   {
-    "id": "62",
-    "name": "Foton",
-    "slug": "foton",
     "founding_country": "China",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-foton-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "62",
+    "name": "Foton",
+    "slug": "foton"
   },
   {
-    "name": "GAC",
-    "slug": "gac",
     "founding_country": "China",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-gac-sm-2x-v1.png",
     "icon_svg": "",
-    "id": "119"
+    "id": "119",
+    "name": "GAC",
+    "slug": "gac"
   },
   {
-    "id": "130",
-    "name": "GAC AION",
-    "slug": "gac-aion",
     "founding_country": "China",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-gac-aion-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "130",
+    "name": "GAC AION",
+    "slug": "gac-aion"
   },
   {
+    "founding_country": "China",
+    "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-noicon-sm-2x-v1.png",
     "icon_svg": "",
     "id": "138",
     "name": "GAC MOTOR",
-    "slug": "gac-motor",
-    "founding_country": "China",
-    "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-noicon-sm-2x-v1.png"
+    "slug": "gac-motor"
   },
   {
-    "id": "99",
-    "name": "GMC",
-    "slug": "gmc",
     "founding_country": "United States",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-gmc-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "99",
+    "name": "GMC",
+    "slug": "gmc"
   },
   {
-    "id": "71",
-    "name": "Golden Dragon",
-    "slug": "golden-dragon",
     "founding_country": "China",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-golden-dragon-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "71",
+    "name": "Golden Dragon",
+    "slug": "golden-dragon"
   },
   {
-    "id": "52",
-    "name": "Great Wall",
-    "slug": "great-wall",
     "founding_country": "China",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-great-wall-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "52",
+    "name": "Great Wall",
+    "slug": "great-wall"
   },
   {
+    "founding_country": "China",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-haval-sm-2x-v1.png",
     "icon_svg": "",
     "id": "86",
     "name": "Haval",
-    "slug": "haval",
-    "founding_country": "China"
+    "slug": "haval"
   },
   {
-    "slug": "higer",
     "founding_country": "China",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-higer-sm-2x-v1.png",
     "icon_svg": "",
     "id": "125",
-    "name": "Higer"
+    "name": "Higer",
+    "slug": "higer"
   },
   {
-    "slug": "holden",
     "founding_country": "Australia",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-holden-sm-2x-v1.png",
     "icon_svg": "",
     "id": "68",
-    "name": "Holden"
+    "name": "Holden",
+    "slug": "holden"
   },
   {
-    "name": "Honda",
-    "slug": "honda",
     "founding_country": "Japan",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-honda-sm-2x-v1.png",
     "icon_svg": "",
-    "id": "10"
+    "id": "10",
+    "name": "Honda",
+    "slug": "honda"
   },
   {
-    "id": "82",
-    "name": "Huanghai",
-    "slug": "huanghai",
     "founding_country": "China",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-huanghai-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "82",
+    "name": "Huanghai",
+    "slug": "huanghai"
   },
   {
+    "founding_country": "United States",
+    "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-hummer-sm-2x-v1.png",
     "icon_svg": "",
     "id": "44",
     "name": "Hummer",
-    "slug": "hummer",
-    "founding_country": "United States",
-    "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-hummer-sm-2x-v1.png"
+    "slug": "hummer"
   },
   {
+    "founding_country": "South Korea",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-hyundai-sm-2x-v1.png",
     "icon_svg": "",
     "id": "11",
     "name": "Hyundai",
-    "slug": "hyundai",
-    "founding_country": "South Korea"
+    "slug": "hyundai"
   },
   {
-    "id": "137",
-    "name": "iCAUR",
-    "slug": "icaur",
     "founding_country": "China",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-noicon-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "137",
+    "name": "iCAUR",
+    "slug": "icaur"
   },
   {
-    "id": "53",
-    "name": "Infiniti",
-    "slug": "infiniti",
     "founding_country": "Japan",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-infiniti-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "53",
+    "name": "Infiniti",
+    "slug": "infiniti"
   },
   {
-    "id": "12",
-    "name": "Inokom",
-    "slug": "inokom",
     "founding_country": "Malaysia",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-inokom-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "12",
+    "name": "Inokom",
+    "slug": "inokom"
   },
   {
+    "founding_country": "Japan",
+    "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-isuzu-sm-2x-v1.png",
     "icon_svg": "",
     "id": "13",
     "name": "Isuzu",
-    "slug": "isuzu",
-    "founding_country": "Japan",
-    "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-isuzu-sm-2x-v1.png"
+    "slug": "isuzu"
   },
   {
     "founding_country": "Italy",
@@ -464,132 +464,132 @@
     "slug": "iveco"
   },
   {
-    "name": "JAC",
-    "slug": "jac",
     "founding_country": "China",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-jac-sm-2x-v1.png",
     "icon_svg": "",
-    "id": "132"
+    "id": "132",
+    "name": "JAC",
+    "slug": "jac"
   },
   {
-    "name": "Jaecoo",
-    "slug": "jaecoo",
     "founding_country": "China",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-jaecoo-sm-2x-v1.png",
     "icon_svg": "",
-    "id": "126"
+    "id": "126",
+    "name": "Jaecoo",
+    "slug": "jaecoo"
   },
   {
-    "slug": "jaguar",
     "founding_country": "United Kingdom",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-jaguar-sm-2x-v1.png",
     "icon_svg": "",
     "id": "14",
-    "name": "Jaguar"
+    "name": "Jaguar",
+    "slug": "jaguar"
   },
   {
-    "id": "54",
-    "name": "Jeep",
-    "slug": "jeep",
     "founding_country": "United States",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-jeep-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "54",
+    "name": "Jeep",
+    "slug": "jeep"
   },
   {
+    "founding_country": "China",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-jetour-sm-2x-v1.png",
     "icon_svg": "",
     "id": "135",
     "name": "Jetour",
-    "slug": "jetour",
-    "founding_country": "China"
+    "slug": "jetour"
   },
   {
-    "id": "113",
-    "name": "JMC",
-    "slug": "jmc",
     "founding_country": "China",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-jmc-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "113",
+    "name": "JMC",
+    "slug": "jmc"
   },
   {
-    "id": "95",
-    "name": "Joylong",
-    "slug": "joylong",
     "founding_country": "China",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-joylong-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "95",
+    "name": "Joylong",
+    "slug": "joylong"
   },
   {
-    "id": "116",
-    "name": "Kaicene",
-    "slug": "kaicene",
     "founding_country": "China",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-kaicene-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "116",
+    "name": "Kaicene",
+    "slug": "kaicene"
   },
   {
+    "founding_country": "South Korea",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-kia-sm-2x-v1.png",
     "icon_svg": "",
     "id": "15",
     "name": "Kia",
-    "slug": "kia",
-    "founding_country": "South Korea"
+    "slug": "kia"
   },
   {
+    "founding_country": "China",
+    "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-king-long-sm-2x-v1.png",
     "icon_svg": "",
     "id": "83",
     "name": "King Long",
-    "slug": "king-long",
-    "founding_country": "China",
-    "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-king-long-sm-2x-v1.png"
+    "slug": "king-long"
   },
   {
-    "id": "118",
-    "name": "KTM",
-    "slug": "ktm",
     "founding_country": "Austria",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-ktm-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "118",
+    "name": "KTM",
+    "slug": "ktm"
   },
   {
-    "id": "46",
-    "name": "Lamborghini",
-    "slug": "lamborghini",
     "founding_country": "Italy",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-lamborghini-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "46",
+    "name": "Lamborghini",
+    "slug": "lamborghini"
   },
   {
-    "slug": "lancia",
     "founding_country": "Italy",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-lancia-sm-2x-v1.png",
     "icon_svg": "",
     "id": "102",
-    "name": "Lancia"
+    "name": "Lancia",
+    "slug": "lancia"
   },
   {
-    "slug": "land-rover",
     "founding_country": "United Kingdom",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-land-rover-sm-2x-v1.png",
     "icon_svg": "",
     "id": "16",
-    "name": "Land Rover"
+    "name": "Land Rover",
+    "slug": "land-rover"
   },
   {
-    "id": "129",
-    "name": "Leapmotor",
-    "slug": "leapmotor",
     "founding_country": "China",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-leapmotor-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "129",
+    "name": "Leapmotor",
+    "slug": "leapmotor"
   },
   {
-    "id": "17",
-    "name": "Lexus",
-    "slug": "lexus",
     "founding_country": "Japan",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-lexus-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "17",
+    "name": "Lexus",
+    "slug": "lexus"
   },
   {
     "founding_country": "United States",
@@ -600,108 +600,108 @@
     "slug": "lincoln"
   },
   {
-    "id": "85",
-    "name": "LMG",
-    "slug": "lmg",
     "founding_country": "China",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-lmg-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "85",
+    "name": "LMG",
+    "slug": "lmg"
   },
   {
-    "name": "Lotus",
-    "slug": "lotus",
     "founding_country": "United Kingdom",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-lotus-sm-2x-v1.png",
     "icon_svg": "",
-    "id": "18"
+    "id": "18",
+    "name": "Lotus",
+    "slug": "lotus"
   },
   {
+    "founding_country": "India",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-mahindra-sm-2x-v1.png",
     "icon_svg": "",
     "id": "56",
     "name": "Mahindra",
-    "slug": "mahindra",
-    "founding_country": "India"
+    "slug": "mahindra"
   },
   {
-    "slug": "maserati",
     "founding_country": "Italy",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-maserati-sm-2x-v1.png",
     "icon_svg": "",
     "id": "57",
-    "name": "Maserati"
+    "name": "Maserati",
+    "slug": "maserati"
   },
   {
+    "founding_country": "China",
+    "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-maxus-sm-2x-v1.png",
     "icon_svg": "",
     "id": "72",
     "name": "Maxus",
-    "slug": "maxus",
-    "founding_country": "China",
-    "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-maxus-sm-2x-v1.png"
+    "slug": "maxus"
   },
   {
-    "id": "19",
-    "name": "Mazda",
-    "slug": "mazda",
     "founding_country": "Japan",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-mazda-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "19",
+    "name": "Mazda",
+    "slug": "mazda"
   },
   {
-    "id": "66",
-    "name": "McLaren",
-    "slug": "mclaren",
     "founding_country": "United Kingdom",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-mclaren-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "66",
+    "name": "McLaren",
+    "slug": "mclaren"
   },
   {
-    "slug": "mercedes-benz",
     "founding_country": "Germany",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-mercedes-benz-sm-2x-v1.png",
     "icon_svg": "",
     "id": "20",
-    "name": "Mercedes Benz"
+    "name": "Mercedes Benz",
+    "slug": "mercedes-benz"
   },
   {
-    "id": "55",
-    "name": "MG",
-    "slug": "mg",
     "founding_country": "United Kingdom",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-mg-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "55",
+    "name": "MG",
+    "slug": "mg"
   },
   {
-    "slug": "mini",
     "founding_country": "United Kingdom",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-mini-sm-2x-v1.png",
     "icon_svg": "",
     "id": "21",
-    "name": "Mini"
+    "name": "Mini",
+    "slug": "mini"
   },
   {
+    "founding_country": "Japan",
+    "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-mitsubishi-sm-2x-v1.png",
     "icon_svg": "",
     "id": "22",
     "name": "Mitsubishi",
-    "slug": "mitsubishi",
-    "founding_country": "Japan",
-    "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-mitsubishi-sm-2x-v1.png"
+    "slug": "mitsubishi"
   },
   {
-    "id": "63",
-    "name": "Mitsuoka",
-    "slug": "mitsuoka",
     "founding_country": "Japan",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-mitsuoka-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "63",
+    "name": "Mitsuoka",
+    "slug": "mitsuoka"
   },
   {
+    "founding_country": "United Kingdom",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-noicon-sm-2x-v1.png",
     "icon_svg": "",
     "id": "89",
     "name": "Morgan",
-    "slug": "morgan",
-    "founding_country": "United Kingdom"
+    "slug": "morgan"
   },
   {
     "founding_country": "United Kingdom",
@@ -712,12 +712,12 @@
     "slug": "morris"
   },
   {
+    "founding_country": "Malaysia",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-naza-sm-2x-v1.png",
     "icon_svg": "",
     "id": "23",
     "name": "Naza",
-    "slug": "naza",
-    "founding_country": "Malaysia"
+    "slug": "naza"
   },
   {
     "founding_country": "China",
@@ -728,124 +728,124 @@
     "slug": "neta"
   },
   {
+    "founding_country": "Japan",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-nissan-sm-2x-v1.png",
     "icon_svg": "",
     "id": "24",
     "name": "Nissan",
-    "slug": "nissan",
-    "founding_country": "Japan"
+    "slug": "nissan"
   },
   {
-    "slug": "oldsmobile",
     "founding_country": "United States",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-oldsmobile-sm-2x-v1.png",
     "icon_svg": "",
     "id": "98",
-    "name": "Oldsmobile"
+    "name": "Oldsmobile",
+    "slug": "oldsmobile"
   },
   {
+    "founding_country": "Germany",
+    "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-opel-sm-2x-v1.png",
     "icon_svg": "",
     "id": "40",
     "name": "Opel",
-    "slug": "opel",
-    "founding_country": "Germany",
-    "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-opel-sm-2x-v1.png"
+    "slug": "opel"
   },
   {
-    "id": "25",
-    "name": "Perodua",
-    "slug": "perodua",
     "founding_country": "Malaysia",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-perodua-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "25",
+    "name": "Perodua",
+    "slug": "perodua"
   },
   {
-    "slug": "peugeot",
     "founding_country": "France",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-peugeot-sm-2x-v1.png",
     "icon_svg": "",
     "id": "26",
-    "name": "Peugeot"
+    "name": "Peugeot",
+    "slug": "peugeot"
   },
   {
+    "founding_country": "Sweden",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-polestar-sm-2x-v1.png",
     "icon_svg": "",
     "id": "133",
     "name": "Polestar",
-    "slug": "polestar",
-    "founding_country": "Sweden"
+    "slug": "polestar"
   },
   {
-    "id": "27",
-    "name": "Porsche",
-    "slug": "porsche",
     "founding_country": "Germany",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-porsche-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "27",
+    "name": "Porsche",
+    "slug": "porsche"
   },
   {
-    "slug": "proton",
     "founding_country": "Malaysia",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-proton-sm-2x-v1.png",
     "icon_svg": "",
     "id": "28",
-    "name": "Proton"
+    "name": "Proton",
+    "slug": "proton"
   },
   {
-    "id": "29",
-    "name": "Renault",
-    "slug": "renault",
     "founding_country": "France",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-renault-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "29",
+    "name": "Renault",
+    "slug": "renault"
   },
   {
-    "name": "Rolls-Royce",
-    "slug": "rolls-royce",
     "founding_country": "United Kingdom",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-rolls-royce-sm-2x-v1.png",
     "icon_svg": "",
-    "id": "58"
+    "id": "58",
+    "name": "Rolls-Royce",
+    "slug": "rolls-royce"
   },
   {
+    "founding_country": "United Kingdom",
+    "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-rover-sm-2x-v1.png",
     "icon_svg": "",
     "id": "65",
     "name": "Rover",
-    "slug": "rover",
-    "founding_country": "United Kingdom",
-    "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-rover-sm-2x-v1.png"
+    "slug": "rover"
   },
   {
+    "founding_country": "Sweden",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-saab-sm-2x-v1.png",
     "icon_svg": "",
     "id": "30",
     "name": "Saab",
-    "slug": "saab",
-    "founding_country": "Sweden"
+    "slug": "saab"
   },
   {
-    "id": "139",
-    "name": "Seres",
-    "slug": "seres",
     "founding_country": "China",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-noicon-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "139",
+    "name": "Seres",
+    "slug": "seres"
   },
   {
-    "slug": "shenyang-brilliance",
     "founding_country": "China",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-shenyang-brilliance-sm-2x-v1.png",
     "icon_svg": "",
     "id": "93",
-    "name": "Shenyang Brilliance"
+    "name": "Shenyang Brilliance",
+    "slug": "shenyang-brilliance"
   },
   {
+    "founding_country": "China",
+    "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-shineray-sm-2x-v1.png",
     "icon_svg": "",
     "id": "136",
     "name": "Shineray",
-    "slug": "shineray",
-    "founding_country": "China",
-    "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-shineray-sm-2x-v1.png"
+    "slug": "shineray"
   },
   {
     "founding_country": "Czech Republic",
@@ -864,20 +864,20 @@
     "slug": "smart"
   },
   {
-    "id": "32",
-    "name": "Ssangyong",
-    "slug": "ssangyong",
     "founding_country": "South Korea",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-ssangyong-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "32",
+    "name": "Ssangyong",
+    "slug": "ssangyong"
   },
   {
-    "id": "33",
-    "name": "Subaru",
-    "slug": "subaru",
     "founding_country": "Japan",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-subaru-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "33",
+    "name": "Subaru",
+    "slug": "subaru"
   },
   {
     "founding_country": "United Kingdom",
@@ -888,92 +888,92 @@
     "slug": "sunbeam"
   },
   {
-    "id": "96",
-    "name": "Sutton",
-    "slug": "sutton",
     "founding_country": "United Kingdom",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-noicon-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "96",
+    "name": "Sutton",
+    "slug": "sutton"
   },
   {
+    "founding_country": "Japan",
+    "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-suzuki-sm-2x-v1.png",
     "icon_svg": "",
     "id": "34",
     "name": "Suzuki",
-    "slug": "suzuki",
-    "founding_country": "Japan",
-    "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-suzuki-sm-2x-v1.png"
+    "slug": "suzuki"
   },
   {
-    "name": "Tata",
-    "slug": "tata",
     "founding_country": "India",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-tata-sm-2x-v1.png",
     "icon_svg": "",
-    "id": "67"
+    "id": "67",
+    "name": "Tata",
+    "slug": "tata"
   },
   {
+    "founding_country": "Malaysia",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-noicon-sm-2x-v1.png",
     "icon_svg": "",
     "id": "84",
     "name": "TD2000",
-    "slug": "td2000",
-    "founding_country": "Malaysia"
+    "slug": "td2000"
   },
   {
-    "id": "74",
-    "name": "Tesla",
-    "slug": "tesla",
     "founding_country": "United States",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-tesla-sm-2x-v1.png",
-    "icon_svg": ""
-  },
-  {
     "icon_svg": "",
-    "id": "140",
-    "name": "TQ Wuling",
-    "slug": "tq-wuling",
-    "founding_country": "China",
-    "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-noicon-sm-2x-v1.png"
+    "id": "74",
+    "name": "Tesla",
+    "slug": "tesla"
   },
   {
-    "slug": "toyota",
     "founding_country": "Japan",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-toyota-sm-2x-v1.png",
     "icon_svg": "",
     "id": "35",
-    "name": "Toyota"
+    "name": "Toyota",
+    "slug": "toyota"
   },
   {
+    "founding_country": "China",
+    "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-noicon-sm-2x-v1.png",
+    "icon_svg": "",
+    "id": "140",
+    "name": "TQ Wuling",
+    "slug": "tq-wuling"
+  },
+  {
+    "founding_country": "United Kingdom",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-triumph-sm-2x-v1.png",
     "icon_svg": "",
     "id": "81",
     "name": "Triumph",
-    "slug": "triumph",
-    "founding_country": "United Kingdom"
+    "slug": "triumph"
   },
   {
+    "founding_country": "United Kingdom",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-tvr-sm-2x-v1.png",
     "icon_svg": "",
     "id": "79",
     "name": "TVR",
-    "slug": "tvr",
-    "founding_country": "United Kingdom"
+    "slug": "tvr"
   },
   {
-    "slug": "volkswagen",
     "founding_country": "Germany",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-volkswagen-sm-2x-v1.png",
     "icon_svg": "",
     "id": "36",
-    "name": "Volkswagen"
+    "name": "Volkswagen",
+    "slug": "volkswagen"
   },
   {
-    "slug": "volvo",
     "founding_country": "Sweden",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-volvo-sm-2x-v1.png",
     "icon_svg": "",
     "id": "37",
-    "name": "Volvo"
+    "name": "Volvo",
+    "slug": "volvo"
   },
   {
     "founding_country": "Malaysia",
@@ -984,43 +984,43 @@
     "slug": "weststar"
   },
   {
+    "founding_country": "United Kingdom",
+    "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-wolseley-sm-2x-v1.png",
     "icon_svg": "",
     "id": "108",
     "name": "Wolseley",
-    "slug": "wolseley",
-    "founding_country": "United Kingdom",
-    "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-wolseley-sm-2x-v1.png"
+    "slug": "wolseley"
   },
   {
-    "id": "127",
-    "name": "XPENG",
-    "slug": "xpeng",
     "founding_country": "China",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-xpeng-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "127",
+    "name": "XPENG",
+    "slug": "xpeng"
   },
   {
-    "id": "78",
-    "name": "Yangtse",
-    "slug": "yangtse",
     "founding_country": "China",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-yangtse-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "78",
+    "name": "Yangtse",
+    "slug": "yangtse"
   },
   {
-    "id": "131",
-    "name": "Zeekr",
-    "slug": "zeekr",
     "founding_country": "China",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-zeekr-sm-2x-v1.png",
-    "icon_svg": ""
+    "icon_svg": "",
+    "id": "131",
+    "name": "Zeekr",
+    "slug": "zeekr"
   },
   {
-    "name": "ZXAuto",
-    "slug": "zxauto",
     "founding_country": "China",
     "icon_png": "https://mcdn.mudah.my/static-assets/images/automotive/icons/icon-search-zx-auto-sm-2x-v1.png",
     "icon_svg": "",
-    "id": "76"
+    "id": "76",
+    "name": "ZXAuto",
+    "slug": "zxauto"
   }
 ]
