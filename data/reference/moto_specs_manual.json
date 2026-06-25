@@ -168,6 +168,59 @@
       "fuel_type": "Petrol", "cooling": "Liquid Cooled", "seat_height_mm": 785,
       "_note": "Bare 'XJ6' covers N/S/Diversion — all the same 600cc 78hp engine.",
       "source_url": "https://www.autoevolution.com/moto/yamaha-xj6-2012.html"
+    },
+    {
+      "make": "benda", "model": "chinchilla-500",
+      "engine_cc": 475.6, "power_hp": 52, "torque_nm": 48,
+      "engine_type": "V-twin, liquid-cooled", "fuel_type": "Petrol",
+      "cooling": "Liquid Cooled",
+      "source_url": "https://paultan.org/?s=benda+chinchilla+500+cruiser+malaysia"
+    },
+    {
+      "make": "modenas", "model": "zx-25r-se",
+      "engine_cc": 250, "power_hp": 44, "torque_nm": 22,
+      "kerb_weight_kg": 184, "fuel_tank_l": 15,
+      "engine_type": "Inline-4, DOHC, liquid-cooled", "fuel_type": "Petrol",
+      "cooling": "Liquid Cooled",
+      "_note": "Modenas-badged Kawasaki ZX-25R (Malaysia); specs from the Kawasaki Ninja ZX-25R SE.",
+      "source_url": "https://paultan.org/?s=modenas-kawasaki-zx-25r-se-malaysia"
+    },
+    {
+      "make": "harley-davidson", "model": "forty-eight",
+      "engine_cc": 1202, "torque_nm": 96, "kerb_weight_kg": 253,
+      "fuel_tank_l": 8, "engine_type": "V-twin, air-cooled, Evolution 1200",
+      "fuel_type": "Petrol", "cooling": "Air Cooled", "seat_height_mm": 710,
+      "_note": "HD does not publish hp officially -> power_hp left NULL.",
+      "source_url": "https://www.motorcyclespecs.com/harley-davidson-xl1200x-forty-eight/"
+    },
+    {
+      "make": "sym", "model": "vfe-185i",
+      "engine_cc": 183, "power_hp": 19.7, "torque_nm": 17.46,
+      "engine_type": "Single Cylinder, liquid-cooled", "fuel_type": "Petrol",
+      "cooling": "Liquid Cooled",
+      "source_url": "https://paultan.org/?s=2025+sym+vfe185i+malaysian+launch"
+    },
+    {
+      "make": "kawasaki", "model": "z500",
+      "engine_cc": 451, "power_hp": 51, "torque_nm": 43,
+      "kerb_weight_kg": 166, "engine_type": "Parallel Twin, DOHC, liquid-cooled",
+      "fuel_type": "Petrol", "cooling": "Liquid Cooled",
+      "source_url": "https://www.autoevolution.com/moto/kawasaki-z500-abs-2024.html"
+    },
+    {
+      "make": "bmw", "model": "f-800-gs",
+      "engine_cc": 798, "power_hp": 85, "torque_nm": 84,
+      "kerb_weight_kg": 207, "fuel_tank_l": 16,
+      "engine_type": "Parallel Twin, liquid-cooled, DOHC", "transmission": "6-speed Manual",
+      "fuel_type": "Petrol", "cooling": "Liquid Cooled",
+      "source_url": "https://www.motorcyclespecs.com/bmw-f800gs/"
+    },
+    {
+      "make": "aveta", "model": "serra-125",
+      "engine_cc": 124, "power_hp": 8.7, "torque_nm": 9.5,
+      "engine_type": "Single Cylinder, air-cooled, SOHC, EFI",
+      "transmission": "CVT", "fuel_type": "Petrol", "cooling": "Air Cooled",
+      "source_url": "https://paultan.org/2026/04/15/aveta-serra-125-dilancarkan-di-malaysia-rm5088/"
     }
   ]
 }
