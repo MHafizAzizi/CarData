@@ -6,6 +6,36 @@
     "mbp": "morbidelli"
   },
   "aliases": {
+    "Bmw|310 Gs": {
+      "spec_make": "bmw",
+      "_note": "BMW 310 GS = G 310 GS (313cc); catalog g-310-gs.",
+      "decision": "g-310-gs"
+    },
+    "Sym|Sport Bonus 110 Sr": {
+      "spec_make": "sym",
+      "_note": "Same 108cc engine as the SYM Bonus 110 SR (manual row).",
+      "decision": "bonus-110-sr"
+    },
+    "Kawasaki|Ninja 1000": {
+      "spec_make": "kawasaki",
+      "_note": "Ninja 1000 / 1000SX = 1043cc; catalog ninja-1000sx.",
+      "decision": "ninja-1000sx"
+    },
+    "Triumph|Trident": {
+      "spec_make": "triumph",
+      "_note": "Bare 'Trident' = the established 660cc roadster (Trident 800 only launched 2025, negligible used stock).",
+      "decision": "trident-660"
+    },
+    "Brixton|Cafe Racer 150I": {
+      "spec_make": "brixton",
+      "_note": "Brixton BX150 Cafe Racer — same 149cc engine as BX150; catalog bx-150.",
+      "decision": "bx-150"
+    },
+    "Harley-Davidson|Sportster 48": {
+      "spec_make": "harley-davidson",
+      "_note": "Sportster Forty-Eight = the manual 'forty-eight' row (1202cc).",
+      "decision": "forty-eight"
+    },
     "Vespa|Gts 300": {
       "spec_make": "vespa",
       "_note": "Vespa GTS 300 -> catalog gts-classic-300 (278cc HPE, same engine across GTS 300 variants).",
