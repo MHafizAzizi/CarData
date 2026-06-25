@@ -70,6 +70,57 @@
       "cooling": "Air Cooled",
       "_note": "Bare 'Scrambler' listing: all 803cc Scrambler variants (Icon/Nightshift/Full Throttle/Cafe Racer) share this one engine, so cc/power/torque are unambiguous.",
       "source_url": "https://www.bikez.com/motorcycles/ducati_scrambler_icon_2019.php"
+    },
+    {
+      "make": "aveta", "model": "dy-115",
+      "engine_cc": 113.3, "power_hp": 8.71, "torque_nm": 9.0,
+      "kerb_weight_kg": 91, "fuel_tank_l": 4.2,
+      "engine_type": "Single Cylinder, air-cooled, 4-stroke",
+      "transmission": "4-speed", "fuel_type": "Petrol", "cooling": "Air Cooled",
+      "source_url": "https://paultan.org/2025/03/20/aveta-malaysia-launches-dy115-kapchai-rm3988/"
+    },
+    {
+      "make": "benda", "model": "dark-flag-500",
+      "engine_cc": 475.6, "power_hp": 52, "torque_nm": 48,
+      "engine_type": "V-twin, liquid-cooled", "fuel_type": "Petrol",
+      "cooling": "Liquid Cooled",
+      "_note": "Shares the 475.6cc V-twin platform of the Benda Chinchilla 500 (naked vs cruiser); engine specs verified from the Chinchilla launch.",
+      "source_url": "https://paultan.org/?s=benda+chinchilla+500"
+    },
+    {
+      "make": "benelli", "model": "tnt-600s",
+      "engine_cc": 600, "power_hp": 78.9, "torque_nm": 54.6,
+      "kerb_weight_kg": 231, "engine_type": "Inline-4, DOHC, liquid-cooled",
+      "fuel_type": "Petrol", "cooling": "Liquid Cooled",
+      "source_url": "https://www.ultimatespecs.com/motorcycles-specs/benelli/benelli-tnt-600-2020"
+    },
+    {
+      "make": "benelli", "model": "rfs150i",
+      "engine_cc": 149, "power_hp": 15.5, "torque_nm": 13,
+      "engine_type": "Single Cylinder, liquid-cooled", "transmission": "6-speed Manual",
+      "fuel_type": "Petrol", "cooling": "Liquid Cooled",
+      "source_url": "https://paultan.org/2017/04/02/2017-benelli-rfs150i-malaysia-launch-from-rm6988/"
+    },
+    {
+      "make": "kawasaki", "model": "klx250",
+      "engine_cc": 249, "power_hp": 24, "torque_nm": 20,
+      "kerb_weight_kg": 138, "engine_type": "Single Cylinder, DOHC, liquid-cooled",
+      "fuel_type": "Petrol", "cooling": "Liquid Cooled",
+      "source_url": "https://en.wikipedia.org/wiki/Kawasaki_KLX250S"
+    },
+    {
+      "make": "kawasaki", "model": "1400-gtr",
+      "engine_cc": 1352, "power_hp": 152.9, "torque_nm": 136,
+      "engine_type": "Inline-4, DOHC, liquid-cooled", "fuel_type": "Petrol",
+      "cooling": "Liquid Cooled",
+      "source_url": "https://www.bikez.com/motorcycles/kawasaki_1400_gtr_2012.php"
+    },
+    {
+      "make": "cfmoto", "model": "800mt-explorer",
+      "engine_cc": 799, "power_hp": 91, "torque_nm": 75,
+      "kerb_weight_kg": 229, "engine_type": "Parallel Twin, DOHC, liquid-cooled",
+      "fuel_type": "Petrol", "cooling": "Liquid Cooled",
+      "source_url": "https://www.autoevolution.com/moto/cfmoto-800mt-explore-2023.html"
     }
   ]
 }
