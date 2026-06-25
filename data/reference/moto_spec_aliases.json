@@ -6,6 +6,11 @@
     "mbp": "morbidelli"
   },
   "aliases": {
+    "Gpx|Gr200-Rr": {
+      "spec_make": "gpx",
+      "_note": "GPX Demon GR200R/RR — catalog slug demon-gr200r (198cc), same platform.",
+      "decision": "demon-gr200r"
+    },
     "Yamaha|R25": {
       "count": 290,
       "spec_make": "yamaha",

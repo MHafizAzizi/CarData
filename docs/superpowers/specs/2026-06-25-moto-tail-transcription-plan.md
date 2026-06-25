@@ -136,6 +136,10 @@ per-model source — it returns authoritative spec pages and clean numbers.
   Benelli RFS150i, Brixton Classic 150I (alias→bx-150), Kawasaki KLX250,
   Kawasaki 1400GTR, CFMoto 800MT Explorer. +319 rows.
 
+- **Batch 5** (→83.2%): Harley Iron 883, Aprilia Shiver 750, Aveta VS115,
+  WMoto Hawk 200i, SYM SM Sport 110, Yamaha XJ6; GPX GR200-RR (alias→
+  demon-gr200r). Skipped Ducati Diavel (bare name spans 1198/1262/1158cc gens).
+
 **Recurring gotcha:** the alias file already holds auto-suggested entries for
 many listings with `decision: "NULL"`. A NEW key prepended to `aliases` is a
 JSON duplicate — the LATER (NULL) one wins on parse, so the alias silently

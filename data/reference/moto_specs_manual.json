@@ -121,6 +121,53 @@
       "kerb_weight_kg": 229, "engine_type": "Parallel Twin, DOHC, liquid-cooled",
       "fuel_type": "Petrol", "cooling": "Liquid Cooled",
       "source_url": "https://www.autoevolution.com/moto/cfmoto-800mt-explore-2023.html"
+    },
+    {
+      "make": "harley-davidson", "model": "iron-883",
+      "engine_cc": 883, "torque_nm": 72.9, "kerb_weight_kg": 256,
+      "engine_type": "V-twin, air-cooled, Evolution", "fuel_type": "Petrol",
+      "cooling": "Air Cooled",
+      "_note": "HD does not publish hp officially -> power_hp left NULL.",
+      "source_url": "https://www.91wheels.com/bikes/harleydavidson/iron-883/specifications"
+    },
+    {
+      "make": "aveta", "model": "vs-115",
+      "engine_cc": 113, "power_hp": 8.7, "torque_nm": 9.0,
+      "fuel_tank_l": 4, "engine_type": "Single Cylinder, air-cooled, 4-stroke",
+      "transmission": "4-speed", "fuel_type": "Petrol", "cooling": "Air Cooled",
+      "source_url": "https://paultan.org/2026/04/13/aveta-vs115-dilancarkan-di-malaysia-kapcai-113-cc-empat-kelajuan-brek-dram-depan-dan-belakang/"
+    },
+    {
+      "make": "aprilia", "model": "shiver-750",
+      "engine_cc": 749.9, "power_hp": 95, "torque_nm": 81,
+      "kerb_weight_kg": 222, "engine_type": "V-twin, liquid-cooled, DOHC",
+      "fuel_type": "Petrol", "cooling": "Liquid Cooled",
+      "source_url": "https://en.wikipedia.org/wiki/Aprilia_SL_750_Shiver"
+    },
+    {
+      "make": "wmoto", "model": "hawk-200i",
+      "engine_cc": 200, "power_hp": 16.1, "torque_nm": 15.7,
+      "kerb_weight_kg": 132, "fuel_tank_l": 8,
+      "engine_type": "Single Cylinder, SOHC, liquid-cooled, EFI",
+      "transmission": "5-speed", "fuel_type": "Petrol", "cooling": "Liquid Cooled",
+      "seat_height_mm": 830, "wheelbase_mm": 1360, "compression_ratio": "9.5:1",
+      "source_url": "https://paultan.org/2026/02/04/wmoto-hawk-200i-dilancar-untuk-pasaran-malaysia-enjin-200-cc-efi-lima-kelajuan-meter-digital-rm7888/"
+    },
+    {
+      "make": "sym", "model": "sm-sport-110",
+      "engine_cc": 109, "power_hp": 6.4, "torque_nm": 7,
+      "engine_type": "Single Cylinder, SOHC, 4-stroke", "transmission": "4-speed",
+      "fuel_type": "Petrol",
+      "source_url": "https://paultan.org/2024/07/26/2024-sm-sport-110r-in-malaysia-rm4199-retail/"
+    },
+    {
+      "make": "yamaha", "model": "xj6",
+      "engine_cc": 600, "power_hp": 78, "torque_nm": 60,
+      "kerb_weight_kg": 205, "fuel_tank_l": 17.3,
+      "engine_type": "Inline-4, liquid-cooled, DOHC", "transmission": "6-speed Manual",
+      "fuel_type": "Petrol", "cooling": "Liquid Cooled", "seat_height_mm": 785,
+      "_note": "Bare 'XJ6' covers N/S/Diversion — all the same 600cc 78hp engine.",
+      "source_url": "https://www.autoevolution.com/moto/yamaha-xj6-2012.html"
     }
   ]
 }
