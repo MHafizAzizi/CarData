@@ -498,12 +498,22 @@ def main() -> None:
         makes_path = _OUT_DIR / f"{category}_makes.json"
         models_path = _OUT_DIR / f"{category}_models.json"
 
+        # Deterministic output: Mudah returns makes/models in a varying order and
+        # the parsed dicts in a varying field order, which otherwise churns the
+        # whole file in git on every run. Sort entries by slug and keys
+        # alphabetically so a re-run with no real change is a no-op diff.
+        makes = sorted(data["makes"], key=lambda m: m.get("slug", ""))
+        models = {
+            slug: sorted(vals, key=lambda v: v.get("slug", ""))
+            for slug, vals in data["models"].items()
+        }
+
         makes_path.write_text(
-            json.dumps(data["makes"], ensure_ascii=False, indent=2),
+            json.dumps(makes, ensure_ascii=False, indent=2, sort_keys=True),
             encoding="utf-8",
         )
         models_path.write_text(
-            json.dumps(data["models"], ensure_ascii=False, indent=2),
+            json.dumps(models, ensure_ascii=False, indent=2, sort_keys=True),
             encoding="utf-8",
         )
         logging.info(f"[{category}] wrote {makes_path.relative_to(_ROOT)}")
