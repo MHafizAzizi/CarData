@@ -61,6 +61,15 @@
       "transmission": "6-speed Manual", "fuel_type": "Petrol",
       "cooling": "Liquid Cooled",
       "source_url": "https://en.wikipedia.org/wiki/Honda_CBR500R"
+    },
+    {
+      "make": "ducati", "model": "scrambler",
+      "engine_cc": 803, "power_hp": 73, "torque_nm": 67,
+      "engine_type": "L-Twin (Desmodue), 2-valve, air-cooled",
+      "transmission": "6-speed Manual", "fuel_type": "Petrol",
+      "cooling": "Air Cooled",
+      "_note": "Bare 'Scrambler' listing: all 803cc Scrambler variants (Icon/Nightshift/Full Throttle/Cafe Racer) share this one engine, so cc/power/torque are unambiguous.",
+      "source_url": "https://www.bikez.com/motorcycles/ducati_scrambler_icon_2019.php"
     }
   ]
 }
