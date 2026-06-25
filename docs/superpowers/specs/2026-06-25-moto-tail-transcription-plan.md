@@ -146,6 +146,13 @@ per-model source — it returns authoritative spec pages and clean numbers.
   bit twice (a manual URL equal to a catalog row's, and two manual rows sharing
   a `?s=` URL) — keep every manual `source_url` unique.
 
+- **Batch 7** (→84.5%): Honda CB650F, Modenas GT128, Yamaha Virago 535, Kymco
+  DTX250 (manual); Kawasaki Ninja 1000→ninja-1000sx, Triumph Trident→trident-660,
+  Brixton Cafe Racer 150I→bx-150, Harley Sportster 48→forty-eight (aliases).
+  Skipped Ducati Multistrada/Streetfighter, MV Agusta Brutale, Triumph
+  Bonneville/Scrambler/Speed Twin, Vespa Super 150 (generation/displacement
+  ambiguous). +152 rows.
+
 **Recurring gotcha:** the alias file already holds auto-suggested entries for
 many listings with `decision: "NULL"`. A NEW key prepended to `aliases` is a
 JSON duplicate — the LATER (NULL) one wins on parse, so the alias silently
