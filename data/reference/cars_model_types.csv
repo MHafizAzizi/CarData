@@ -1,5 +1,6 @@
 car_make,car_model,vehicle_type,classification_method,evidence,source_url,verification_status
 Alfa Romeo,145,Hatchback,llm-knowledge,"3/5-door hatchback, not a sedan.",,LLM-reviewed
+Alfa Romeo,146,Hatchback,make/model heuristic,Alfa Romeo 146 5-door hatchback.,,LLM-reviewed
 Alfa Romeo,147,Hatchback,llm-knowledge,3/5-door hatchback.,,LLM-reviewed
 Alfa Romeo,155,Sedan,make/model heuristic,LLM pass concurs; DB majority 4 Wheels:1.,,LLM-reviewed
 Alfa Romeo,156,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:6.,,LLM-reviewed
@@ -10,6 +11,8 @@ Alfa Romeo,Giulia,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan
 Alfa Romeo,Gt,Coupe,llm-knowledge,Alfa GT (937) 2-door coupe.,,LLM-reviewed
 Alfa Romeo,Stelvio,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:3.,,LLM-reviewed
 Alpine,A110,Sports car,llm-knowledge,Mid-engine two-seat sports car.,,LLM-reviewed
+Ariel,Atom,Sports car,make/model heuristic,Ariel Atom exposed track-day sports car.,,LLM-reviewed
+Asia Motors,Asia Rocsta,SUV / Crossover,make/model heuristic,Asia Rocsta compact 4x4 SUV.,,LLM-reviewed
 Aston Martin,Db11,Coupe,llm-knowledge,2-door grand tourer.,,LLM-reviewed
 Aston Martin,Db12,Coupe,llm-knowledge,2-door grand tourer.,,LLM-reviewed
 Aston Martin,Db9,Coupe,llm-knowledge,2-door grand tourer.,,LLM-reviewed
@@ -270,6 +273,7 @@ Gac Motor,Emkoo,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majori
 Gac Motor,Gs3 Emzoom,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Others:3.,,LLM-reviewed
 Gmc,Hummer,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:1.,,LLM-reviewed
 Golden Dragon,Rk Commuter,Van / Commercial,make default heuristic,LLM pass concurs; DB majority Others:1.,,LLM-reviewed
+Golden Dragon,X5,Van / Commercial,web-verified,"Golden Dragon X5 is a 6m diesel window van / 17–18-seater light commercial van (2982cc, 4000kg GVW).",https://www.bcmgroup.com.my/golden-dragon-x5/,Verified
 Great Wall,Haval,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority Suvs:17.,,LLM-reviewed
 Great Wall,M4,SUV / Crossover,llm-knowledge,GWM M4 compact crossover; DB majority SUV.,,LLM-reviewed
 Great Wall,Ora,Hatchback,llm-knowledge,Ora Good Cat EV hatchback.,,LLM-reviewed
@@ -490,6 +494,7 @@ Maxus,G10,MPV / Minivan,llm-knowledge,G10 people-mover MPV; DB unanimous MPV.,,L
 Maxus,Mifa,MPV / Minivan,make/model heuristic,LLM pass concurs; DB majority Mpvs:3.,,LLM-reviewed
 Maxus,T60,Pickup / Truck,make/model heuristic,LLM pass concurs; DB majority Pick-Up:1.,,LLM-reviewed
 Maxus,V80,Van / Commercial,make/model heuristic,LLM pass concurs; DB majority Others:19.,,LLM-reviewed
+Maxus,V90,Van / Commercial,make/model heuristic,Maxus/LDV V90 large panel van.,,LLM-reviewed
 Mazda,121,Sedan,llm-knowledge,MY 121 saloon.,,LLM-reviewed
 Mazda,2,Sedan / Hatchback,llm-knowledge,Sold in MY as both sedan and hatchback; DB split.,,LLM-reviewed
 Mazda,3,Sedan / Hatchback,llm-knowledge,Sold in MY as both sedan and hatchback; DB split.,,LLM-reviewed
@@ -780,6 +785,7 @@ Nissan,Murano,SUV / Crossover,make/model heuristic,LLM pass concurs; DB majority
 Nissan,Navara,Pickup / Truck,make/model heuristic,LLM pass concurs; DB majority Pick-Up:313.,,LLM-reviewed
 Nissan,Note,Hatchback,llm-knowledge,Compact hatch.,,LLM-reviewed
 Nissan,Nv200,Van / Commercial,make/model heuristic,LLM pass concurs; DB majority Others:64.,,LLM-reviewed
+Nissan,Patrol,SUV / Crossover,make/model heuristic,Nissan Patrol full-size SUV/4x4.,,LLM-reviewed
 Nissan,Pulsar,Sedan / Hatchback,make/model heuristic,LLM pass concurs; DB majority Sedan:1.,,LLM-reviewed
 Nissan,Roox,Hatchback,llm-knowledge,Kei tall wagon.,,LLM-reviewed
 Nissan,Sentra,Sedan,make/model heuristic,LLM pass concurs; DB majority Sedan:136.,,LLM-reviewed

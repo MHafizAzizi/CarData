@@ -10,9 +10,11 @@ REM     run_pipeline.bat both
 REM
 REM Recheck (recheck.py) is a separate daily cadence and is NOT run here.
 REM Schema must be v9 first: python migrations\run_migrations.py --category both
-REM Both categories clean with --enrich-types: unmapped (make, model) pairs
-REM print at the end and need a row added to the category's mapping CSV
-REM (data\reference\motorcycles_model_types.csv / cars_model_types.csv).
+REM Both categories clean with --enrich-types --write-unmapped: unmapped
+REM (make, model) pairs print at the end AND are auto-appended to the
+REM category's mapping CSV as 'Auto-stub' rows (type 'Unknown / Needs Web
+REM Check'). Set the real type later: grep ',Auto-stub$' in
+REM data\reference\motorcycles_model_types.csv / cars_model_types.csv.
 REM Cars only fall back to the CSV when the API car_type is junk
 REM ('4 Wheels'/'Others'), so unmapped car pairs are rare.
 REM ===========================================================================
@@ -72,9 +74,9 @@ echo ==================================================
 echo   %C% : STEP 3/3 clean
 echo ==================================================
 if /i "%C%"=="cars" (
-    python "src\3_clean.py" --category %C% --enrich-variants --enrich-types || exit /b 1
+    python "src\3_clean.py" --category %C% --enrich-variants --enrich-types --write-unmapped || exit /b 1
 ) else (
-    python "src\3_clean.py" --category %C% --enrich-types || exit /b 1
+    python "src\3_clean.py" --category %C% --enrich-types --write-unmapped || exit /b 1
 )
 exit /b 0
 

@@ -357,17 +357,22 @@ def apply_variant_hints(
 # ---------------------------------------------------------------------------
 
 
-def apply_type_hints(conn, *, dry_run: bool = False) -> Dict:
+def apply_type_hints(conn, *, dry_run: bool = False,
+                     write_unmapped: bool = False) -> Dict:
     """Populate motorcycle_type / type_group for rows where they are NULL,
     using the curated mapping in data/reference/motorcycles_model_types.csv.
 
     Unmapped (make, model) pairs are reported with listing counts so new
-    models from future scrapes surface as mapping-CSV to-dos.
+    models from future scrapes surface as mapping-CSV to-dos. With
+    write_unmapped=True they are also appended to the CSV as 'Auto-stub'
+    rows (type 'Unknown / Needs Web Check') for later real classification.
 
-    Returns stats dict: {candidates, filled, unmapped_pairs}.
+    Returns stats dict: {candidates, filled, unmapped_pairs, stubbed}.
     """
     sys.path.insert(0, str(_ROOT / "src"))
-    from reference import load_model_types, model_types_path  # noqa: PLC0415
+    from reference import (  # noqa: PLC0415
+        load_model_types, model_types_path, stub_unmapped_types,
+    )
 
     mapping = load_model_types()
     if not mapping:
@@ -406,6 +411,12 @@ def apply_type_hints(conn, *, dry_run: bool = False) -> Dict:
         for (make, model), n in sorted(unmapped.items(), key=lambda x: -x[1]):
             print(f"    {make} | {model} ({n} listing(s))")
 
+    stubbed = 0
+    if write_unmapped and unmapped and not dry_run:
+        stubbed = stub_unmapped_types("motorcycles", unmapped.keys())
+        print(f"  Wrote {stubbed} new 'Auto-stub' row(s) to "
+              f"{model_types_path().name} — set the real type, then re-run.")
+
     if not dry_run and updates:
         with conn:
             conn.executemany(
@@ -418,6 +429,7 @@ def apply_type_hints(conn, *, dry_run: bool = False) -> Dict:
         "candidates": candidates,
         "filled": filled,
         "unmapped_pairs": len(unmapped),
+        "stubbed": stubbed,
     }
 
 
@@ -426,7 +438,8 @@ def apply_type_hints(conn, *, dry_run: bool = False) -> Dict:
 # ---------------------------------------------------------------------------
 
 
-def apply_vehicle_type_hints(conn, *, dry_run: bool = False) -> Dict:
+def apply_vehicle_type_hints(conn, *, dry_run: bool = False,
+                             write_unmapped: bool = False) -> Dict:
     """Populate vehicle_type / type_group for car rows where they are NULL.
 
     API-first strategy: a clean API car_type ('Sedan', 'Suvs', ...) is
@@ -434,9 +447,12 @@ def apply_vehicle_type_hints(conn, *, dry_run: bool = False) -> Dict:
     ('4 Wheels', 'Others') fall back to the curated mapping in
     data/reference/cars_model_types.csv. Junk rows whose (make, model) is
     not in the mapping stay NULL and are reported with listing counts so
-    new models from future scrapes surface as mapping-CSV to-dos.
+    new models from future scrapes surface as mapping-CSV to-dos. With
+    write_unmapped=True they are also appended to the CSV as 'Auto-stub'
+    rows (type 'Unknown / Needs Web Check') for later real classification.
 
-    Returns stats dict: {candidates, filled_api, filled_mapping, unmapped_pairs}.
+    Returns stats dict:
+    {candidates, filled_api, filled_mapping, unmapped_pairs, stubbed}.
     """
     sys.path.insert(0, str(_ROOT / "src"))
     from reference import (  # noqa: PLC0415
@@ -444,6 +460,7 @@ def apply_vehicle_type_hints(conn, *, dry_run: bool = False) -> Dict:
         CAR_TYPE_TO_GROUP,
         car_types_path,
         load_car_types,
+        stub_unmapped_types,
     )
 
     mapping = load_car_types()
@@ -491,6 +508,12 @@ def apply_vehicle_type_hints(conn, *, dry_run: bool = False) -> Dict:
         for (make, model), n in sorted(unmapped.items(), key=lambda x: -x[1]):
             print(f"    {make} | {model} ({n} listing(s))")
 
+    stubbed = 0
+    if write_unmapped and unmapped and not dry_run:
+        stubbed = stub_unmapped_types("cars", unmapped.keys())
+        print(f"  Wrote {stubbed} new 'Auto-stub' row(s) to "
+              f"{car_types_path().name} — set the real type, then re-run.")
+
     if not dry_run and updates:
         with conn:
             conn.executemany(
@@ -504,6 +527,7 @@ def apply_vehicle_type_hints(conn, *, dry_run: bool = False) -> Dict:
         "filled_api": filled_api,
         "filled_mapping": filled_mapping,
         "unmapped_pairs": len(unmapped),
+        "stubbed": stubbed,
     }
 
 
@@ -607,6 +631,14 @@ def _parse_args() -> argparse.Namespace:
              "cars_model_types.csv (cars).",
     )
     parser.add_argument(
+        "--write-unmapped",
+        action="store_true",
+        help="With --enrich-types: append unmapped (make, model) pairs to the "
+             "model-type CSV as 'Auto-stub' rows (type 'Unknown / Needs Web "
+             "Check') so the pipeline self-heals. Find them later with "
+             "grep ',Auto-stub$' and set the real type.",
+    )
+    parser.add_argument(
         "--enrich-variants",
         action="store_true",
         help="Populate the variant column for NULL rows using cars_variants.json "
@@ -659,11 +691,13 @@ def main() -> None:
             from db import connect  # noqa: PLC0415
             if args.category == "motorcycles":
                 conn = connect("motorcycles")
-                apply_type_hints(conn, dry_run=args.dry_run)
+                apply_type_hints(conn, dry_run=args.dry_run,
+                                 write_unmapped=args.write_unmapped)
                 conn.close()
             elif args.category == "cars":
                 conn = connect("cars")
-                apply_vehicle_type_hints(conn, dry_run=args.dry_run)
+                apply_vehicle_type_hints(conn, dry_run=args.dry_run,
+                                         write_unmapped=args.write_unmapped)
                 conn.close()
             else:
                 print("[enrich-types] Requires --category cars or motorcycles; skipping.")
