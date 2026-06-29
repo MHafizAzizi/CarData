@@ -31,6 +31,8 @@ from bs4 import BeautifulSoup
 _ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_ROOT / "src"))
 
+from cli_utf8 import force_utf8_stdio  # noqa: E402
+
 SPECS_DB_PATH = _ROOT / "data" / "reference" / "motobike_specs.db"
 SOURCE = "motomalaysia"
 _KW_TO_HP = 1.34102
@@ -207,10 +209,7 @@ def crawl(client, conn, curated=CURATED, *, refresh=False):
 
 
 def main() -> None:
-    try:
-        sys.stdout.reconfigure(encoding="utf-8")
-    except (AttributeError, OSError):
-        pass
+    force_utf8_stdio()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
     ap = argparse.ArgumentParser(description="Crawl curated motomalaysia spec pages.")

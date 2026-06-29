@@ -26,6 +26,7 @@ _ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_ROOT / "src"))
 
 from scrape_motomalaysia_specs import ensure_source_column  # noqa: E402
+from cli_utf8 import force_utf8_stdio  # noqa: E402
 
 SPECS_DB_PATH = _ROOT / "data" / "reference" / "motobike_specs.db"
 MANUAL_PATH = _ROOT / "data" / "reference" / "moto_specs_manual.json"
@@ -62,10 +63,7 @@ def upsert(conn, row):
 
 
 def main():
-    try:
-        sys.stdout.reconfigure(encoding="utf-8")
-    except (AttributeError, OSError):
-        pass
+    force_utf8_stdio()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
     ap = argparse.ArgumentParser(description="Load hand-verified moto specs.")

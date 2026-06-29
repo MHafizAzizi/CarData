@@ -19,11 +19,14 @@ sys.path.insert(0, str(_ROOT / "src"))
 
 from reference import (  # noqa: E402
     CAR_TYPE_TO_GROUP,
+    STUB_STATUS,
+    STUB_TYPE,
     TYPE_TO_GROUP,
     car_types_path,
     load_car_types,
     load_model_types,
     model_types_path,
+    stub_unmapped_types,
 )
 
 EXPECTED_COLUMNS = [
@@ -36,7 +39,10 @@ EXPECTED_CAR_COLUMNS = [
     "classification_method", "evidence", "source_url", "verification_status",
 ]
 
-ALLOWED_STATUSES = {"Verified", "Verified sample", "LLM-reviewed", "Needs source URL"}
+ALLOWED_STATUSES = {
+    "Verified", "Verified sample", "LLM-reviewed", "Needs source URL",
+    "Auto-stub",  # written by reference.stub_unmapped_types for unmapped pairs
+}
 
 
 @pytest.fixture(scope="module")
@@ -149,3 +155,75 @@ class TestCarTypesCsv:
         ValueError on any type outside CAR_TYPE_TO_GROUP)."""
         mapping = load_car_types()
         assert len(mapping) > 1000  # sanity: full mapping, not a stub
+
+
+# Header (make col, model col, type col) per category — mirrors the CSVs.
+_HEADERS = {
+    "motorcycles": "motorcycle_make,motorcycle_model,motorcycle_type,"
+                   "classification_method,evidence,source_url,verification_status\n",
+    "cars": "car_make,car_model,vehicle_type,"
+            "classification_method,evidence,source_url,verification_status\n",
+}
+
+
+@pytest.fixture
+def temp_reference(tmp_path, monkeypatch):
+    """Redirect the model-type CSV paths to an isolated temp dir so
+    stub_unmapped_types() never touches the real reference files."""
+    import reference
+    monkeypatch.setattr(reference, "REFERENCE_DIR", tmp_path)
+    return tmp_path
+
+
+@pytest.mark.parametrize("category,make_col,model_col,type_col", [
+    ("motorcycles", "motorcycle_make", "motorcycle_model", "motorcycle_type"),
+    ("cars", "car_make", "car_model", "vehicle_type"),
+])
+class TestStubUnmappedTypes:
+    def _seed(self, tmp_path, category):
+        path = tmp_path / f"{category}_model_types.csv"
+        # one pre-existing row ('Zeta Zz') to prove dedupe + sort.
+        head = _HEADERS[category]
+        path.write_text(head + f"Zeta,Zz,{STUB_TYPE},manual,,,Verified\n",
+                        encoding="utf-8")
+        return path
+
+    def test_appends_sorts_and_dedupes(
+        self, temp_reference, category, make_col, model_col, type_col
+    ):
+        path = self._seed(temp_reference, category)
+        added = stub_unmapped_types(category, [
+            ("Acme", "One"),       # new -> stub
+            ("Zeta", "Zz"),        # already present (case-exact) -> skip
+            ("zeta", "zz"),        # already present (casefold) -> skip
+            ("", "Blank"),         # empty make -> skip
+            ("Blank", ""),         # empty model -> skip
+        ])
+        assert added == 1
+
+        with open(path, encoding="utf-8-sig", newline="") as f:
+            rows = list(csv.DictReader(f))
+        # sorted by (make, model): Acme before Zeta
+        assert [r[make_col] for r in rows] == ["Acme", "Zeta"]
+        stub = rows[0]
+        assert stub[type_col] == STUB_TYPE
+        assert stub["verification_status"] == STUB_STATUS
+
+    def test_idempotent(
+        self, temp_reference, category, make_col, model_col, type_col
+    ):
+        self._seed(temp_reference, category)
+        assert stub_unmapped_types(category, [("Acme", "One")]) == 1
+        # second call with the same pair adds nothing
+        assert stub_unmapped_types(category, [("Acme", "One")]) == 0
+
+    def test_stub_type_is_loadable(
+        self, temp_reference, category, make_col, model_col, type_col
+    ):
+        """The stub type must be in the type vocab so the loader accepts it
+        instead of raising ValueError."""
+        self._seed(temp_reference, category)
+        stub_unmapped_types(category, [("Acme", "One")])
+        loader = load_model_types if category == "motorcycles" else load_car_types
+        mapping = loader()  # must not raise
+        assert mapping[("acme", "one")][1] == "Unknown"

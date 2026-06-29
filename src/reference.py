@@ -107,35 +107,46 @@ TYPE_TO_GROUP: Dict[str, str] = {
 }
 
 
-def load_model_types() -> Dict[Tuple[str, str], Tuple[str, str]]:
-    """Load the motorcycle type mapping keyed by casefolded (make, model).
+def _load_types(
+    path: Path,
+    make_col: str,
+    model_col: str,
+    type_col: str,
+    group_map: Dict[str, str],
+) -> Dict[Tuple[str, str], Tuple[str, str]]:
+    """Load a model-type CSV keyed by casefolded (make, model).
 
-    Returns {} when the file is missing. Values are
-    (motorcycle_type, type_group), e.g. ('Sport / Superbike', 'Sport') —
-    the group is derived from TYPE_TO_GROUP, not read from the file.
-
-    Raises ValueError on a motorcycle_type not in TYPE_TO_GROUP so a typo
-    in a hand-edited row fails loudly instead of writing a bad group.
+    Returns {} when the file is missing. Values are (granular_type, group),
+    the group derived from `group_map` (never read from the file). Raises
+    ValueError on a type not in `group_map` so a typo in a hand-edited row
+    fails loudly instead of writing a bad group.
     """
-    path = model_types_path()
     if not path.exists():
         return {}
     mapping: Dict[Tuple[str, str], Tuple[str, str]] = {}
     with open(path, encoding="utf-8-sig", newline="") as f:
         for row in csv.DictReader(f):
             key = (
-                (row.get("motorcycle_make") or "").casefold().strip(),
-                (row.get("motorcycle_model") or "").casefold().strip(),
+                (row.get(make_col) or "").casefold().strip(),
+                (row.get(model_col) or "").casefold().strip(),
             )
-            mtype = (row.get("motorcycle_type") or "").strip()
-            if mtype not in TYPE_TO_GROUP:
+            gtype = (row.get(type_col) or "").strip()
+            if gtype not in group_map:
                 raise ValueError(
-                    f"{path.name}: unknown motorcycle_type {mtype!r} for "
-                    f"{row.get('motorcycle_make')}/{row.get('motorcycle_model')} "
-                    f"— must be one of {sorted(TYPE_TO_GROUP)}"
+                    f"{path.name}: unknown {type_col} {gtype!r} for "
+                    f"{row.get(make_col)}/{row.get(model_col)} "
+                    f"— must be one of {sorted(group_map)}"
                 )
-            mapping[key] = (mtype, TYPE_TO_GROUP[mtype])
+            mapping[key] = (gtype, group_map[gtype])
     return mapping
+
+
+def load_model_types() -> Dict[Tuple[str, str], Tuple[str, str]]:
+    """Motorcycle (make, model) -> (motorcycle_type, type_group). See _load_types."""
+    return _load_types(
+        model_types_path(), "motorcycle_make", "motorcycle_model",
+        "motorcycle_type", TYPE_TO_GROUP,
+    )
 
 
 def car_types_path() -> Path:
@@ -174,31 +185,89 @@ API_CAR_TYPE_TO_VEHICLE: Dict[str, str] = {
 
 
 def load_car_types() -> Dict[Tuple[str, str], Tuple[str, str]]:
-    """Load the car vehicle-type mapping keyed by casefolded (make, model).
+    """Car (make, model) -> (vehicle_type, type_group). See _load_types."""
+    return _load_types(
+        car_types_path(), "car_make", "car_model",
+        "vehicle_type", CAR_TYPE_TO_GROUP,
+    )
 
-    Returns {} when the file is missing. Values are
-    (vehicle_type, type_group), e.g. ('Sports car', 'Coupe / Sports') —
-    the group is derived from CAR_TYPE_TO_GROUP, not read from the file.
 
-    Raises ValueError on a vehicle_type not in CAR_TYPE_TO_GROUP so a typo
-    in a hand-edited row fails loudly instead of writing a bad group.
+# ---------------------------------------------------------------------------
+# Auto-stubbing unmapped (make, model) pairs into the model-type CSVs
+# ---------------------------------------------------------------------------
+
+# A stub row carries the only type that is valid yet injects no guess: the
+# loader accepts it (it's in TYPE_TO_GROUP / CAR_TYPE_TO_GROUP) and listings
+# fill to group 'Unknown' until a human replaces it with the real type.
+STUB_TYPE = "Unknown / Needs Web Check"
+STUB_STATUS = "Auto-stub"  # find rows awaiting real classification: grep ,Auto-stub$
+
+# Per-category CSV shape: (path fn, make col, model col, type col, full header).
+_TYPE_CSV = {
+    "motorcycles": (
+        model_types_path, "motorcycle_make", "motorcycle_model", "motorcycle_type",
+        ["motorcycle_make", "motorcycle_model", "motorcycle_type",
+         "classification_method", "evidence", "source_url", "verification_status"],
+    ),
+    "cars": (
+        car_types_path, "car_make", "car_model", "vehicle_type",
+        ["car_make", "car_model", "vehicle_type",
+         "classification_method", "evidence", "source_url", "verification_status"],
+    ),
+}
+
+
+def stub_unmapped_types(category: str, pairs) -> int:
+    """Append unmapped (make, model) pairs to the category's model-type CSV as
+    'Unknown / Needs Web Check' / 'Auto-stub' stubs, then rewrite the file in
+    sorted (make, model) order. Existing pairs are skipped. Returns the count
+    added.
+
+    The stub keeps the pipeline self-healing (a valid type → no loader crash)
+    while leaving a greppable to-do (verification_status == 'Auto-stub') so the
+    pair still surfaces for real classification.
     """
-    path = car_types_path()
-    if not path.exists():
-        return {}
-    mapping: Dict[Tuple[str, str], Tuple[str, str]] = {}
-    with open(path, encoding="utf-8-sig", newline="") as f:
-        for row in csv.DictReader(f):
-            key = (
-                (row.get("car_make") or "").casefold().strip(),
-                (row.get("car_model") or "").casefold().strip(),
-            )
-            vtype = (row.get("vehicle_type") or "").strip()
-            if vtype not in CAR_TYPE_TO_GROUP:
-                raise ValueError(
-                    f"{path.name}: unknown vehicle_type {vtype!r} for "
-                    f"{row.get('car_make')}/{row.get('car_model')} "
-                    f"— must be one of {sorted(CAR_TYPE_TO_GROUP)}"
-                )
-            mapping[key] = (vtype, CAR_TYPE_TO_GROUP[vtype])
-    return mapping
+    if category not in _TYPE_CSV:
+        raise ValueError(f"unknown category {category!r}")
+    path_fn, make_col, model_col, type_col, columns = _TYPE_CSV[category]
+    path = path_fn()
+
+    rows: List[Dict] = []
+    if path.exists():
+        with open(path, encoding="utf-8-sig", newline="") as f:
+            rows = list(csv.DictReader(f))
+
+    seen = {
+        (r.get(make_col, "").casefold().strip(), r.get(model_col, "").casefold().strip())
+        for r in rows
+    }
+    added = 0
+    for make, model in pairs:
+        make = (make or "").strip()
+        model = (model or "").strip()
+        if not make or not model:
+            continue
+        key = (make.casefold(), model.casefold())
+        if key in seen:
+            continue
+        seen.add(key)
+        rows.append({
+            make_col: make,
+            model_col: model,
+            type_col: STUB_TYPE,
+            "classification_method": "auto-stub",
+            "evidence": "",
+            "source_url": "",
+            "verification_status": STUB_STATUS,
+        })
+        added += 1
+
+    if added:
+        rows.sort(key=lambda r: (
+            r.get(make_col, "").casefold(), r.get(model_col, "").casefold()
+        ))
+        with open(path, "w", encoding="utf-8", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=columns)
+            writer.writeheader()
+            writer.writerows(rows)
+    return added

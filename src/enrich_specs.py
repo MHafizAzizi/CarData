@@ -34,6 +34,7 @@ _ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_ROOT / "src"))
 
 from db import connect  # noqa: E402
+from cli_utf8 import force_utf8_stdio  # noqa: E402
 
 SPECS_DB_PATH = _ROOT / "data" / "reference" / "motobike_specs.db"
 ALIAS_PATH = _ROOT / "data" / "reference" / "moto_spec_aliases.json"
@@ -176,10 +177,7 @@ def enrich(moto_conn, specs_conn, make_alias, model_alias, *,
 # ---------------------------------------------------------------------------
 
 def main() -> None:
-    try:
-        sys.stdout.reconfigure(encoding="utf-8")
-    except (AttributeError, OSError):
-        pass
+    force_utf8_stdio()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
     p = argparse.ArgumentParser(description="Enrich motorcycle listings with OEM specs.")

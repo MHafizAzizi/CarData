@@ -22,11 +22,9 @@ from typing import Dict, Optional, Tuple
 _ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_ROOT / "src"))
 
-try:
-    sys.stdout.reconfigure(encoding="utf-8")
-    sys.stderr.reconfigure(encoding="utf-8")
-except (AttributeError, OSError):
-    pass
+from cli_utf8 import force_utf8_stdio  # noqa: E402
+
+force_utf8_stdio()
 
 logging.basicConfig(
     level=logging.INFO,

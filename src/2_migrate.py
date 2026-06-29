@@ -28,6 +28,7 @@ from typing import Dict, List, Set, Tuple
 import pandas as pd
 
 from db import connect, db_path_for, CATEGORIES, set_meta
+from cli_utf8 import force_utf8_stdio
 
 # ---------------------------------------------------------------------------
 # Paths
@@ -38,11 +39,7 @@ _LOGS_DIR = _ROOT / "logs"
 _RAW_DIR = _ROOT / "data" / "raw"
 _OLD_DIR = _ROOT / "data" / "old"
 
-try:
-    sys.stdout.reconfigure(encoding="utf-8")
-    sys.stderr.reconfigure(encoding="utf-8")
-except (AttributeError, OSError):
-    pass
+force_utf8_stdio()
 
 _LOGS_DIR.mkdir(parents=True, exist_ok=True)
 logging.basicConfig(

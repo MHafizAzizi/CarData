@@ -80,6 +80,7 @@ _ROOT = _HERE.parent
 sys.path.insert(0, str(_HERE))
 
 from eagle_client import EagleAPIError, EagleAuthError, EagleClient  # noqa: E402
+from cli_utf8 import force_utf8_stdio  # noqa: E402
 
 # Logging setup
 _LOGS_DIR = _ROOT / "logs"
@@ -831,11 +832,7 @@ def _interactive_fill(args: argparse.Namespace, eagle: EagleClient) -> argparse.
 # ---------------------------------------------------------------------------
 
 def main() -> None:
-    try:
-        sys.stdout.reconfigure(encoding="utf-8")
-        sys.stderr.reconfigure(encoding="utf-8")
-    except (AttributeError, OSError):
-        pass
+    force_utf8_stdio()
 
     logging.basicConfig(
         level=logging.INFO,

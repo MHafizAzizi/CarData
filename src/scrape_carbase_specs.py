@@ -25,6 +25,8 @@ from urllib.parse import urlsplit
 
 from bs4 import BeautifulSoup
 
+from cli_utf8 import force_utf8_stdio
+
 _ROOT = Path(__file__).resolve().parent.parent
 SPECS_DB_PATH = _ROOT / "data" / "reference" / "carbase_specs.db"
 
@@ -421,13 +423,8 @@ def crawl(client, conn, makes, limit=None, refresh=False):
 
 def main():
     import argparse
-    import sys
 
-    try:
-        sys.stdout.reconfigure(encoding="utf-8")
-        sys.stderr.reconfigure(encoding="utf-8")
-    except (AttributeError, OSError):
-        pass
+    force_utf8_stdio()
 
     ap = argparse.ArgumentParser(description="carbase.my full-catalog spec scraper")
     ap.add_argument("--makes", help="comma-separated make slugs (default: all)")

@@ -11,25 +11,17 @@ polite (~1.5-2.0s between requests).
 """
 
 import logging
-import random
-import threading
-import time
-from typing import Dict, Optional, Tuple
+from typing import Optional, Tuple
 
-import cloudscraper
 from requests.exceptions import RequestException
 
-from mudah_client import (
-    parse_retry_after,
-    RATE_LIMIT_DEFAULT_WAIT,
-    RATE_LIMIT_MAX_WAIT,
-)
+from mudah_client import ThrottledSession
 
 BASE_URL = "https://www.carbase.my"
 
 
-class CarbaseClient:
-    """Throttled, retrying HTTP client for carbase.my."""
+class CarbaseClient(ThrottledSession):
+    """Throttled, retrying HTTP client for carbase.my (no per-request headers)."""
 
     DEFAULT_RETRY_WAITS = (2, 3, 5)
     DEFAULT_REQUEST_INTERVAL = (1.5, 2.0)
@@ -41,23 +33,12 @@ class CarbaseClient:
         request_interval: Tuple[float, float] = DEFAULT_REQUEST_INTERVAL,
         timeout: float = 20.0,
     ) -> None:
-        self.scraper = cloudscraper.create_scraper(
-            browser={"browser": "chrome", "platform": "windows", "mobile": False}
+        super().__init__(
+            max_retries=max_retries,
+            retry_waits=retry_waits,
+            request_interval=request_interval,
+            timeout=timeout,
         )
-        self.max_retries = max_retries
-        self.retry_waits = retry_waits
-        self.request_interval = request_interval
-        self.timeout = timeout
-        self._request_lock = threading.Lock()
-        self._last_request_time = 0.0
-
-    def _throttle(self) -> None:
-        with self._request_lock:
-            target_gap = random.uniform(*self.request_interval)
-            elapsed = time.monotonic() - self._last_request_time
-            if elapsed < target_gap:
-                time.sleep(target_gap - elapsed)
-            self._last_request_time = time.monotonic()
 
     def _url(self, path: str) -> str:
         return path if path.startswith("http") else f"{BASE_URL}{path}"
@@ -71,34 +52,9 @@ class CarbaseClient:
         with Retry-After backoff inside the loop.
         """
         url = self._url(path)
-        last_error: Optional[Exception] = None
-        for attempt in range(self.max_retries + 1):
-            try:
-                if attempt == 0:
-                    self._throttle()
-                else:
-                    time.sleep(self.retry_waits[min(attempt - 1, len(self.retry_waits) - 1)])
-
-                resp = self.scraper.get(url, timeout=self.timeout)
-
-                if resp.status_code == 429 and attempt < self.max_retries:
-                    wait = parse_retry_after(resp.headers.get("Retry-After"))
-                    wait = min(wait if wait is not None else RATE_LIMIT_DEFAULT_WAIT,
-                               RATE_LIMIT_MAX_WAIT)
-                    logging.warning(f"429 for {url}; backing off {wait:.1f}s "
-                                    f"(attempt {attempt + 1}/{self.max_retries})")
-                    time.sleep(wait)
-                    continue
-
-                return resp.status_code, resp.text
-
-            except RequestException as e:
-                last_error = e
-                if attempt < self.max_retries:
-                    logging.warning(f"Request failed for {url}. Retrying... "
-                                    f"({attempt + 1}/{self.max_retries})")
-                else:
-                    logging.error(f"Max retries reached for {url}. Error: {e}")
-
-        logging.warning(f"Probe failed for {url}: {last_error}")
-        return None, None
+        try:
+            resp = self._request(url)
+            return resp.status_code, resp.text
+        except RequestException as e:
+            logging.warning(f"Probe failed for {url}: {e}")
+            return None, None

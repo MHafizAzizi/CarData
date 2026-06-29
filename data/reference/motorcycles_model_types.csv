@@ -61,6 +61,7 @@ Benelli,R18I Se,Scooter,make/model heuristic,Benelli VZ/R18/Panarea scooter fami
 Benelli,Rfs150I,Underbone / Moped,make/model heuristic,Benelli RFS150i is underbone/kapchai style.,,LLM-reviewed
 Benelli,Rfs150I Le,Underbone / Moped,make/model heuristic,Benelli RFS150i is underbone/kapchai style.,,LLM-reviewed
 Benelli,Rfs150I Se,Underbone / Moped,make/model heuristic,Benelli RFS150i is underbone/kapchai style.,,LLM-reviewed
+Benelli,Rkv 200,Naked / Standard,make/model heuristic,Benelli RKV 200 naked.,,LLM-reviewed
 Benelli,Tnt 135I,Naked / Standard,make/model heuristic,Naked/standard streetbike family keyword.,,LLM-reviewed
 Benelli,Tnt 135I Le,Naked / Standard,make/model heuristic,Naked/standard streetbike family keyword.,,LLM-reviewed
 Benelli,Tnt 249S,Naked / Standard,llm-knowledge,Corrected in LLM knowledge pass (batch 2).,,LLM-reviewed
@@ -112,6 +113,7 @@ Bmw,R 1250 Gs Adventure,Adventure,make/model heuristic,Adventure/ADV touring fam
 Bmw,R 1250 Rs,Sport Touring,llm-knowledge,Corrected in LLM knowledge pass (batch 3).,,LLM-reviewed
 Bmw,R 1250 Rt,Touring,make/model heuristic,Touring/sport-touring model family keyword.,,LLM-reviewed
 Bmw,R 1300 Gs,Adventure,make/model heuristic,Adventure/ADV touring family keyword.,,LLM-reviewed
+Bmw,R 1300 Gsa,Adventure,make/model heuristic,BMW R 1300 GS Adventure big-bore ADV.,,LLM-reviewed
 Bmw,R 1300 Rt,Touring,make/model heuristic,Touring/sport-touring model family keyword.,,LLM-reviewed
 Bmw,R 18,Cruiser,make/model heuristic,BMW R 18 is cruiser family.,,LLM-reviewed
 Bmw,R 80 Gs,Adventure,make/model heuristic,Adventure/ADV touring family keyword.,,LLM-reviewed
@@ -169,8 +171,8 @@ Cmc,Tekken 250,Dual-sport / Off-road,llm-knowledge,Corrected in LLM knowledge pa
 Cmc,Valentine 125,Scooter,web-verified,Bahasa Malaysia sources identify CMC Italjet Valentine 125 as a scooter model.,https://www.rodaroda.my/articles/model-baru/2007/cmc-italjet-valentine-125,Verified
 Cmc,Xy400,Classic / Retro,web-verified,Sources describe CMC XY400 as a retro-inspired / naked classic motorcycle and note it is China-sourced and brought into Malaysia.,https://www.motorkekal.com/motorcycle/cmc-xy400-cmmss88po00rmir8o6jftsnhf,Verified
 Comel,Jm50,Underbone / Moped,llm-knowledge,Only marketplace/listing evidence was found for Comel JM50; no authoritative type page was located. The 50cc small-bike context supports moped/underbone only as,https://www.mudah.my/malaysia/motorcycles-for-sale/comel/jm50,LLM-reviewed
-Cyclone,Ra600,Unknown / Needs Web Check,fallback heuristic,Cyclone RA600 type not confirmed.,,Needs source URL
-Daelim,Tl125,Unknown / Needs Web Check,fallback heuristic,Search found Daelim TL125 sale listings but no reliable source confirming the exact motorcycle category.,https://www.mudah.my/selangor/motorcycles-for-sale/daelim/tl125,Needs source URL
+Cyclone,Ra600,Cruiser,web-verified,"Cyclone (Zongshen) RA600 is a 550cc parallel-twin retro bobber/cruiser.",https://www.bikesrepublic.com/english/cyclone-ra600-previewed-rm25888/,Verified
+Daelim,Tl125,Unknown / Needs Web Check,fallback heuristic,"Deep-dive: no Daelim TL125 exists in Daelim's catalogue (Roadwin/Daystar/VS/VC/S-series/Citi/History). 'TL125' is Honda's trials/trail model name; listing is likely a mislabelled Honda TL125 (which would be Dual-sport / Off-road). Unconfirmed as a Daelim — leave Unknown.",https://www.mudah.my/selangor/motorcycles-for-sale/daelim/tl125,Needs source URL
 Demak,D7,Underbone / Moped,llm-knowledge,Only listing-level evidence was found for Demak D7; no strong manufacturer/type page was located.,https://www.mudah.my/malaysia/motorcycles-for-sale/demak/d7,LLM-reviewed
 Demak,Dj 90,Underbone / Moped,web-verified,Demak DJ-90 underbone cub.,https://www.lmkmotor.com.my/demak-motorcycle.html,Verified
 Demak,Dtm 150,Dual-sport / Off-road,web-verified,Demak DTM (trail/motard) off-road line.,https://www.mudah.my/malaysia/motorcycles-for-sale/demak/dtm-150,Verified
@@ -226,6 +228,7 @@ Gpx,Popz 110,Underbone / Moped,make/model heuristic,Underbone/kapchai/small step
 Hanway,Bob 125S,Cruiser,web-verified,Multiple sources describe Bob 125S as a bobber-style motorcycle.,https://www.drbulb.com/en/motorcycles/hanway-bob125s,Verified
 Hanway,Bob 250 Classic,Cruiser,web-verified,Hanway Bob 250 Classic/BOB250 is described as a retro cruiser/bobber-style model.,https://www.mekanika.com.my/hanway-bob250-masuk-malaysia-harga-rm14k/,Verified
 Hanway,Bob 250 Heritage,Cruiser,web-verified,Hanway Bob 250 Heritage is described as a bobber-style model.,https://www.trmotorworld.com.my/product/hanway-bob-250-heritage,Verified
+Hanway,Classic 400,Classic / Retro,make/model heuristic,Hanway Classic 400 retro cafe-racer style.,,LLM-reviewed
 Harley-Davidson,1200 Custom,Cruiser,make/model heuristic,Harley/Indian/Victory model family mostly cruiser.,,LLM-reviewed
 Harley-Davidson,883 Roadster,Cruiser,make/model heuristic,Harley/Indian/Victory model family mostly cruiser.,,LLM-reviewed
 Harley-Davidson,Blackline,Cruiser,make/model heuristic,Harley/Indian/Victory model family mostly cruiser.,,LLM-reviewed
@@ -397,6 +400,7 @@ Husqvarna,701 Supermoto,Supermoto,make/model heuristic,Supermoto/hypermotard fam
 Husqvarna,Fe 250,Dual-sport / Off-road,make/model heuristic,Off-road/enduro/motocross model family keyword.,,LLM-reviewed
 Husqvarna,Norden 901,Adventure,make/model heuristic,Adventure/ADV touring family keyword.,,LLM-reviewed
 Husqvarna,Svartpilen 401,Naked / Standard,make/model heuristic,Husqvarna Vitpilen/Svartpilen street model family.,,LLM-reviewed
+Husqvarna,Te 250,Dual-sport / Off-road,make/model heuristic,Husqvarna TE 250 enduro.,,LLM-reviewed
 Husqvarna,Te 300,Dual-sport / Off-road,make/model heuristic,Off-road/enduro/motocross model family keyword.,,LLM-reviewed
 Husqvarna,V401,Naked / Standard,make/model heuristic,Husqvarna Vitpilen/Svartpilen street model family.,,LLM-reviewed
 Hyosung,Cruisse Ii,Cruiser,make/model heuristic,Cruise/cruiser naming pattern; verify online.,,LLM-reviewed
@@ -463,6 +467,7 @@ Kawasaki,Versys 1100 Se,Adventure,make/model heuristic,Adventure/ADV touring fam
 Kawasaki,Versys 1100 Std,Adventure,make/model heuristic,Adventure/ADV touring family keyword.,,LLM-reviewed
 Kawasaki,Versys 650,Adventure,make/model heuristic,Adventure/ADV touring family keyword.,,LLM-reviewed
 Kawasaki,Versys-X 250,Adventure,make/model heuristic,Adventure/ADV touring family keyword.,,LLM-reviewed
+Kawasaki,Vn1700 Voyager Custom,Cruiser,make/model heuristic,Kawasaki VN1700 Voyager cruiser/tourer.,,LLM-reviewed
 Kawasaki,Vn250,Cruiser,make/model heuristic,Kawasaki Vulcan/Eliminator/EN cruiser family keyword.,,LLM-reviewed
 Kawasaki,Vn900,Cruiser,make/model heuristic,Kawasaki Vulcan/Eliminator/EN cruiser family keyword.,,LLM-reviewed
 Kawasaki,Vulcan 1500,Cruiser,make/model heuristic,Cruiser/bobber/Harley-style model family keyword.,,LLM-reviewed
@@ -490,6 +495,7 @@ Kawasaki,Z125 Pro,Mini / Monkey Bike,make/model heuristic,Kawasaki mini-bike fam
 Kawasaki,Z125 Pro Se,Mini / Monkey Bike,make/model heuristic,Kawasaki mini-bike family keyword.,,LLM-reviewed
 Kawasaki,Z250 Abs,Naked / Standard,make/model heuristic,Naked/standard streetbike family keyword.,,LLM-reviewed
 Kawasaki,Z250Sl,Naked / Standard,make/model heuristic,Kawasaki Z/ZRX naked/standard model family keyword.,,LLM-reviewed
+Kawasaki,Z300,Naked / Standard,make/model heuristic,Kawasaki Z300 naked.,,LLM-reviewed
 Kawasaki,Z500,Naked / Standard,make/model heuristic,Kawasaki Z/ZRX naked/standard model family keyword.,,LLM-reviewed
 Kawasaki,Z500 Se,Naked / Standard,make/model heuristic,Kawasaki Z/ZRX naked/standard model family keyword.,,LLM-reviewed
 Kawasaki,Z650Rs,Classic / Retro,llm-knowledge,Corrected in LLM knowledge pass (batch 4).,,LLM-reviewed
@@ -533,6 +539,7 @@ Ktm,200 Duke,Naked / Standard,make/model heuristic,Naked/standard streetbike fam
 Ktm,200 Exc,Dual-sport / Off-road,make/model heuristic,Off-road/enduro/motocross model family keyword.,,LLM-reviewed
 Ktm,250 Adventure,Adventure,make/model heuristic,KTM Adventure model family keyword.,,LLM-reviewed
 Ktm,250 Duke,Naked / Standard,make/model heuristic,Naked/standard streetbike family keyword.,,LLM-reviewed
+Ktm,250 Exc Six Days,Dual-sport / Off-road,make/model heuristic,KTM 250 EXC enduro.,,LLM-reviewed
 Ktm,250 Exc-F,Dual-sport / Off-road,make/model heuristic,Off-road/enduro/motocross model family keyword.,,LLM-reviewed
 Ktm,300 Exc,Dual-sport / Off-road,make/model heuristic,Off-road/enduro/motocross model family keyword.,,LLM-reviewed
 Ktm,350 Exc-F Wess,Dual-sport / Off-road,make/model heuristic,Off-road/enduro/motocross model family keyword.,,LLM-reviewed
@@ -548,6 +555,7 @@ Ktm,690 Enduro R,Dual-sport / Off-road,make/model heuristic,Off-road/enduro/moto
 Ktm,690 Smc R,Supermoto,make/model heuristic,Supermoto/hypermotard family keyword.,,LLM-reviewed
 Ktm,790 Adventure,Adventure,make/model heuristic,KTM Adventure model family keyword.,,LLM-reviewed
 Ktm,790 Duke,Naked / Standard,make/model heuristic,Naked/standard streetbike family keyword.,,LLM-reviewed
+Ktm,890 Duke R,Naked / Standard,make/model heuristic,KTM 890 Duke R naked.,,LLM-reviewed
 Ktm,990,Adventure,make/model heuristic,KTM 990 model uncertain; often Adventure/Super Duke variants. Verify online.,,LLM-reviewed
 Ktm,Brabus 1300 R Edition 23,Naked / Standard,make/model heuristic,KTM 1290 Super Duke R-based Brabus special; naked.,,LLM-reviewed
 Ktm,Rc 200,Sport / Superbike,make/model heuristic,Sport/superbike model family keyword.,,LLM-reviewed
@@ -577,6 +585,7 @@ Mbp,C1002V,Cruiser,web-verified,Sources describe MBP/Morbidelli C1002V as a mode
 Mbp,M502N,Naked / Standard,web-verified,Official Morbidelli page calls M502N a naked motorcycle.,https://www.morbidellimoto.com/global-en/models/m502n/,Verified
 Mbp Morbidelli,F252,Sport / Superbike,web-verified,Paultan/Zigwheels: 249.5cc twin sport bike.,https://paultan.org/2026/04/17/2026-morbidelli-f252-now-in-malaysia-rm14888/,Verified
 Mbp Morbidelli,T1002Vx,Adventure,web-verified,Malaysia coverage describes Morbidelli T1002VX as an adventure / advencer / trail-segment motorcycle.,https://www.mforce.my/news/mbp-morbidelli-t1002vx-masuk-segmen-trail-malaysia/,Verified
+Mbp Morbidelli,T250X Std,Adventure,web-verified,"MBP/Morbidelli T250X is a 250cc entry-level adventure bike (spoked wheels, dual-purpose tyres, handguards).",https://news.imotorbike.com/en/2025/11/morbidelli-launches-affordable-t250x-adventure-bike/,Verified
 Mbp Morbidelli,T252X,Adventure,web-verified,"Paultan: 250cc twin adventure-tourer, 6-speed.",https://paultan.org/2026/04/16/2026-morbidelli-t502x-and-t252x-adventure-tourers-enter-malaysia-market-rm28888-and-rm16888/,Verified
 Mbp Morbidelli,T502X,Adventure,web-verified,Paultan: 500cc twin adventure-tourer.,https://paultan.org/2026/04/16/2026-morbidelli-t502x-and-t252x-adventure-tourers-enter-malaysia-market-rm28888-and-rm16888/,Verified
 Mle,Xtm 200,Supermoto,web-verified,Bike Continent history identifies MLE XTM 200cc as a motard/supermotard model.,https://www.bikecont.com/my/about-us,Verified
@@ -648,6 +657,7 @@ Nimota,Ck9,Naked / Standard,web-verified,Sources describe Nimota CK9 as a midran
 Nimota,Lc125,Underbone / Moped,llm-knowledge,Model-specific authoritative source was not found; available listings/spec references support a 125cc local small-bike classification only weakly.,https://www.facebook.com/groups/747242828827031/posts/3271401099676286/,LLM-reviewed
 Nimota,Ranger,Dual-sport / Off-road,web-verified,"Malaysia listing text refers to Nimota Ranger X 150 as motard/KLX-style, supporting motard/dual-sport classification.",https://www.carlist.my/motorcycles-for-sale/nimota/ranger-x,Verified
 Nitro,Ne150 Winstar,Cruiser,web-verified,"Mudah Malaysia confirms Nitro NE150 WINSTAR listings, and a Malaysia listing explicitly uses ""Chopper Nitro 150"" wording; user correction classifies NE150 Winst",https://www.carousell.com.my/p/chopper-nitro-150-untuk-dijual-1432190835/,Verified
+Nitro,Nu 110 Power,Underbone / Moped,make/model heuristic,110cc kapcai/moped commuter.,,LLM-reviewed
 Norton,Commando,Classic / Retro,make/model heuristic,Classic/retro/scrambler/cafe family keyword.,,LLM-reviewed
 Ottimo,Viz110,Underbone / Moped,web-verified,Bahasa Malaysia sources call Ottimo VIZ110 a kapcai/rakyat model; English sources note it as first model from a Malaysian builder.,https://pandulaju.com.my/ottimo-viz110-lancar-kapcai-rakyat-paling-murah-rm3288/,Verified
 Peugeot,Django Caferacer,Scooter,llm-knowledge,Corrected in LLM knowledge pass (batch 4).,,LLM-reviewed
@@ -664,6 +674,7 @@ Qj Motor,Fort 350,Maxi-scooter,make/model heuristic,QJMotor Fort 350 is scooter/
 Qj Motor,Ltr 150,Underbone / Moped,make/model heuristic,Small-displacement commuter model pattern; verify online.,,LLM-reviewed
 Qj Motor,Ltr 150 (N1),Underbone / Moped,make/model heuristic,Small-displacement commuter model pattern; verify online.,,LLM-reviewed
 Qj Motor,Srf15,Mini / Monkey Bike,web-verified,"QJ Motor SRF15 compact minimoto, manual gearbox + chain drive.",https://www.qjmotor.my/product/SRF15/,Verified
+Qj Motor,Srk 250R1,Naked / Standard,make/model heuristic,QJMotor SRK 250 naked roadster.,,LLM-reviewed
 Qj Motor,Srk250,Naked / Standard,make/model heuristic,Naked/standard streetbike family keyword.,,LLM-reviewed
 Qj Motor,Srk250Rd,Naked / Standard,make/model heuristic,Naked/standard streetbike family keyword.,,LLM-reviewed
 Qj Motor,Srk250Rr,Sport / Superbike,make/model heuristic,Sport/superbike model family keyword.,,LLM-reviewed
@@ -698,6 +709,8 @@ Skyteam,T-Rex 125,Mini / Monkey Bike,make/model heuristic,Skyteam mini-bike/monk
 Sm Sport,110E,Underbone / Moped,make/model heuristic,Underbone/kapchai/small step-through family keyword.,,LLM-reviewed
 Sm Sport,110R,Underbone / Moped,make/model heuristic,Underbone/kapchai/small step-through family keyword.,,LLM-reviewed
 Superlux,Bos2000,Electric Scooter,web-verified,Official Superlux BOS2000 page identifies the model as electric and gives electric-motor specs; company coverage confirms Superlux focuses on electric motorcycl,https://www.superlux.my/bos2000,Verified
+Superlux,Eb1,Electric Scooter,web-verified,"Superlux EB1 is a CKD electric two-wheeler (650W motor, 48V removable battery, 45–55 km/h).",https://www.superlux.com.my/,Verified
+Suzuki,1442,Unknown / Needs Web Check,auto-stub,"Deep-dive: '1442' is a bare displacement, not a model name; no Suzuki bike is exactly 1442cc. Suzuki's ~1.3–1.5L range spans cruiser (VL1500/Intruder 1462cc), naked (GSX1400 1402cc) and sport (Hayabusa 1340cc), so it can't be disambiguated — data-quality issue. Leave Unknown.",,Auto-stub
 Suzuki,Address,Scooter,make/model heuristic,Scooter model family keyword.,,LLM-reviewed
 Suzuki,Ag100,Dual-sport / Off-road,make/model heuristic,Small-displacement trail/utility pattern; verify online.,,LLM-reviewed
 Suzuki,An 125,Scooter,make/model heuristic,Suzuki scooter model family keyword.,,LLM-reviewed
@@ -766,7 +779,9 @@ Suzuki,Vr125,Scooter,llm-knowledge,"Malaysia listings group Suzuki VR125 with VS
 Suzuki,Vs125,Scooter,web-verified,Malaysia listings identify Suzuki VS125 in scooter context.,https://www.carlist.my/motorcycles-for-sale/suzuki/vs125,Verified
 Suzuki,Vs150,Scooter,web-verified,Malaysia listings identify Suzuki VS150 in scooter context.,https://www.carlist.my/motorcycles-for-sale/suzuki/vs150,Verified
 Sym,Adxtg 400,Maxi-scooter,llm-knowledge,Corrected in LLM knowledge pass (batch 1).,,LLM-reviewed
+Sym,Attila Elizabeth,Scooter,make/model heuristic,SYM Attila scooter.,,LLM-reviewed
 Sym,Bonus 110 Sr,Underbone / Moped,make/model heuristic,Underbone/kapchai/small step-through family keyword.,,LLM-reviewed
+Sym,Bonus 110 Sr N1,Underbone / Moped,make/model heuristic,SYM Bonus 110 underbone kapcai.,,LLM-reviewed
 Sym,Cruisym 250I,Maxi-scooter,make/model heuristic,Larger scooter/maxi-scooter model family keyword.,,LLM-reviewed
 Sym,Cruisym 250I Se,Maxi-scooter,make/model heuristic,Larger scooter/maxi-scooter model family keyword.,,LLM-reviewed
 Sym,Cruisym 400I,Scooter,make/model heuristic,SYM scooter model family keyword.,,LLM-reviewed
@@ -864,7 +879,7 @@ Wmoto,Es125,Scooter,web-verified,Paultan: 118.8cc CVT scooter.,https://paultan.o
 Wmoto,Es250I,Maxi-scooter,web-verified,Paultan: 244.3cc CVT scooter.,https://paultan.org/2022/03/26/2022-wmoto-es250i-scooter-in-malaysia-priced-at-rm13888-two-channel-abs-smart-key-tpms/,Verified
 Wmoto,Ez125,Scooter,web-verified,Mforce/Paultan: EZ125i compact CVT scooter.,https://paultan.org/2025/10/03/2025-wmoto-ez125i-scooter-malaysian-launch-rm4-5k/,Verified
 Wmoto,F15,Underbone / Moped,weak make heuristic,Local/commuter brand; exact model needs online verification.,,LLM-reviewed
-Wmoto,Ga200,Unknown / Needs Web Check,llm-knowledge,"Listings refer to WMOTO GA200 / LX200AU-2B as an ATV, so it should not be counted as a normal motorcycle type.",https://www.lazada.com.my/products/wmoto-lx200au-2b-ga200-atv-i3636442558.html,LLM-reviewed
+Wmoto,Ga200,Unknown / Needs Web Check,llm-knowledge,"Deep-dive confirmed: WMOTO GA200 = Loncin LX200AU-2B, a four-wheel utility ATV/quad (auto trans + reverse, drum/disc, 23x7-10 & 22x10-10 tyres) — not a two-wheel motorcycle. No valid motorcycle_type fits; candidate for exclusion rather than classification.",https://www.lazada.com.my/products/product-details-of-wmoto-lx200au-2b-ga200-atvatv-i3268873329.html,LLM-reviewed
 Wmoto,Gemma 125,Scooter,web-verified,MotoMalaysia and official WMoto sources identify Gemma 125 as a classic scooter.,https://motomalaysia.com/en/bike/wmoto-gemma-125/,Verified
 Wmoto,Griffin 205,Scooter,web-verified,Bahasa Malaysia motorcycle sources call WMoto Griffin 205 a scooter/skuter.,https://arenamotosikal.com/2024/06/skuter-wmoto-griffin-205-2024-dilancarkan-harga-rm8888/,Verified
 Wmoto,Hawk 200I,Dual-sport / Off-road,web-verified,"Paultan: Hawk 200i enduro, 5-speed, 19/17-inch wheels.",https://paultan.org/2026/02/05/2026-wmoto-hawk-200i-enduro-in-malaysia-rm7888/,Verified
@@ -938,6 +953,7 @@ Yamaha,Rx100,Naked / Standard,llm-knowledge,Corrected in LLM knowledge pass (bat
 Yamaha,Rxs,Naked / Standard,llm-knowledge,Corrected in LLM knowledge pass (batch 2).,,LLM-reviewed
 Yamaha,Rxz,Naked / Standard,llm-knowledge,Corrected in LLM knowledge pass (batch 1).,,LLM-reviewed
 Yamaha,Rz250,Sport / Superbike,make/model heuristic,Yamaha sport two-stroke/faired model family keyword.,,LLM-reviewed
+Yamaha,Rz250R,Sport / Superbike,make/model heuristic,Yamaha RZ250R 2-stroke sportbike.,,LLM-reviewed
 Yamaha,Sport,Underbone / Moped,web-verified,"Mudah Malaysia confirms Yamaha Sport listings; user correction classifies Yamaha Sport/Sports as moped/kapcai, likely referring to an older local-market Yamaha ",https://www.mudah.my/malaysia/motorcycles-for-sale/yamaha/sport,Verified
 Yamaha,Srv,Cruiser,make/model heuristic,Cruiser/bobber/Harley-style model family keyword.,,LLM-reviewed
 Yamaha,Srx,Naked / Standard,make/model heuristic,Yamaha MT/FZ/XSR street/naked family keyword.,,LLM-reviewed
@@ -988,9 +1004,13 @@ Zontes,368E,Maxi-scooter,make/model heuristic,Zontes D/E/G 350-368 model pattern
 Zontes,368G,Maxi-scooter,make/model heuristic,Zontes D/E/G 350-368 model pattern is scooter/maxi-scooter in listings.,,LLM-reviewed
 Zontes,Zt155G,Naked / Standard,make/model heuristic,Zontes small-displacement street model pattern; verify online.,,LLM-reviewed
 Zontes,Zt155U,Naked / Standard,make/model heuristic,Zontes small-displacement street model pattern; verify online.,,LLM-reviewed
+Zontes,Zt155U1,Adventure,web-verified,"Zontes ZT155-U1 is a 155cc entry-level adventure bike (21in/18in dual-sport wheels, handguards, raised clearance).",https://www.zigwheels.my/new-motorcycles/zontes/zt155u1,Verified
 Zontes,Zt310-R,Naked / Standard,make/model heuristic,Naked/standard streetbike family keyword.,,LLM-reviewed
 Zontes,Zt310-T,Adventure,make/model heuristic,Zontes T-series model pattern is adventure/touring oriented.,,LLM-reviewed
 Zontes,Zt310-V,Cruiser,make/model heuristic,Zontes V-series model pattern is cruiser oriented.,,LLM-reviewed
 Zontes,Zt310-X,Sport Touring,make/model heuristic,Zontes X-series model pattern is sport-touring oriented.,,LLM-reviewed
 Zontes,Zt350D,Maxi-scooter,make/model heuristic,Zontes D/E/G 350-368 model pattern is scooter/maxi-scooter in listings.,,LLM-reviewed
 Zontes,Zt350E,Maxi-scooter,make/model heuristic,Zontes D/E/G 350-368 model pattern is scooter/maxi-scooter in listings.,,LLM-reviewed
+Zxmoto,500F,Naked / Standard,web-verified,"ZXMOTO 500F is a 470cc inline-four naked/retro streetbike (73hp).",https://www.zxmoto.com.my/models/,Verified
+Zxmoto,500Rr,Sport / Superbike,web-verified,"ZXMOTO 500RR is a 470cc inline-four supersport (84hp, 235 km/h top speed).",https://www.zxmoto.com.my/models/500rr/,Verified
+Zxmoto,820Rr,Sport / Superbike,web-verified,"ZXMOTO 820RR is an 819cc inline-triple supersport (135–150hp, WorldSSP race winner).",https://www.autoevolution.com/moto/zxmoto-820rr-2025.html,Verified

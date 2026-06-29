@@ -32,6 +32,7 @@ from bs4 import BeautifulSoup
 
 # Reuse carbase's leading-number parsers -- identical job ('155 cc' -> 155 etc).
 from scrape_carbase_specs import _to_int, _to_float
+from cli_utf8 import force_utf8_stdio
 
 _ROOT = Path(__file__).resolve().parent.parent
 SPECS_DB_PATH = _ROOT / "data" / "reference" / "motobike_specs.db"
@@ -248,13 +249,8 @@ def crawl(client, conn, urls, limit=None, refresh=False):
 
 def main():
     import argparse
-    import sys
 
-    try:
-        sys.stdout.reconfigure(encoding="utf-8")
-        sys.stderr.reconfigure(encoding="utf-8")
-    except (AttributeError, OSError):
-        pass
+    force_utf8_stdio()
 
     ap = argparse.ArgumentParser(description="zigwheels.my motorcycle spec scraper")
     ap.add_argument("--limit", type=int, help="stop after N pages (smoke test)")

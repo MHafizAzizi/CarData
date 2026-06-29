@@ -311,7 +311,8 @@ class TestApplyTypeHints:
         conn = _moto_db_with_types()
         stats = apply_type_hints(conn)
 
-        assert stats == {"candidates": 4, "filled": 3, "unmapped_pairs": 1}
+        assert stats == {"candidates": 4, "filled": 3, "unmapped_pairs": 1,
+                         "stubbed": 0}
         rows = dict(
             (r[0], (r[1], r[2]))
             for r in conn.execute(
@@ -452,6 +453,7 @@ class TestApplyVehicleTypeHints:
             "filled_api": 2,
             "filled_mapping": 2,
             "unmapped_pairs": 1,
+            "stubbed": 0,
         }
         rows = dict(
             (r[0], (r[1], r[2]))
