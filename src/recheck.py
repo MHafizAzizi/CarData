@@ -38,6 +38,7 @@ from typing import Iterable, List, Optional, Set, Tuple
 
 from db import connect, db_path_for, CATEGORIES
 from mudah_client import MudahClient
+from cli_utf8 import force_utf8_stdio
 
 # Mudah only embeds mcdParams (OEM specs) on recent listings. Below this ads_id
 # the hit rate is ~0.01% (11/93,579), so a spec sweep there is wasted fetches.
@@ -76,14 +77,10 @@ _ROOT = Path(__file__).resolve().parent.parent
 _LOGS_DIR = _ROOT / "logs"
 
 # -----------------------------------------------------------------------------
-# Logging — same UTF-8 setup as 1_scrape.py
+# Logging
 # -----------------------------------------------------------------------------
 
-try:
-    sys.stdout.reconfigure(encoding='utf-8')
-    sys.stderr.reconfigure(encoding='utf-8')
-except (AttributeError, OSError):
-    pass
+force_utf8_stdio()
 
 _LOGS_DIR.mkdir(parents=True, exist_ok=True)
 logging.basicConfig(

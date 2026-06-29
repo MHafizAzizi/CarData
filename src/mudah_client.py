@@ -52,7 +52,85 @@ def parse_retry_after(header_value: Optional[str]) -> Optional[float]:
         return None
 
 
-class MudahClient:
+class ThrottledSession:
+    """Shared cloudscraper session: global throttle + fixed-schedule retry + 429
+    Retry-After backoff. Base for MudahClient and CarbaseClient, which add the
+    per-site bits (headers, URL prefixing, return shape)."""
+
+    def __init__(
+        self,
+        *,
+        max_retries: int,
+        retry_waits: Tuple[int, ...],
+        request_interval: Tuple[float, float],
+        timeout: float,
+    ) -> None:
+        self.scraper = cloudscraper.create_scraper(
+            browser={'browser': 'chrome', 'platform': 'windows', 'mobile': False}
+        )
+        self.max_retries = max_retries
+        self.retry_waits = retry_waits
+        self.request_interval = request_interval
+        self.timeout = timeout
+        self._request_lock = threading.Lock()
+        self._last_request_time = 0.0
+
+    def _throttle(self) -> None:
+        """Block until at least request_interval has passed since the last request.
+        Holding the lock during sleep serializes pacing across worker threads."""
+        with self._request_lock:
+            target_gap = random.uniform(*self.request_interval)
+            elapsed = time.monotonic() - self._last_request_time
+            if elapsed < target_gap:
+                time.sleep(target_gap - elapsed)
+            self._last_request_time = time.monotonic()
+
+    def _request(
+        self, url: str, *, headers: Optional[Dict[str, str]] = None
+    ) -> requests.Response:
+        """GET with throttling + fixed-schedule retry backoff.
+
+        On HTTP 429 honors the Retry-After header (or backs off
+        `RATE_LIMIT_DEFAULT_WAIT` when absent), capped at `RATE_LIMIT_MAX_WAIT`.
+        Returns the Response at any HTTP status; does NOT call raise_for_status
+        (callers decide). Raises the last RequestException if all retries fail.
+        """
+        last_error: Optional[Exception] = None
+        for attempt in range(self.max_retries + 1):
+            try:
+                if attempt == 0:
+                    self._throttle()
+                else:
+                    time.sleep(self.retry_waits[min(attempt - 1, len(self.retry_waits) - 1)])
+
+                response = self.scraper.get(url, headers=headers, timeout=self.timeout)
+
+                if response.status_code == 429 and attempt < self.max_retries:
+                    wait = parse_retry_after(response.headers.get("Retry-After"))
+                    if wait is None:
+                        wait = RATE_LIMIT_DEFAULT_WAIT
+                    wait = min(wait, RATE_LIMIT_MAX_WAIT)
+                    logging.warning(
+                        f"429 Too Many Requests for {url}; backing off "
+                        f"{wait:.1f}s (attempt {attempt + 1}/{self.max_retries})"
+                    )
+                    time.sleep(wait)
+                    continue
+
+                return response
+
+            except RequestException as e:
+                last_error = e
+                if attempt < self.max_retries:
+                    logging.warning(f"Request failed for {url}. Retrying... ({attempt + 1}/{self.max_retries})")
+                else:
+                    logging.error(f"Max retries reached for {url}. Error: {e}")
+
+        assert last_error is not None
+        raise last_error
+
+
+class MudahClient(ThrottledSession):
     """HTTP client with rate limiting + retry backoff for Mudah.my."""
 
     DEFAULT_RETRY_WAITS = (2, 3, 5)
@@ -65,17 +143,13 @@ class MudahClient:
         request_interval: Tuple[float, float] = DEFAULT_REQUEST_INTERVAL,
         timeout: float = 30.0,
     ) -> None:
-        self.scraper = cloudscraper.create_scraper(
-            browser={'browser': 'chrome', 'platform': 'windows', 'mobile': False}
+        super().__init__(
+            max_retries=max_retries,
+            retry_waits=retry_waits,
+            request_interval=request_interval,
+            timeout=timeout,
         )
-        self.max_retries = max_retries
-        self.retry_waits = retry_waits
-        self.request_interval = request_interval
-        self.timeout = timeout
         self.ua = UserAgent()
-
-        self._request_lock = threading.Lock()
-        self._last_request_time = 0.0
 
     def _random_headers(self) -> Dict[str, str]:
         return {
@@ -94,61 +168,16 @@ class MudahClient:
             'Cache-Control': 'max-age=0',
         }
 
-    def _throttle(self) -> None:
-        """Block until at least request_interval has passed since the last request.
-        Holding the lock during sleep serializes pacing across worker threads."""
-        with self._request_lock:
-            target_gap = random.uniform(*self.request_interval)
-            elapsed = time.monotonic() - self._last_request_time
-            if elapsed < target_gap:
-                time.sleep(target_gap - elapsed)
-            self._last_request_time = time.monotonic()
-
     def get(self, url: str, *, raise_for_status: bool = True) -> requests.Response:
-        """GET a URL with throttling + fixed-schedule retry backoff.
+        """GET a URL with throttling + retry backoff and random per-request headers.
 
-        On HTTP 429 the loop honors the Retry-After header (or backs off
-        `RATE_LIMIT_DEFAULT_WAIT` seconds when absent), capped at
-        `RATE_LIMIT_MAX_WAIT`. Other failures use the fixed retry schedule.
-
-        Raises the last RequestException if all retries fail.
+        Raises the last RequestException if all retries fail; raises for an HTTP
+        error status when `raise_for_status` (the default).
         """
-        last_error: Optional[Exception] = None
-        for attempt in range(self.max_retries + 1):
-            try:
-                if attempt == 0:
-                    self._throttle()
-                else:
-                    wait = self.retry_waits[min(attempt - 1, len(self.retry_waits) - 1)]
-                    time.sleep(wait)
-
-                response = self.scraper.get(url, headers=self._random_headers(), timeout=self.timeout)
-
-                if response.status_code == 429 and attempt < self.max_retries:
-                    wait = parse_retry_after(response.headers.get("Retry-After"))
-                    if wait is None:
-                        wait = RATE_LIMIT_DEFAULT_WAIT
-                    wait = min(wait, RATE_LIMIT_MAX_WAIT)
-                    logging.warning(
-                        f"429 Too Many Requests for {url}; backing off "
-                        f"{wait:.1f}s (attempt {attempt + 1}/{self.max_retries})"
-                    )
-                    time.sleep(wait)
-                    continue
-
-                if raise_for_status:
-                    response.raise_for_status()
-                return response
-
-            except RequestException as e:
-                last_error = e
-                if attempt < self.max_retries:
-                    logging.warning(f"Request failed for {url}. Retrying... ({attempt + 1}/{self.max_retries})")
-                else:
-                    logging.error(f"Max retries reached for {url}. Error: {e}")
-
-        assert last_error is not None
-        raise last_error
+        response = self._request(url, headers=self._random_headers())
+        if raise_for_status:
+            response.raise_for_status()
+        return response
 
     def get_status(self, url: str) -> Tuple[Optional[int], Optional[str]]:
         """Probe a URL and return (status_code, body_text) without raising on HTTP errors.

@@ -72,6 +72,7 @@ import argparse
 import logging
 import sqlite3
 import sys
+from datetime import datetime
 from pathlib import Path
 from typing import List, Tuple
 
@@ -81,6 +82,7 @@ _ROOT = _HERE.parent
 sys.path.insert(0, str(_ROOT / "src"))
 
 from db import CATEGORIES, connect, schema_version, set_meta  # noqa: E402
+from cli_utf8 import force_utf8_stdio  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # Migration spec — v1 -> v2
@@ -288,83 +290,63 @@ def _columns_for(category: str) -> List[Tuple[str, str]]:
 
 
 # ---------------------------------------------------------------------------
-# Per-category migrate
+# Step dispatch — one declarative table per change kind. Keyed by the version
+# being migrated TO. Add/drop steps are pure column lists; v4 is the special
+# TEXT->INTEGER table-swap. The generic driver in migrate() bumps
+# schema_version after each step, so the step functions never touch meta.
 # ---------------------------------------------------------------------------
 
-def _migrate_v1_to_v2(
-    conn: sqlite3.Connection, category: str, *, dry_run: bool
-) -> None:
-    """Add EagleSearch + hybrid-tracking columns."""
-    cols = _columns_for(category)
-    logging.info(
-        f"[{category}] step v1 -> v2 ({len(cols)} columns to evaluate)"
-    )
+# target version -> fn(category) -> [(column, sqlite_type), ...] to ADD
+_ADD_STEPS = {
+    2:  _columns_for,
+    5:  lambda c: V5_SHARED_COLS,
+    7:  lambda c: V7_MOTORCYCLE_COLS if c == "motorcycles" else [],
+    8:  lambda c: V8_CAR_COLS if c == "cars" else [],
+    9:  lambda c: V9_CAR_COLS if c == "cars" else [],
+    10: lambda c: V10_MOTORCYCLE_COLS if c == "motorcycles" else [],
+    11: lambda c: V11_CAR_COLS if c == "cars" else [],
+}
 
-    added = 0
-    with conn:
-        for col_name, col_type in cols:
-            if _safe_add_column(conn, "listings", col_name, col_type, dry_run=dry_run):
-                added += 1
+# target version -> fn(category) -> [column, ...] to DROP
+_DROP_STEPS = {
+    3: lambda c: DROPPED_COLS_V3,
+    6: _dropped_cols_v6,
+}
 
-        if dry_run:
-            logging.info(
-                f"[{category}] DRY-RUN v1->v2: would add {added} column(s)"
+
+def _apply_step(
+    conn: sqlite3.Connection, category: str, target: int, *, dry_run: bool
+) -> str:
+    """Apply the schema change that takes the DB to version `target`.
+
+    Returns a short summary for logging. Does NOT bump schema_version — the
+    driver does that. v4 is the special retype step; all others are pure
+    add/drop of the column lists in _ADD_STEPS / _DROP_STEPS.
+    """
+    if target == 4:
+        return _retype_v4(conn, category, dry_run=dry_run)
+    if target in _ADD_STEPS:
+        cols = _ADD_STEPS[target](category)
+        with conn:
+            n = sum(
+                _safe_add_column(conn, "listings", c, t, dry_run=dry_run)
+                for c, t in cols
             )
-            return
-
-        conn.execute(
-            "INSERT INTO meta (key, value) VALUES ('schema_version', '2') "
-            "ON CONFLICT(key) DO UPDATE SET value = excluded.value"
-        )
-
-    logging.info(
-        f"[{category}] v1 -> v2 complete — added {added} column(s)"
-    )
-    set_meta(
-        conn,
-        "last_migration_v2_at",
-        __import__("datetime").datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-    )
-
-
-def _migrate_v2_to_v3(
-    conn: sqlite3.Connection, category: str, *, dry_run: bool
-) -> None:
-    """Drop columns no longer stored (currently: body)."""
-    logging.info(
-        f"[{category}] step v2 -> v3 ({len(DROPPED_COLS_V3)} column(s) to drop)"
-    )
-
-    dropped = 0
-    with conn:
-        for col_name in DROPPED_COLS_V3:
-            if _safe_drop_column(conn, "listings", col_name, dry_run=dry_run):
-                dropped += 1
-
-        if dry_run:
-            logging.info(
-                f"[{category}] DRY-RUN v2->v3: would drop {dropped} column(s)"
+        return f"{'would add' if dry_run else 'added'} {n} column(s)"
+    if target in _DROP_STEPS:
+        cols = _DROP_STEPS[target](category)
+        with conn:
+            n = sum(
+                _safe_drop_column(conn, "listings", c, dry_run=dry_run)
+                for c in cols
             )
-            return
-
-        conn.execute(
-            "INSERT INTO meta (key, value) VALUES ('schema_version', '3') "
-            "ON CONFLICT(key) DO UPDATE SET value = excluded.value"
-        )
-
-    logging.info(
-        f"[{category}] v2 -> v3 complete — dropped {dropped} column(s)"
-    )
-    set_meta(
-        conn,
-        "last_migration_v3_at",
-        __import__("datetime").datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-    )
+        return f"{'would drop' if dry_run else 'dropped'} {n} column(s)"
+    raise ValueError(f"no migration step defined for v{target}")
 
 
-def _migrate_v3_to_v4(
+def _retype_v4(
     conn: sqlite3.Connection, category: str, *, dry_run: bool
-) -> None:
+) -> str:
     """Retype TEXT columns that hold numeric values to INTEGER.
 
     SQLite has no `ALTER COLUMN TYPE`, so we do the standard table-swap:
@@ -391,327 +373,67 @@ def _migrate_v3_to_v4(
     )
 
     if not present_retypes:
-        logging.info(f"[{category}] v3 -> v4: no columns to retype")
-    elif dry_run:
-        logging.info(
-            f"[{category}] DRY-RUN v3->v4: would retype {present_retypes} to INTEGER"
-        )
-        return
-    else:
-        # Build new column clauses, preserving constraints
-        col_clauses: List[str] = []
-        col_names: List[str] = []
-        for col in cols_info:
-            name = col["name"]
-            new_type = "INTEGER" if name in retype else (col["type"] or "TEXT")
-            clause = f"{name} {new_type}"
-            if col["pk"]:
-                clause += " PRIMARY KEY"
-            if col["notnull"]:
-                clause += " NOT NULL"
-            if col["dflt_value"] is not None:
-                clause += f" DEFAULT {col['dflt_value']}"
-            # availability_status has a CHECK constraint we must preserve
-            if name == "availability_status":
-                clause += (
-                    " CHECK (availability_status IN "
-                    "('available','unavailable','unknown'))"
-                )
-            col_clauses.append(clause)
-            col_names.append(name)
+        return "no columns to retype"
+    if dry_run:
+        return f"would retype {present_retypes} to INTEGER"
 
-        # Build SELECT expressions: CAST retyped cols, pass-through the rest.
-        # Wrap CAST in NULLIF to keep empty strings as NULL after coercion.
-        select_exprs = [
-            f"CAST(NULLIF({n}, '') AS INTEGER) AS {n}" if n in retype else n
-            for n in col_names
-        ]
-
-        create_sql = f"CREATE TABLE listings_new ({', '.join(col_clauses)})"
-        insert_sql = (
-            f"INSERT INTO listings_new ({', '.join(col_names)}) "
-            f"SELECT {', '.join(select_exprs)} FROM listings"
-        )
-
-        with conn:
-            conn.execute(create_sql)
-            conn.execute(insert_sql)
-            conn.execute("DROP TABLE listings")
-            conn.execute("ALTER TABLE listings_new RENAME TO listings")
-            # Recreate the listings index (availability_checks index survives)
-            conn.execute(
-                "CREATE INDEX IF NOT EXISTS idx_listings_status "
-                "ON listings(availability_status, last_checked_at)"
+    # Build new column clauses, preserving constraints
+    col_clauses: List[str] = []
+    col_names: List[str] = []
+    for col in cols_info:
+        name = col["name"]
+        new_type = "INTEGER" if name in retype else (col["type"] or "TEXT")
+        clause = f"{name} {new_type}"
+        if col["pk"]:
+            clause += " PRIMARY KEY"
+        if col["notnull"]:
+            clause += " NOT NULL"
+        if col["dflt_value"] is not None:
+            clause += f" DEFAULT {col['dflt_value']}"
+        # availability_status has a CHECK constraint we must preserve
+        if name == "availability_status":
+            clause += (
+                " CHECK (availability_status IN "
+                "('available','unavailable','unknown'))"
             )
+        col_clauses.append(clause)
+        col_names.append(name)
 
-    # Bump schema_version (no-op DRY-RUN already returned above)
+    # Build SELECT expressions: CAST retyped cols, pass-through the rest.
+    # Wrap CAST in NULLIF to keep empty strings as NULL after coercion.
+    select_exprs = [
+        f"CAST(NULLIF({n}, '') AS INTEGER) AS {n}" if n in retype else n
+        for n in col_names
+    ]
+
+    create_sql = f"CREATE TABLE listings_new ({', '.join(col_clauses)})"
+    insert_sql = (
+        f"INSERT INTO listings_new ({', '.join(col_names)}) "
+        f"SELECT {', '.join(select_exprs)} FROM listings"
+    )
+
     with conn:
+        conn.execute(create_sql)
+        conn.execute(insert_sql)
+        conn.execute("DROP TABLE listings")
+        conn.execute("ALTER TABLE listings_new RENAME TO listings")
+        # Recreate the listings index (availability_checks index survives)
         conn.execute(
-            "INSERT INTO meta (key, value) VALUES ('schema_version', '4') "
-            "ON CONFLICT(key) DO UPDATE SET value = excluded.value"
+            "CREATE INDEX IF NOT EXISTS idx_listings_status "
+            "ON listings(availability_status, last_checked_at)"
         )
 
-    logging.info(f"[{category}] v3 -> v4 complete — retyped {len(present_retypes)} column(s)")
-    set_meta(
-        conn,
-        "last_migration_v4_at",
-        __import__("datetime").datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-    )
-
-
-def _migrate_v4_to_v5(
-    conn: sqlite3.Connection, category: str, *, dry_run: bool
-) -> None:
-    """Add ad_expiry and sold_inference columns (both categories)."""
-    logging.info(
-        f"[{category}] step v4 -> v5 ({len(V5_SHARED_COLS)} columns to evaluate)"
-    )
-
-    added = 0
-    with conn:
-        for col_name, col_type in V5_SHARED_COLS:
-            if _safe_add_column(conn, "listings", col_name, col_type, dry_run=dry_run):
-                added += 1
-
-        if dry_run:
-            logging.info(
-                f"[{category}] DRY-RUN v4->v5: would add {added} column(s)"
-            )
-            return
-
-        conn.execute(
-            "INSERT INTO meta (key, value) VALUES ('schema_version', '5') "
-            "ON CONFLICT(key) DO UPDATE SET value = excluded.value"
-        )
-
-    logging.info(
-        f"[{category}] v4 -> v5 complete — added {added} column(s)"
-    )
-    set_meta(
-        conn,
-        "last_migration_v5_at",
-        __import__("datetime").datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-    )
-
-
-def _migrate_v5_to_v6(
-    conn: sqlite3.Connection, category: str, *, dry_run: bool
-) -> None:
-    """Drop permanently-empty / dead-weight columns (per-category)."""
-    cols = _dropped_cols_v6(category)
-    logging.info(
-        f"[{category}] step v5 -> v6 ({len(cols)} column(s) to drop)"
-    )
-
-    dropped = 0
-    with conn:
-        for col_name in cols:
-            if _safe_drop_column(conn, "listings", col_name, dry_run=dry_run):
-                dropped += 1
-
-        if dry_run:
-            logging.info(
-                f"[{category}] DRY-RUN v5->v6: would drop {dropped} column(s)"
-            )
-            return
-
-        conn.execute(
-            "INSERT INTO meta (key, value) VALUES ('schema_version', '6') "
-            "ON CONFLICT(key) DO UPDATE SET value = excluded.value"
-        )
-
-    logging.info(
-        f"[{category}] v5 -> v6 complete — dropped {dropped} column(s)"
-    )
-    set_meta(
-        conn,
-        "last_migration_v6_at",
-        __import__("datetime").datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-    )
-
-
-def _migrate_v6_to_v7(
-    conn: sqlite3.Connection, category: str, *, dry_run: bool
-) -> None:
-    """Add motorcycle_type / type_group (motorcycles only; cars bump version)."""
-    cols = V7_MOTORCYCLE_COLS if category == "motorcycles" else []
-    logging.info(
-        f"[{category}] step v6 -> v7 ({len(cols)} column(s) to evaluate)"
-    )
-
-    added = 0
-    with conn:
-        for col_name, col_type in cols:
-            if _safe_add_column(conn, "listings", col_name, col_type, dry_run=dry_run):
-                added += 1
-
-        if dry_run:
-            logging.info(
-                f"[{category}] DRY-RUN v6->v7: would add {added} column(s)"
-            )
-            return
-
-        conn.execute(
-            "INSERT INTO meta (key, value) VALUES ('schema_version', '7') "
-            "ON CONFLICT(key) DO UPDATE SET value = excluded.value"
-        )
-
-    logging.info(
-        f"[{category}] v6 -> v7 complete — added {added} column(s)"
-    )
-    set_meta(
-        conn,
-        "last_migration_v7_at",
-        __import__("datetime").datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-    )
-
-
-def _migrate_v7_to_v8(
-    conn: sqlite3.Connection, category: str, *, dry_run: bool
-) -> None:
-    """Add vehicle_type / type_group (cars only; motorcycles bump version)."""
-    cols = V8_CAR_COLS if category == "cars" else []
-    logging.info(
-        f"[{category}] step v7 -> v8 ({len(cols)} column(s) to evaluate)"
-    )
-
-    added = 0
-    with conn:
-        for col_name, col_type in cols:
-            if _safe_add_column(conn, "listings", col_name, col_type, dry_run=dry_run):
-                added += 1
-
-        if dry_run:
-            logging.info(
-                f"[{category}] DRY-RUN v7->v8: would add {added} column(s)"
-            )
-            return
-
-        conn.execute(
-            "INSERT INTO meta (key, value) VALUES ('schema_version', '8') "
-            "ON CONFLICT(key) DO UPDATE SET value = excluded.value"
-        )
-
-    logging.info(
-        f"[{category}] v7 -> v8 complete — added {added} column(s)"
-    )
-    set_meta(
-        conn,
-        "last_migration_v8_at",
-        __import__("datetime").datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-    )
-
-
-def _migrate_v8_to_v9(
-    conn: sqlite3.Connection, category: str, *, dry_run: bool
-) -> None:
-    """Add mcdParams spec columns (cars only; motorcycles bump version)."""
-    cols = V9_CAR_COLS if category == "cars" else []
-    logging.info(
-        f"[{category}] step v8 -> v9 ({len(cols)} column(s) to evaluate)"
-    )
-
-    added = 0
-    with conn:
-        for col_name, col_type in cols:
-            if _safe_add_column(conn, "listings", col_name, col_type, dry_run=dry_run):
-                added += 1
-
-        if dry_run:
-            logging.info(
-                f"[{category}] DRY-RUN v8->v9: would add {added} column(s)"
-            )
-            return
-
-        conn.execute(
-            "INSERT INTO meta (key, value) VALUES ('schema_version', '9') "
-            "ON CONFLICT(key) DO UPDATE SET value = excluded.value"
-        )
-
-    logging.info(
-        f"[{category}] v8 -> v9 complete — added {added} column(s)"
-    )
-    set_meta(
-        conn,
-        "last_migration_v9_at",
-        __import__("datetime").datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-    )
-
-
-def _migrate_v9_to_v10(
-    conn: sqlite3.Connection, category: str, *, dry_run: bool
-) -> None:
-    """Add OEM-spec columns (motorcycles only; cars bump version)."""
-    cols = V10_MOTORCYCLE_COLS if category == "motorcycles" else []
-    logging.info(
-        f"[{category}] step v9 -> v10 ({len(cols)} column(s) to evaluate)"
-    )
-
-    added = 0
-    with conn:
-        for col_name, col_type in cols:
-            if _safe_add_column(conn, "listings", col_name, col_type, dry_run=dry_run):
-                added += 1
-
-        if dry_run:
-            logging.info(
-                f"[{category}] DRY-RUN v9->v10: would add {added} column(s)"
-            )
-            return
-
-        conn.execute(
-            "INSERT INTO meta (key, value) VALUES ('schema_version', '10') "
-            "ON CONFLICT(key) DO UPDATE SET value = excluded.value"
-        )
-
-    logging.info(
-        f"[{category}] v9 -> v10 complete — added {added} column(s)"
-    )
-    set_meta(
-        conn,
-        "last_migration_v10_at",
-        __import__("datetime").datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-    )
-
-
-def _migrate_v10_to_v11(
-    conn: sqlite3.Connection, category: str, *, dry_run: bool
-) -> None:
-    """Add spec_match / spec_source (cars only; motorcycles bump version)."""
-    cols = V11_CAR_COLS if category == "cars" else []
-    logging.info(
-        f"[{category}] step v10 -> v11 ({len(cols)} column(s) to evaluate)"
-    )
-
-    added = 0
-    with conn:
-        for col_name, col_type in cols:
-            if _safe_add_column(conn, "listings", col_name, col_type, dry_run=dry_run):
-                added += 1
-
-        if dry_run:
-            logging.info(
-                f"[{category}] DRY-RUN v10->v11: would add {added} column(s)"
-            )
-            return
-
-        conn.execute(
-            "INSERT INTO meta (key, value) VALUES ('schema_version', '11') "
-            "ON CONFLICT(key) DO UPDATE SET value = excluded.value"
-        )
-
-    logging.info(
-        f"[{category}] v10 -> v11 complete — added {added} column(s)"
-    )
-    set_meta(
-        conn,
-        "last_migration_v11_at",
-        __import__("datetime").datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-    )
+    return f"retyped {len(present_retypes)} column(s)"
 
 
 def migrate(category: str, *, dry_run: bool = False) -> None:
-    """Run all pending migrations on the given category's DB."""
+    """Run all pending migrations on the given category's DB.
+
+    Walks one version at a time from the DB's current schema_version up to
+    TARGET_VERSION, dispatching each step through _apply_step and bumping
+    schema_version after it. Idempotent: a re-run early-exits, and each step's
+    add/drop is itself guarded by a column-existence check.
+    """
     if category not in CATEGORIES:
         raise ValueError(
             f"Unknown category: {category!r}. Expected one of {CATEGORIES}."
@@ -730,30 +452,23 @@ def migrate(category: str, *, dry_run: bool = False) -> None:
         )
         return
 
-    logging.info(
-        f"[{category}] migrating v{current} -> v{TARGET_VERSION}"
-    )
+    logging.info(f"[{category}] migrating v{current} -> v{TARGET_VERSION}")
 
-    if current < 2:
-        _migrate_v1_to_v2(conn, category, dry_run=dry_run)
-    if current < 3:
-        _migrate_v2_to_v3(conn, category, dry_run=dry_run)
-    if current < 4:
-        _migrate_v3_to_v4(conn, category, dry_run=dry_run)
-    if current < 5:
-        _migrate_v4_to_v5(conn, category, dry_run=dry_run)
-    if current < 6:
-        _migrate_v5_to_v6(conn, category, dry_run=dry_run)
-    if current < 7:
-        _migrate_v6_to_v7(conn, category, dry_run=dry_run)
-    if current < 8:
-        _migrate_v7_to_v8(conn, category, dry_run=dry_run)
-    if current < 9:
-        _migrate_v8_to_v9(conn, category, dry_run=dry_run)
-    if current < 10:
-        _migrate_v9_to_v10(conn, category, dry_run=dry_run)
-    if current < 11:
-        _migrate_v10_to_v11(conn, category, dry_run=dry_run)
+    for target in range(current + 1, TARGET_VERSION + 1):
+        summary = _apply_step(conn, category, target, dry_run=dry_run)
+        logging.info(f"[{category}] v{target - 1} -> v{target}: {summary}")
+        if dry_run:
+            continue
+        with conn:
+            conn.execute(
+                "INSERT INTO meta (key, value) VALUES ('schema_version', ?) "
+                "ON CONFLICT(key) DO UPDATE SET value = excluded.value",
+                (str(target),),
+            )
+
+    if not dry_run:
+        set_meta(conn, "last_migration_at",
+                 datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
     logging.info(
         f"[{category}] migration complete; "
@@ -801,11 +516,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> None:
-    try:
-        sys.stdout.reconfigure(encoding="utf-8")
-        sys.stderr.reconfigure(encoding="utf-8")
-    except (AttributeError, OSError):
-        pass
+    force_utf8_stdio()
 
     logging.basicConfig(
         level=logging.INFO,
